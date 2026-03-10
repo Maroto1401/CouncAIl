@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 
-const API_URL = "http://localhost:8000"; // Change to your deployed backend URL
+const API_URL = "https://councail.onrender.com"; 
 
 const AGENT_COLORS = {
   analyst: { bg: "#0f172a", accent: "#38bdf8", border: "#1e3a5f" },
