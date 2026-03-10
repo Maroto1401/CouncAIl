@@ -29,7 +29,7 @@ async def preflight(rest_of_path: str):
     )
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "your_groq_api_key_here")
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
-MODEL = "llama3-70b-8192"
+MODEL = "llama-3.3-70b-versatile"
 
 AGENTS = {
     "analyst": {
