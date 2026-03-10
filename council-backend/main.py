@@ -1,3 +1,4 @@
+from http.client import HTTPException
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse, JSONResponse
@@ -6,8 +7,19 @@ from typing import List, Optional
 import httpx
 import json
 import os
+# Add to imports at the top
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+
 
 app = FastAPI()
+
+# Add limiter setup for API rate limiting
+limiter = Limiter(key_func=get_remote_address)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
 
 @app.middleware("http")
 async def add_cors(request: Request, call_next):
@@ -158,9 +170,19 @@ async def orchestrate(question: str, debate_transcript: str, clarifications: dic
             "recommendation": cleaned[:300]
         }
 
+def sanitize_input(text: str) -> str:
+    if len(text) > 1000:
+        raise HTTPException(status_code=400, detail="Question too long")
+    banned = ["ignore previous", "ignore all", "system prompt", "jailbreak", "you are now"]
+    for phrase in banned:
+        if phrase.lower() in text.lower():
+            raise HTTPException(status_code=400, detail="Invalid input")
+    return text.strip()
 
 @app.post("/ask")
+@limiter.limit("20/minute")
 async def ask(req: ConversationRequest):
+    req.question = sanitize_input(req.question)
     already_clarified = bool(req.clarifications)
     agent_responses, debate_transcript = await run_debate(req.question, req.clarifications)
     orchestration = await orchestrate(req.question, debate_transcript, req.clarifications, already_clarified)
