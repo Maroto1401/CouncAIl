@@ -81,9 +81,8 @@ async def call_groq(messages: list, stream: bool = False) -> str:
     async with httpx.AsyncClient(timeout=30) as client:
         response = await client.post(GROQ_URL, headers=headers, json=payload)
         data = response.json()
+        print("GROQ RESPONSE:", data)  # add this line
         return data["choices"][0]["message"]["content"]
-
-
 async def run_debate(question: str, clarifications: dict) -> dict:
     context = f"User question: {question}"
     if clarifications:
