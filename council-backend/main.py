@@ -181,17 +181,15 @@ def sanitize_input(text: str) -> str:
 
 @app.post("/ask")
 @limiter.limit("20/minute")
-async def ask(req: ConversationRequest):
+async def ask(request: Request, req: ConversationRequest):
     req.question = sanitize_input(req.question)
     already_clarified = bool(req.clarifications)
     agent_responses, debate_transcript = await run_debate(req.question, req.clarifications)
     orchestration = await orchestrate(req.question, debate_transcript, req.clarifications, already_clarified)
-
     return {
         "agents": agent_responses,
         "orchestration": orchestration
     }
-
 
 @app.get("/health")
 async def health():
