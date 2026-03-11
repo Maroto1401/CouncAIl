@@ -1,25 +1,21 @@
-from http.client import HTTPException
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse, JSONResponse
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import List, Optional
-import httpx
-import json
-import os
-# Add to imports at the top
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
-
+from agents import AGENTS
+import httpx
+import json
+import os
 
 app = FastAPI()
 
-# Add limiter setup for API rate limiting
 limiter = Limiter(key_func=get_remote_address)
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
-
 
 @app.middleware("http")
 async def add_cors(request: Request, call_next):
@@ -39,42 +35,22 @@ async def preflight(rest_of_path: str):
             "Access-Control-Allow-Headers": "*",
         }
     )
+
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "your_groq_api_key_here")
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 MODEL = "llama-3.3-70b-versatile"
 
-AGENTS = {
-    "analyst": {
-        "name": "Analyst",
-        "emoji": "🔍",
-        "prompt": "You are a sharp analytical thinker. You break down problems logically, look for evidence, and challenge assumptions. Be concise and direct. " +
-        "Your goal is to discuss topics with other personalities to get the most of them. As discussion, you should be able to reasoning what is really a good idea or what should be improved, following your personality and character"
-    },
-    "advocate": {
-        "name": "Advocate",
-        "emoji": "💡",
-        "prompt": "You are an optimistic creative thinker. You look for opportunities, upsides, and innovative angles. Be concise and inspiring." +
-                "Your goal is to discuss topics with other personalities to get the most of them. As discussion, you should be able to reasoning what is really a good idea or what should be improved, following your personality and character"
-
-    },
-    "skeptic": {
-        "name": "Skeptic",
-        "emoji": "⚠️",
-        "prompt": "You are a pragmatic skeptic. You identify risks, blind spots, and what could go wrong. Be concise and honest." +
-        "Your goal is to discuss topics with other personalities to get the most of them. As discussion, you should be able to reasoning what is really a good idea or what should be improved, following your personality and character"
-    },
-}
-
 ORCHESTRATOR_PROMPT = """You are the orchestrator of an AI council. Your job is to:
 1. Receive a user question and the council's debate notes
 2. Decide: does the council need more info from the user to give a truly useful answer?
-3. If YES: output a JSON with {{"needs_clarification": true, "questions": ["question1", "question2"]}} — max 2 short questions
-4. If NO: output a JSON with {{"needs_clarification": false, "summary_bullets": ["bullet1", "bullet2", "bullet3"], "recommendation": "clear final recommendation in 2-3 sentences"}}
+3. If YES: output a JSON with {"needs_clarification": true, "questions": ["question1", "question2"]} — max 2 short questions
+4. If NO: output a JSON with {"needs_clarification": false, "summary_bullets": ["bullet1", "bullet2", "bullet3"], "recommendation": "clear final recommendation in 2-3 sentences"}
 
 Rules:
 - Only ask for clarification if it would SIGNIFICANTLY change the answer
-- Max 1 round of clarification questions, but sometimes 2 is possible if the topic is complex
-- Bullets should capture key tensions or insights from the debate without being too generic. The recommendation should be specific and actionable.
+- Max 1 round of clarification questions
+- Bullets should capture key tensions or insights from the debate. Be specific, not generic.
+- The recommendation must be direct and actionable.
 - Be direct. No fluff. Respond ONLY with valid JSON."""
 
 
@@ -87,7 +63,16 @@ class ConversationRequest(BaseModel):
     history: Optional[List[dict]] = []
     clarifications: Optional[dict] = {}
 
-async def call_groq(messages: list, stream: bool = False) -> str:
+def sanitize_input(text: str) -> str:
+    if len(text) > 1000:
+        raise HTTPException(status_code=400, detail="Question too long")
+    banned = ["ignore previous", "ignore all", "system prompt", "jailbreak", "you are now"]
+    for phrase in banned:
+        if phrase.lower() in text.lower():
+            raise HTTPException(status_code=400, detail="Invalid input")
+    return text.strip()
+
+async def call_groq(messages: list) -> str:
     headers = {
         "Authorization": f"Bearer {GROQ_API_KEY}",
         "Content-Type": "application/json"
@@ -102,9 +87,12 @@ async def call_groq(messages: list, stream: bool = False) -> str:
     async with httpx.AsyncClient(timeout=30) as client:
         response = await client.post(GROQ_URL, headers=headers, json=payload)
         data = response.json()
-        print("GROQ RESPONSE:", data)  # add this line
+        if "choices" not in data:
+            raise HTTPException(status_code=500, detail=f"Groq error: {data}")
         return data["choices"][0]["message"]["content"]
-async def run_debate(question: str, clarifications: dict) -> dict:
+
+
+async def run_debate(question: str, clarifications: dict):
     context = f"User question: {question}"
     if clarifications:
         context += f"\n\nAdditional context from user: {json.dumps(clarifications)}"
@@ -119,10 +107,10 @@ async def run_debate(question: str, clarifications: dict) -> dict:
         agent_responses[agent_id] = {
             "name": agent["name"],
             "emoji": agent["emoji"],
+            "color": agent.get("color", "#94a3b8"),
             "response": response
         }
 
-    # Round 2: agents react to each other
     debate_transcript = "\n\n".join([
         f"{a['emoji']} {a['name']}: {a['response']}"
         for a in agent_responses.values()
@@ -152,7 +140,6 @@ async def orchestrate(question: str, debate_transcript: str, clarifications: dic
     ]
     response = await call_groq(messages)
 
-    # Clean and parse JSON
     cleaned = response.strip()
     if cleaned.startswith("```"):
         cleaned = cleaned.split("```")[1]
@@ -163,21 +150,12 @@ async def orchestrate(question: str, debate_transcript: str, clarifications: dic
     try:
         return json.loads(cleaned)
     except:
-        # Fallback
         return {
             "needs_clarification": False,
             "summary_bullets": ["The council has weighed in on your question."],
             "recommendation": cleaned[:300]
         }
 
-def sanitize_input(text: str) -> str:
-    if len(text) > 1000:
-        raise HTTPException(status_code=400, detail="Question too long")
-    banned = ["ignore previous", "ignore all", "system prompt", "jailbreak", "you are now"]
-    for phrase in banned:
-        if phrase.lower() in text.lower():
-            raise HTTPException(status_code=400, detail="Invalid input")
-    return text.strip()
 
 @app.post("/ask")
 @limiter.limit("20/minute")
@@ -186,10 +164,12 @@ async def ask(request: Request, req: ConversationRequest):
     already_clarified = bool(req.clarifications)
     agent_responses, debate_transcript = await run_debate(req.question, req.clarifications)
     orchestration = await orchestrate(req.question, debate_transcript, req.clarifications, already_clarified)
+
     return {
         "agents": agent_responses,
         "orchestration": orchestration
     }
+
 
 @app.get("/health")
 async def health():

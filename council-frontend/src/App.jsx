@@ -1,19 +1,16 @@
 import { useState, useRef, useEffect } from "react";
 
-const API_URL = "https://councail.onrender.com"; 
+const API_URL = "https://councail.onrender.com";
 
-const AGENT_COLORS = {
-  analyst: { bg: "#0f172a", accent: "#38bdf8", border: "#1e3a5f" },
-  advocate: { bg: "#0f1f0f", accent: "#4ade80", border: "#1a3a1a" },
-  skeptic:  { bg: "#1f0f0f", accent: "#f87171", border: "#3a1a1a" },
-};
+const AgentCard = ({ agent, visible }) => {
+  const color = agent.color || "#94a3b8";
+  const bg = `${color}12`;
+  const border = `${color}30`;
 
-const AgentCard = ({ agent, agentId, visible }) => {
-  const colors = AGENT_COLORS[agentId] || AGENT_COLORS.analyst;
   return (
     <div style={{
-      background: colors.bg,
-      border: `1px solid ${colors.border}`,
+      background: bg,
+      border: `1px solid ${border}`,
       borderRadius: "12px",
       padding: "16px",
       opacity: visible ? 1 : 0,
@@ -23,7 +20,7 @@ const AgentCard = ({ agent, agentId, visible }) => {
     }}>
       <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
         <span style={{ fontSize: "18px" }}>{agent.emoji}</span>
-        <span style={{ color: colors.accent, fontWeight: 700, fontSize: "13px", letterSpacing: "0.08em", textTransform: "uppercase" }}>
+        <span style={{ color, fontWeight: 700, fontSize: "13px", letterSpacing: "0.08em", textTransform: "uppercase" }}>
           {agent.name}
         </span>
       </div>
@@ -31,7 +28,7 @@ const AgentCard = ({ agent, agentId, visible }) => {
         {agent.response}
       </p>
       {agent.followup && (
-        <p style={{ color: "#94a3b8", fontSize: "13px", lineHeight: "1.5", marginTop: "8px", paddingTop: "8px", borderTop: `1px solid ${colors.border}`, fontStyle: "italic" }}>
+        <p style={{ color: "#94a3b8", fontSize: "13px", lineHeight: "1.5", marginTop: "10px", paddingTop: "10px", borderTop: `1px solid ${border}`, fontStyle: "italic" }}>
           ↩ {agent.followup}
         </p>
       )}
@@ -41,42 +38,43 @@ const AgentCard = ({ agent, agentId, visible }) => {
 
 const BulletSummary = ({ bullets, recommendation, visible }) => (
   <div style={{
-    background: "#0a0a0f",
+    background: "#0d0d1f",
     border: "1px solid #2d2d4a",
     borderRadius: "14px",
-    padding: "20px 24px",
+    padding: "22px 24px",
     opacity: visible ? 1 : 0,
     transform: visible ? "translateY(0)" : "translateY(12px)",
     transition: "all 0.5s ease 0.2s",
+    marginTop: "6px",
   }}>
-    <div style={{ color: "#7c6af7", fontSize: "11px", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: "14px" }}>
-      ⚖️ Council Summary
+    <div style={{ color: "#7c6af7", fontSize: "11px", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: "16px" }}>
+      ⚖️ Council Verdict
     </div>
-    <ul style={{ margin: "0 0 16px 0", padding: "0 0 0 4px", listStyle: "none" }}>
+    <ul style={{ margin: "0 0 18px 0", padding: 0, listStyle: "none" }}>
       {bullets.map((b, i) => (
-        <li key={i} style={{ display: "flex", gap: "10px", color: "#e2e8f0", fontSize: "14px", lineHeight: "1.6", marginBottom: "8px" }}>
-          <span style={{ color: "#7c6af7", flexShrink: 0, marginTop: "2px" }}>▸</span>
+        <li key={i} style={{ display: "flex", gap: "10px", color: "#e2e8f0", fontSize: "14px", lineHeight: "1.65", marginBottom: "10px" }}>
+          <span style={{ color: "#7c6af7", flexShrink: 0, marginTop: "3px", fontSize: "10px" }}>◆</span>
           <span>{b}</span>
         </li>
       ))}
     </ul>
     {recommendation && (
-      <div style={{ background: "#13132a", borderRadius: "8px", padding: "14px 16px", borderLeft: "3px solid #7c6af7" }}>
-        <p style={{ color: "#c4b5fd", fontSize: "14px", lineHeight: "1.6", margin: 0 }}>
-          {recommendation}
-        </p>
-      </div>
+      <>
+        <div style={{ color: "#7c6af7", fontSize: "11px", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: "10px" }}>
+          🎯 Recommendation
+        </div>
+        <div style={{ background: "#13132a", borderRadius: "10px", padding: "14px 16px", borderLeft: "3px solid #7c6af7" }}>
+          <p style={{ color: "#c4b5fd", fontSize: "14px", lineHeight: "1.65", margin: 0 }}>
+            {recommendation}
+          </p>
+        </div>
+      </>
     )}
   </div>
 );
 
 const ClarificationBlock = ({ questions, onAnswer, visible }) => {
   const [answers, setAnswers] = useState({});
-
-  const handleSubmit = () => {
-    if (Object.keys(answers).length === 0) return;
-    onAnswer(answers);
-  };
 
   return (
     <div style={{
@@ -87,13 +85,14 @@ const ClarificationBlock = ({ questions, onAnswer, visible }) => {
       opacity: visible ? 1 : 0,
       transform: visible ? "translateY(0)" : "translateY(12px)",
       transition: "all 0.5s ease",
+      marginTop: "6px",
     }}>
       <div style={{ color: "#a78bfa", fontSize: "11px", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: "14px" }}>
-        🤔 The council needs a bit more context
+        🤔 A couple of questions before the verdict
       </div>
       {questions.map((q, i) => (
         <div key={i} style={{ marginBottom: "16px" }}>
-          <p style={{ color: "#e2e8f0", fontSize: "14px", marginBottom: "8px" }}>{q}</p>
+          <p style={{ color: "#e2e8f0", fontSize: "14px", marginBottom: "8px", lineHeight: "1.5" }}>{q}</p>
           <textarea
             rows={2}
             placeholder="Your answer..."
@@ -111,12 +110,15 @@ const ClarificationBlock = ({ questions, onAnswer, visible }) => {
               outline: "none",
               fontFamily: "inherit",
               boxSizing: "border-box",
+              transition: "border-color 0.2s",
             }}
+            onFocus={e => e.target.style.borderColor = "#7c6af7"}
+            onBlur={e => e.target.style.borderColor = "#2d2d4a"}
           />
         </div>
       ))}
       <button
-        onClick={handleSubmit}
+        onClick={() => onAnswer(answers)}
         style={{
           background: "#7c6af7",
           color: "white",
@@ -126,19 +128,35 @@ const ClarificationBlock = ({ questions, onAnswer, visible }) => {
           fontSize: "14px",
           fontWeight: 600,
           cursor: "pointer",
-          transition: "background 0.2s",
         }}
         onMouseEnter={e => e.target.style.background = "#6d5ce6"}
         onMouseLeave={e => e.target.style.background = "#7c6af7"}
       >
-        Submit answers →
+        Submit →
       </button>
     </div>
   );
 };
 
+const UserBubble = ({ text }) => (
+  <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "24px" }}>
+    <div style={{
+      background: "#1e1e3a",
+      border: "1px solid #2d2d4a",
+      borderRadius: "14px 14px 2px 14px",
+      padding: "12px 16px",
+      maxWidth: "75%",
+      color: "#e2e8f0",
+      fontSize: "15px",
+      lineHeight: "1.55",
+    }}>
+      {text}
+    </div>
+  </div>
+);
+
 const LoadingPulse = () => (
-  <div style={{ display: "flex", alignItems: "center", gap: "8px", padding: "16px 0" }}>
+  <div style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 0 16px" }}>
     <div style={{ display: "flex", gap: "5px" }}>
       {[0,1,2].map(i => (
         <div key={i} style={{
@@ -149,7 +167,7 @@ const LoadingPulse = () => (
         }} />
       ))}
     </div>
-    <span style={{ color: "#64748b", fontSize: "13px" }}>The council is deliberating...</span>
+    <span style={{ color: "#475569", fontSize: "13px" }}>The council is deliberating...</span>
   </div>
 );
 
@@ -164,11 +182,19 @@ export default function App() {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [sessions, loading]);
 
+  // Keep server warm
+  useEffect(() => {
+    const keepAlive = setInterval(() => {
+      fetch(`${API_URL}/health`).catch(() => {});
+    }, 10 * 60 * 1000);
+    return () => clearInterval(keepAlive);
+  }, []);
+
   const addVisible = (id) => {
     setTimeout(() => setVisibleItems(prev => new Set([...prev, id])), 50);
   };
 
-  const submitQuestion = async (q, clarifications = {}, sessionIndex = null) => {
+  const submitQuestion = async (q, clarifications = {}, parentId = null) => {
     setLoading(true);
     try {
       const res = await fetch(`${API_URL}/ask`, {
@@ -179,21 +205,10 @@ export default function App() {
       const data = await res.json();
       const id = Date.now();
 
-      const newSession = {
-        id,
-        question: q,
-        agents: data.agents,
-        orchestration: data.orchestration,
-        clarifications,
-        answered: false,
-      };
+      const newSession = { id, question: q, agents: data.agents, orchestration: data.orchestration, answered: false, parentId };
 
-      if (sessionIndex !== null) {
-        setSessions(prev => {
-          const updated = [...prev];
-          updated[sessionIndex] = { ...updated[sessionIndex], result: newSession };
-          return updated;
-        });
+      if (parentId) {
+        setSessions(prev => prev.map(s => s.id === parentId ? { ...s, child: newSession, answered: true } : s));
       } else {
         setSessions(prev => [...prev, newSession]);
       }
@@ -202,7 +217,7 @@ export default function App() {
         Object.keys(data.agents).forEach((k, i) => {
           setTimeout(() => addVisible(`${id}-agent-${k}`), i * 120);
         });
-        setTimeout(() => addVisible(`${id}-result`), 400);
+        setTimeout(() => addVisible(`${id}-result`), 500);
       }, 100);
 
     } catch (err) {
@@ -219,53 +234,46 @@ export default function App() {
   };
 
   const handleClarification = (sessionId, questions, answers) => {
-    const idx = sessions.findIndex(s => s.id === sessionId);
-    const session = sessions[idx];
     const clarifications = {};
     questions.forEach((q, i) => { clarifications[q] = answers[i] || ""; });
-    setSessions(prev => prev.map(s => s.id === sessionId ? { ...s, answered: true } : s));
-    submitQuestion(session.question, clarifications, idx);
+    const session = sessions.find(s => s.id === sessionId);
+    submitQuestion(session.question, clarifications, sessionId);
   };
 
   const renderSession = (session) => {
-    const { id, agents, orchestration, answered } = session;
-
+    const { id, question: q, agents, orchestration, answered } = session;
     return (
-      <div key={id} style={{ marginBottom: "32px" }}>
-        {/* Agent cards */}
-        <div style={{ marginBottom: "16px" }}>
-          <div style={{ color: "#475569", fontSize: "11px", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "10px" }}>
+      <div key={id}>
+        <UserBubble text={q} />
+        <div style={{ marginBottom: "8px" }}>
+          <div style={{ color: "#334155", fontSize: "11px", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "10px" }}>
             Council deliberation
           </div>
           {Object.entries(agents).map(([agentId, agent]) => (
-            <AgentCard
-              key={agentId}
-              agentId={agentId}
-              agent={agent}
-              visible={visibleItems.has(`${id}-agent-${agentId}`)}
-            />
+            <AgentCard key={agentId} agent={agent} visible={visibleItems.has(`${id}-agent-${agentId}`)} />
           ))}
         </div>
 
-        {/* Result */}
         {visibleItems.has(`${id}-result`) && (
           orchestration.needs_clarification && !answered ? (
             <ClarificationBlock
               questions={orchestration.questions}
-              visible={visibleItems.has(`${id}-result`)}
+              visible={true}
               onAnswer={(answers) => handleClarification(id, orchestration.questions, answers)}
             />
           ) : (
-            <BulletSummary
-              bullets={orchestration.summary_bullets || []}
-              recommendation={orchestration.recommendation}
-              visible={visibleItems.has(`${id}-result`)}
-            />
+            !session.child && (
+              <BulletSummary
+                bullets={orchestration.summary_bullets || []}
+                recommendation={orchestration.recommendation}
+                visible={true}
+              />
+            )
           )
         )}
 
-        {/* Follow-up result after clarification */}
-        {session.result && renderSession(session.result)}
+        {session.child && renderSession(session.child)}
+        <div style={{ marginBottom: "32px" }} />
       </div>
     );
   };
@@ -273,13 +281,17 @@ export default function App() {
   return (
     <div style={{
       minHeight: "100vh",
+      height: "100%",
       background: "#060610",
       fontFamily: "'IBM Plex Sans', 'Segoe UI', sans-serif",
       color: "#e2e8f0",
+      display: "flex",
+      flexDirection: "column",
     }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
-        * { box-sizing: border-box; }
+        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body, #root { height: 100%; background: #060610; }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: #0a0a15; }
         ::-webkit-scrollbar-thumb { background: #2d2d4a; border-radius: 2px; }
@@ -287,60 +299,63 @@ export default function App() {
           0%, 100% { opacity: 0.3; transform: scale(0.8); }
           50% { opacity: 1; transform: scale(1); }
         }
-        textarea:focus { border-color: #7c6af7 !important; }
       `}</style>
 
       {/* Header */}
       <div style={{
         borderBottom: "1px solid #12122a",
-        padding: "20px 24px",
+        padding: "16px 24px",
         display: "flex",
         alignItems: "center",
         gap: "12px",
-        position: "sticky",
-        top: 0,
         background: "#060610",
-        zIndex: 10,
+        flexShrink: 0,
       }}>
         <div style={{
           width: "32px", height: "32px",
           background: "linear-gradient(135deg, #7c6af7, #38bdf8)",
           borderRadius: "8px",
           display: "flex", alignItems: "center", justifyContent: "center",
-          fontSize: "16px",
+          fontSize: "16px", flexShrink: 0,
         }}>⚖</div>
         <div>
-          <div style={{ fontWeight: 700, fontSize: "15px", letterSpacing: "0.02em" }}>The Council</div>
-          <div style={{ color: "#475569", fontSize: "12px" }}>🔍 Analyst · 💡 Advocate · ⚠️ Skeptic</div>
+          <div style={{ fontWeight: 700, fontSize: "15px" }}>The Council</div>
+          <div style={{ color: "#334155", fontSize: "12px" }}>🔍 Analyst · 💡 Advocate · 🧐 Skeptic</div>
         </div>
       </div>
 
-      {/* Main content */}
-      <div style={{ maxWidth: "680px", margin: "0 auto", padding: "32px 24px 160px" }}>
+      {/* Scrollable content */}
+      <div style={{ flex: 1, overflowY: "auto", padding: "32px 24px 24px" }}>
+        <div style={{ maxWidth: "680px", margin: "0 auto" }}>
 
-        {sessions.length === 0 && !loading && (
-          <div style={{ textAlign: "center", padding: "60px 0 40px" }}>
-            <div style={{ fontSize: "48px", marginBottom: "16px" }}>⚖️</div>
-            <h1 style={{ fontSize: "28px", fontWeight: 700, marginBottom: "10px", background: "linear-gradient(135deg, #e2e8f0, #7c6af7)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-              Ask the Council
-            </h1>
-            <p style={{ color: "#475569", fontSize: "15px", lineHeight: "1.6", maxWidth: "400px", margin: "0 auto" }}>
-              Three AI minds — analytical, optimistic, skeptical — debate your question and give you a clear, balanced answer.
-            </p>
-          </div>
-        )}
+          {sessions.length === 0 && !loading && (
+            <div style={{ textAlign: "center", padding: "80px 0 40px" }}>
+              <div style={{ fontSize: "52px", marginBottom: "20px" }}>⚖️</div>
+              <h1 style={{
+                fontSize: "30px", fontWeight: 700, marginBottom: "12px",
+                background: "linear-gradient(135deg, #e2e8f0, #7c6af7)",
+                WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent"
+              }}>
+                Ask the Council
+              </h1>
+              <p style={{ color: "#334155", fontSize: "15px", lineHeight: "1.65", maxWidth: "380px", margin: "0 auto" }}>
+                Three AI minds — analytical, optimistic, skeptical — debate your question and deliver a clear, balanced verdict.
+              </p>
+            </div>
+          )}
 
-        {sessions.map(renderSession)}
-        {loading && <LoadingPulse />}
-        <div ref={bottomRef} />
+          {sessions.map(renderSession)}
+          {loading && <LoadingPulse />}
+          <div ref={bottomRef} />
+        </div>
       </div>
 
-      {/* Input bar */}
+      {/* Fixed input bar */}
       <div style={{
-        position: "fixed",
-        bottom: 0, left: 0, right: 0,
-        background: "linear-gradient(to top, #060610 70%, transparent)",
-        padding: "24px",
+        borderTop: "1px solid #12122a",
+        padding: "16px 24px",
+        background: "#060610",
+        flexShrink: 0,
       }}>
         <div style={{ maxWidth: "680px", margin: "0 auto", display: "flex", gap: "10px" }}>
           <textarea
@@ -352,10 +367,7 @@ export default function App() {
               e.target.style.height = Math.min(e.target.scrollHeight, 120) + "px";
             }}
             onKeyDown={e => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                handleSubmit();
-              }
+              if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSubmit(); }
             }}
             placeholder="Ask your question or dilemma..."
             style={{
@@ -365,12 +377,12 @@ export default function App() {
               borderRadius: "12px",
               color: "#e2e8f0",
               fontSize: "15px",
-              padding: "14px 16px",
+              padding: "13px 16px",
               resize: "none",
               outline: "none",
               fontFamily: "inherit",
               lineHeight: "1.5",
-              minHeight: "50px",
+              minHeight: "48px",
               transition: "border-color 0.2s",
             }}
             onFocus={e => e.target.style.borderColor = "#7c6af7"}
@@ -384,7 +396,7 @@ export default function App() {
               color: loading || !question.trim() ? "#475569" : "white",
               border: "none",
               borderRadius: "12px",
-              width: "50px",
+              width: "48px",
               fontSize: "20px",
               cursor: loading || !question.trim() ? "not-allowed" : "pointer",
               transition: "background 0.2s",
@@ -394,7 +406,7 @@ export default function App() {
             ↑
           </button>
         </div>
-        <p style={{ textAlign: "center", color: "#1e293b", fontSize: "11px", marginTop: "10px" }}>
+        <p style={{ textAlign: "center", color: "#1e293b", fontSize: "11px", marginTop: "8px" }}>
           Enter to send · Shift+Enter for new line
         </p>
       </div>
