@@ -112,8 +112,9 @@ const AgentTurn = ({ turn }) => {
   );
 };
 
-const DanBlock = ({ summary, question, onAnswer, answered, userAnswer }) => {
+const DanBlock = ({ summary, question, needsMoreRound, onAnswer, answered, userAnswer }) => {
   const [ans, setAns] = useState("");
+  const showQuestion = needsMoreRound && question && !answered;
   return (
     <div style={{ background:"#0d0d20", border:"1px solid #3d3a6a", borderRadius:"14px", padding:"16px 18px", marginBottom:"8px" }}>
       <div style={{ display:"flex", alignItems:"center", gap:"7px", marginBottom:"12px" }}>
@@ -121,7 +122,7 @@ const DanBlock = ({ summary, question, onAnswer, answered, userAnswer }) => {
         <span style={{ color:"#7c6af7", fontWeight:700, fontSize:"11px", letterSpacing:"0.08em", textTransform:"uppercase" }}>Dan — The Judge</span>
       </div>
       {summary?.length > 0 && (
-        <ul style={{ margin:"0 0 12px", padding:0, listStyle:"none" }}>
+        <ul style={{ margin: showQuestion || (answered && question) ? "0 0 12px" : "0", padding:0, listStyle:"none" }}>
           {summary.map((b,i) => (
             <li key={i} style={{ display:"flex", gap:"8px", color:"#94a3b8", fontSize:"13px", lineHeight:"1.6", marginBottom:"6px" }}>
               <span style={{ color:"#7c6af7", flexShrink:0 }}>◆</span><span>{b}</span>
@@ -129,7 +130,7 @@ const DanBlock = ({ summary, question, onAnswer, answered, userAnswer }) => {
           ))}
         </ul>
       )}
-      {question && !answered && (
+      {showQuestion && (
         <div style={{ borderTop:"1px solid #2d2d4a", paddingTop:"13px" }}>
           <p style={{ color:"#e2e8f0", fontSize:"14px", marginBottom:"10px", lineHeight:"1.5" }}>🤔 {question}</p>
           <div style={{ display:"flex", gap:"8px" }}>
@@ -321,6 +322,8 @@ const DebateScreen = ({ characters, onClose }) => {
     try {
       const allHistory = [...history, ...newTurns];
       const data = await post("/debate/checkin", { question, characters: charConfigs, history: allHistory, context: ctx, round: roundNum });
+      // Hard enforce: no more rounds after 3
+      if (roundNum >= 3) { data.needs_more_round = false; data.question = null; }
       setFeed(p=>[...p, { type:"dan_checkin", summary: data.summary, question: data.question, answered:false, needsMoreRound: data.needs_more_round, roundNum }]);
       if (data.needs_more_round && data.question) {
         setPhase("checkin");
@@ -408,6 +411,7 @@ const DebateScreen = ({ characters, onClose }) => {
             if(item.type==="agent") return <AgentTurn key={i} turn={item} />;
             if(item.type==="dan_checkin") return (
               <DanBlock key={i} summary={item.summary} question={item.question}
+                needsMoreRound={item.needsMoreRound}
                 answered={item.answered} userAnswer={item.userAnswer}
                 onAnswer={(ans) => handleCheckinAnswer(ans, item.roundNum)} />
             );

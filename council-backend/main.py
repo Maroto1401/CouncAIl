@@ -64,6 +64,7 @@ class CheckinRequest(BaseModel):
     characters: List[CharacterConfig]
     history: List[Dict]
     context: Dict[str, str] = {}
+    round: int = 1
 
 class VerdictRequest(BaseModel):
     question: str
@@ -265,10 +266,14 @@ async def debate_checkin(request: Request, req: CheckinRequest):
     raw = await call_groq(messages, max_tokens=350)
     result = parse_json_response(raw)
 
+    needs_more = result.get("needs_more_round", False)
+    # Force no more rounds after round 3
+    if req.round >= 3:
+        needs_more = False
     return {
         "summary": result.get("summary", []),
-        "question": result.get("question", None),
-        "needs_more_round": result.get("needs_more_round", False),
+        "question": result.get("question") if needs_more else None,
+        "needs_more_round": needs_more,
     }
 
 
