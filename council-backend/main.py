@@ -302,6 +302,8 @@ async def debate_verdict(request: Request, req: VerdictRequest):
 
     return {
         "insights": result.get("insights", []),
+        "for_points": result.get("for", []),
+        "against_points": result.get("against", []),
         "consensus": result.get("consensus", ""),
         "dissent": result.get("dissent", ""),
         "recommendation": result.get("recommendation", ""),
