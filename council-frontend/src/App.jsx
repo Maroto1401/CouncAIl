@@ -188,11 +188,33 @@ const SpeakerPicker = ({ pitches, onChoose, loading }) => {
 };
 
 // Dan block
-const DanBlock = ({ summary, question, councilQuestion, needsMoreRound, onAnswer, onSkip, answered, userAnswer }) => {
+const DanBlock = ({ summary, question, councilQuestion, needsMoreRound, onAnswer, onSkip, answered, userAnswer, revealed, onReveal }) => {
   const [ans, setAns] = useState("");
   const [vis, setVis] = useState(false);
   const showQ = needsMoreRound && question && !answered;
   useEffect(() => { const t = setTimeout(() => setVis(true), 80); return () => clearTimeout(t); }, []);
+
+  if (!revealed) return (
+    <div style={{ opacity:vis?1:0, transform:vis?"translateY(0)":"translateY(12px)", transition:"all 0.4s ease", margin:"18px 0" }}>
+      <div style={{ display:"flex", alignItems:"center", gap:"10px" }}>
+        <div style={{ flex:1, height:"1px", background:"linear-gradient(to right,transparent,rgba(201,168,76,0.2))" }}/>
+        <button onClick={onReveal} style={{
+          display:"flex", alignItems:"center", gap:"8px",
+          background:"transparent", border:"1px solid rgba(201,168,76,0.25)",
+          borderRadius:"20px", padding:"7px 16px", cursor:"pointer",
+          color:"rgba(201,168,76,0.7)", fontSize:"12px", fontWeight:700,
+          letterSpacing:"0.06em", transition:"all 0.18s",
+        }}
+          onMouseEnter={e=>{ e.currentTarget.style.borderColor="#c9a84c"; e.currentTarget.style.color="#c9a84c"; }}
+          onMouseLeave={e=>{ e.currentTarget.style.borderColor="rgba(201,168,76,0.25)"; e.currentTarget.style.color="rgba(201,168,76,0.7)"; }}
+        >
+          <Avatar char={DAN} size={20} />
+          Dan has something to say →
+        </button>
+        <div style={{ flex:1, height:"1px", background:"linear-gradient(to left,transparent,rgba(201,168,76,0.2))" }}/>
+      </div>
+    </div>
+  );
 
   return (
     <div style={{ opacity:vis?1:0, transform:vis?"translateY(0)":"translateY(14px)", transition:"all 0.45s ease", margin:"22px 0" }}>
@@ -673,7 +695,7 @@ const DebateScreen = ({ characters, onClose }) => {
         ...p,
         { type:"dan_checkin", summary:data.summary, question:data.question,
           councilQuestion:data.council_question, answered:false,
-          needsMoreRound:data.needs_more_round, roundNum },
+          needsMoreRound:data.needs_more_round, roundNum, revealed:false },
         ...(councilResponseTurn ? [{ type:"agent", ...councilResponseTurn, slideDir:"right", respondingToDan:true }] : []),
       ]);
 
@@ -763,6 +785,8 @@ const DebateScreen = ({ characters, onClose }) => {
                 councilQuestion={item.councilQuestion}
                 needsMoreRound={item.needsMoreRound}
                 answered={item.answered} userAnswer={item.userAnswer}
+                revealed={item.revealed}
+                onReveal={() => setFeed(p => p.map((f,j) => j===i ? {...f, revealed:true} : f))}
                 onAnswer={ans => handleCheckinAnswer(ans, item.roundNum)}
               />
             );
