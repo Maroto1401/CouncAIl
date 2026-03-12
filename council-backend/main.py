@@ -173,9 +173,13 @@ async def get_context_questions(request: Request, req: ContextRequest):
         {"role": "user", "content": (
             f"A user has brought this question to the council: \"{req.question}\"\n\n"
             f"The debaters are: {character_names}\n\n"
-            f"PHASE 0: Ask 1-2 context questions. They must be INSTANT to answer — factual or emotional, one sentence each. "
-            f"Examples of good questions: 'Are you currently employed?', 'Do you have savings to cover a few months?', 'Is this something you want or feel you have to do?' "
-            f"Do NOT ask analytical or trade-off questions — the council does the analysis, not the user. "
+            f"PHASE 0: Ask 1-2 factual questions that gather information the council CANNOT infer from the question itself.\n\n"
+            f"The question already tells you what the user wants or is considering. "
+            f"Do NOT ask them to restate or elaborate on their question — ask for the FACTS that would change the council's advice.\n\n"
+            f"Think: what concrete details would make this situation very different to advise on? "
+            f"For example: how long has this been going on, have they tried anything before, what are the actual numbers, "
+            f"is there a deadline, who else is involved, what have they already decided vs what is still open?\n\n"
+            f"Each question must take 5 seconds to answer. No analysis required from the user.\n\n"
             f"Respond ONLY with valid JSON: {{\"phase\": \"context\", \"questions\": [\"q1\", \"q2\"]}}"
         )}
     ]
@@ -261,28 +265,28 @@ async def single_turn(request: Request, req: SingleTurnRequest):
         instruction = (
             f"ROUND {req.round} — You are speaking first.\n"
             f"The question: \"{req.question}\"\n"
-            f"{'User context: ' + user_context if user_context else ''}\n\n"
-            f"State your opening position through your lens ({char_data['lens']}). "
-            f"Ground it in a real pattern or known risk — but do NOT cite studies or name sources. "
-            f"The insight is what matters, not where it came from. "
-            f"End with at least one concrete, specific action this user can take — not vague advice, a real step. "
-            f"**Bold your single most important claim** by wrapping it in **double asterisks**. "
-            f"3-5 sentences. Speak in your character's voice."
+            f"{'FACTS we know about this user: ' + user_context if user_context else 'No user context yet — reason from what the question implies.'}\n\n"
+            f"Use the facts above to make your argument specific to THIS person — not a generic person asking this question. "
+            f"State your position through your lens ({char_data['lens']}). "
+            f"Ground it in a real pattern or known consequence — do NOT cite sources. "
+            f"End with one concrete, specific action this user can take given what we know about their situation. "
+            f"**Bold your single most important claim** using **double asterisks**. "
+            f"3-5 sentences. Speak in your character's voice. Never complain about missing information."
         )
     else:
         others_said = "\n\n".join([f"{t['emoji']} {t['name']}: {t['text']}" for t in round_turns])
         instruction = (
             f"ROUND {req.round} — Others have already spoken. React to what was just said.\n"
             f"The question: \"{req.question}\"\n"
-            f"{'User context: ' + user_context if user_context else ''}\n\n"
+            f"{'FACTS we know about this user: ' + user_context if user_context else 'No user context yet.'}\n\n"
             f"What has been said this round:\n{others_said}\n\n"
             f"Full debate history:\n{prior_transcript}\n\n"
-            f"Your FIRST sentence MUST be a direct reaction to {speakers_this_round[-1]} — name them, engage their specific point. "
-            f"Then add your own angle through your lens ({char_data['lens']}). "
-            f"If your view has shifted, say so. "
-            f"End with at least one concrete, actionable suggestion for this specific user — a real step, not a platitude. "
-            f"Do NOT cite studies, name sources, or add references. The insight is the point. "
-            f"**Bold your single most important claim** by wrapping it in **double asterisks**. "
+            f"Your FIRST sentence MUST directly react to {speakers_this_round[-1]} — name them, engage their specific point. "
+            f"Use the facts we know about the user to make your argument specific to THEM — not generic. "
+            f"Add your angle through your lens ({char_data['lens']}). "
+            f"End with one concrete, actionable step for this user given what we know. "
+            f"Do NOT cite sources. Do NOT say information is missing — work with what you have. "
+            f"**Bold your single most important claim** using **double asterisks**. "
             f"3-5 sentences. Speak in your character's voice."
         )
 
