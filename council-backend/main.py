@@ -173,7 +173,9 @@ async def get_context_questions(request: Request, req: ContextRequest):
         {"role": "user", "content": (
             f"A user has brought this question to the council: \"{req.question}\"\n\n"
             f"The debaters are: {character_names}\n\n"
-            f"PHASE 0: Ask the user 1-2 short context questions to understand their personal situation. "
+            f"PHASE 0: Ask 1-2 context questions. They must be INSTANT to answer — factual or emotional, one sentence each. "
+            f"Examples of good questions: 'Are you currently employed?', 'Do you have savings to cover a few months?', 'Is this something you want or feel you have to do?' "
+            f"Do NOT ask analytical or trade-off questions — the council does the analysis, not the user. "
             f"Respond ONLY with valid JSON: {{\"phase\": \"context\", \"questions\": [\"q1\", \"q2\"]}}"
         )}
     ]
@@ -224,9 +226,9 @@ async def single_sentence_pitch(request: Request, req: SingleSentenceRequest):
         f"{'User context: ' + user_context if user_context else ''}\n"
         f"{'Debate so far:\n' + prior_transcript if prior_transcript else ''}\n\n"
         f"You are about to speak in Round {req.round}. "
-        f"Express your single most important insight or challenge about this topic through your lens ({char_data['lens']}). "
-        f"This is your PITCH to be chosen — make it sharp, provocative, and impossible to ignore. "
-        f"ONE sentence only. No preamble. Speak in your character voice."
+        f"Express your single most important insight or practical suggestion through your lens ({char_data['lens']}). "
+        f"This is your PITCH — make it sharp, direct, and useful. Hint at the concrete advice you will give if chosen. "
+        f"ONE sentence only. No preamble. No citations. Speak in your character voice."
     )
 
     messages = [
@@ -261,8 +263,9 @@ async def single_turn(request: Request, req: SingleTurnRequest):
             f"The question: \"{req.question}\"\n"
             f"{'User context: ' + user_context if user_context else ''}\n\n"
             f"State your opening position through your lens ({char_data['lens']}). "
-            f"Ground it in something concrete — a real pattern, study, named example, or known risk. "
-            f"Make it specific to this user's situation. "
+            f"Ground it in a real pattern or known risk — but do NOT cite studies or name sources. "
+            f"The insight is what matters, not where it came from. "
+            f"End with at least one concrete, specific action this user can take — not vague advice, a real step. "
             f"**Bold your single most important claim** by wrapping it in **double asterisks**. "
             f"3-5 sentences. Speak in your character's voice."
         )
@@ -276,7 +279,9 @@ async def single_turn(request: Request, req: SingleTurnRequest):
             f"Full debate history:\n{prior_transcript}\n\n"
             f"Your FIRST sentence MUST be a direct reaction to {speakers_this_round[-1]} — name them, engage their specific point. "
             f"Then add your own angle through your lens ({char_data['lens']}). "
-            f"If your view has shifted after hearing them, say so. "
+            f"If your view has shifted, say so. "
+            f"End with at least one concrete, actionable suggestion for this specific user — a real step, not a platitude. "
+            f"Do NOT cite studies, name sources, or add references. The insight is the point. "
             f"**Bold your single most important claim** by wrapping it in **double asterisks**. "
             f"3-5 sentences. Speak in your character's voice."
         )
@@ -363,7 +368,9 @@ async def council_response(request: Request, req: SingleTurnRequest):
         f"The debate topic: \"{req.question}\"\n"
         f"{'User context: ' + user_context if user_context else ''}\n\n"
         f"Debate so far:\n{prior_transcript}\n\n"
-        f"Respond directly and concisely to Dan's question through your lens ({char_data['lens']}). "
+        f"Respond directly to Dan's question through your lens ({char_data['lens']}). "
+        f"Include one concrete, actionable suggestion for the user. "
+        f"Do NOT cite studies or name sources. "
         f"**Bold your single most important claim**. "
         f"2-4 sentences. Stay in character."
     )
