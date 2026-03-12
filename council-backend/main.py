@@ -11,7 +11,6 @@ import json
 import os
 
 app = FastAPI()
-
 limiter = Limiter(key_func=get_remote_address)
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
@@ -45,18 +44,35 @@ class CharacterConfig(BaseModel):
     title: str
     emoji: str
     color: str
-    prompt: str
+    prompt: str = ""
 
 class ContextRequest(BaseModel):
     question: str
     characters: List[CharacterConfig]
 
-class DebateRoundRequest(BaseModel):
+class OpeningRequest(BaseModel):
+    """Dan's dramatic opening statement before round 1."""
     question: str
     characters: List[CharacterConfig]
-    round: int  # 1 or 2
-    context: Dict[str, str] = {}   # user answers to Dan's context questions
-    checkin_answer: Optional[str] = None  # user answer after round 1
+    context: Dict[str, str] = {}
+
+class SingleTurnRequest(BaseModel):
+    """Request a single character's turn."""
+    question: str
+    character_id: str
+    characters: List[CharacterConfig]
+    round: int
+    context: Dict[str, str] = {}
+    checkin_answer: Optional[str] = None
+    history: List[Dict] = []
+
+class SingleSentenceRequest(BaseModel):
+    """A character's one-sentence pitch to be chosen."""
+    question: str
+    character_id: str
+    characters: List[CharacterConfig]
+    round: int
+    context: Dict[str, str] = {}
     history: List[Dict] = []
 
 class CheckinRequest(BaseModel):
@@ -104,7 +120,6 @@ def parse_json_response(raw: str) -> dict:
     try:
         return json.loads(cleaned)
     except:
-        # Try to find JSON object in the string
         start = cleaned.find("{")
         end = cleaned.rfind("}") + 1
         if start >= 0 and end > start:
@@ -138,15 +153,8 @@ def build_user_context_summary(context: Dict[str, str], checkin_answer: Optional
 @app.get("/characters")
 async def get_characters():
     return {
-        cid: {
-            "id": c["id"],
-            "name": c["name"],
-            "title": c["title"],
-            "emoji": c["emoji"],
-            "color": c["color"],
-            "description": c["description"],
-            "lens": c["lens"],
-        }
+        cid: {"id": c["id"], "name": c["name"], "title": c["title"],
+              "emoji": c["emoji"], "color": c["color"], "description": c["description"], "lens": c["lens"]}
         for cid, c in CHARACTERS.items()
     }
 
@@ -158,17 +166,15 @@ async def get_dan():
 @app.post("/debate/context")
 @limiter.limit("30/minute")
 async def get_context_questions(request: Request, req: ContextRequest):
-    """Dan asks the user 1-2 context questions before the debate starts."""
     req.question = sanitize(req.question)
     character_names = ", ".join([f"{c.emoji} {c.name} the {c.title}" for c in req.characters])
-
     messages = [
         {"role": "system", "content": MODERATOR_PROMPT},
         {"role": "user", "content": (
             f"A user has brought this question to the council: \"{req.question}\"\n\n"
             f"The debaters are: {character_names}\n\n"
-            f"PHASE 0: Ask the user 1-2 short context questions to understand their personal situation before the debate. "
-            f"Respond ONLY with valid JSON in this format: {{\"phase\": \"context\", \"questions\": [\"q1\", \"q2\"]}}"
+            f"PHASE 0: Ask the user 1-2 short context questions to understand their personal situation. "
+            f"Respond ONLY with valid JSON: {{\"phase\": \"context\", \"questions\": [\"q1\", \"q2\"]}}"
         )}
     ]
     raw = await call_groq(messages, max_tokens=200)
@@ -176,111 +182,216 @@ async def get_context_questions(request: Request, req: ContextRequest):
     return {"questions": result.get("questions", ["What's your current situation regarding this question?"])}
 
 
-@app.post("/debate/round")
+@app.post("/debate/opening")
 @limiter.limit("20/minute")
-async def debate_round(request: Request, req: DebateRoundRequest):
-    """Run one debate round. Each character responds sequentially, seeing previous responses."""
+async def debate_opening(request: Request, req: OpeningRequest):
+    """Dan delivers a dramatic opening before round 1 begins."""
     req.question = sanitize(req.question)
-
-    user_context = build_user_context_summary(req.context, req.checkin_answer)
-    prior_transcript = build_transcript(req.history)
-
-    turns = []
-    running_transcript = prior_transcript
-
-    for char in req.characters:
-        # Find the full prompt from CHARACTERS
-        char_data = CHARACTERS.get(char.id)
-        if not char_data:
-            continue
-
-        if req.round == 1:
-            instruction = (
-                f"ROUND 1 — Opening position.\n"
-                f"The question is: \"{req.question}\"\n"
-                f"{'User context: ' + user_context if user_context else ''}\n\n"
-                f"State your opening position through YOUR lens ({char_data['lens']}). "
-                f"Ground it in something concrete — a real pattern, example, known risk, or insight. "
-                f"Make it specific to this user's situation if context was provided. "
-                f"3-5 sentences. Speak in your character's voice."
-            )
-        else:
-            instruction = (
-                f"ROUND 2 — Direct engagement.\n"
-                f"The question is: \"{req.question}\"\n"
-                f"{'User context: ' + user_context if user_context else ''}\n\n"
-                f"What has been said so far:\n{running_transcript}\n\n"
-                f"You MUST directly respond to at least one specific point made by another debater — name them. "
-                f"Either challenge their reasoning, build on it, or reframe it through YOUR lens ({char_data['lens']}). "
-                f"If your view has shifted, say so. If you still disagree, defend it with a concrete reason. "
-                f"3-5 sentences. Speak in your character's voice."
-            )
-
-        messages = [
-            {"role": "system", "content": char_data["prompt"]},
-            {"role": "user", "content": instruction}
-        ]
-
-        text = await call_groq(messages, max_tokens=300)
-
-        change_signals = ["changed my mind", "i now agree", "i concede", "you've convinced me", "i was wrong", "i update my", "fair point, i"]
-        position_updated = any(s in text.lower() for s in change_signals)
-
-        turn = {
-            "type": "agent",
-            "id": char.id,
-            "name": char.name,
-            "title": char.title,
-            "emoji": char.emoji,
-            "color": char.color,
-            "text": text,
-            "position_updated": position_updated,
-            "round": req.round,
-        }
-        turns.append(turn)
-        # Add to running transcript so next character sees it
-        running_transcript += f"\n\n{char.emoji} {char.name} ({char.title}): {text}"
-
-    return {"turns": turns, "round": req.round}
-
-
-@app.post("/debate/checkin")
-@limiter.limit("20/minute")
-async def debate_checkin(request: Request, req: CheckinRequest):
-    """Dan summarizes Round 1 and asks one follow-up question."""
-    req.question = sanitize(req.question)
-    transcript = build_transcript(req.history)
+    character_names = ", ".join([f"{c.emoji} {c.name} ({c.title})" for c in req.characters])
     user_context = build_user_context_summary(req.context, None)
 
     messages = [
         {"role": "system", "content": MODERATOR_PROMPT},
         {"role": "user", "content": (
             f"Topic: \"{req.question}\"\n"
-            f"{'User context: ' + user_context if user_context else ''}\n\n"
-            f"Round 1 transcript:\n{transcript}\n\n"
-            f"PHASE 1: Summarize the key tensions in 2-3 bullets (name debaters specifically). "
-            f"Then ask ONE follow-up question about the user's values, fears, or situation — not technical expertise. "
-            f"Respond ONLY with valid JSON: {{\"phase\": \"checkin\", \"summary\": [\"b1\", \"b2\"], \"question\": \"one question\"}}"
+            f"{'User context: ' + user_context if user_context else ''}\n"
+            f"Council assembled: {character_names}\n\n"
+            f"OPENING: Deliver a short, dramatic opening statement (2-3 sentences) that frames the stakes of this question for this user. "
+            f"Name the council members. Set the tension. Make it feel like something important is about to happen. "
+            f"Do NOT give a verdict or advice yet — just frame the debate. "
+            f"Respond with plain text only, no JSON."
         )}
     ]
-    raw = await call_groq(messages, max_tokens=350)
+    raw = await call_groq(messages, max_tokens=180)
+    return {"opening": raw}
+
+
+@app.post("/debate/single_sentence")
+@limiter.limit("30/minute")
+async def single_sentence_pitch(request: Request, req: SingleSentenceRequest):
+    """A character delivers one sentence expressing their core position for this round.
+    User sees these from all characters and picks who speaks first/next."""
+    req.question = sanitize(req.question)
+    char_data = CHARACTERS.get(req.character_id)
+    if not char_data:
+        raise HTTPException(status_code=404, detail="Character not found")
+
+    user_context = build_user_context_summary(req.context, None)
+    prior_transcript = build_transcript(req.history)
+
+    instruction = (
+        f"The question before the council: \"{req.question}\"\n"
+        f"{'User context: ' + user_context if user_context else ''}\n"
+        f"{'Debate so far:\n' + prior_transcript if prior_transcript else ''}\n\n"
+        f"You are about to speak in Round {req.round}. "
+        f"Express your single most important insight or challenge about this topic through your lens ({char_data['lens']}). "
+        f"This is your PITCH to be chosen — make it sharp, provocative, and impossible to ignore. "
+        f"ONE sentence only. No preamble. Speak in your character voice."
+    )
+
+    messages = [
+        {"role": "system", "content": char_data["prompt"]},
+        {"role": "user", "content": instruction}
+    ]
+    raw = await call_groq(messages, max_tokens=80)
+    # Trim to first sentence
+    sentence = raw.split(".")[0].strip() + "."
+    return {"character_id": req.character_id, "pitch": sentence}
+
+
+@app.post("/debate/single_turn")
+@limiter.limit("20/minute")
+async def single_turn(request: Request, req: SingleTurnRequest):
+    """A single character speaks their full turn, seeing the full debate history."""
+    req.question = sanitize(req.question)
+    char_data = CHARACTERS.get(req.character_id)
+    if not char_data:
+        raise HTTPException(status_code=404, detail="Character not found")
+
+    user_context = build_user_context_summary(req.context, req.checkin_answer)
+    prior_transcript = build_transcript(req.history)
+
+    # Build instruction based on what's already been said this round
+    round_turns = [h for h in req.history if h.get("round") == req.round and h.get("type") == "agent"]
+    speakers_this_round = [t["name"] for t in round_turns]
+
+    if not round_turns:
+        instruction = (
+            f"ROUND {req.round} — You are speaking first.\n"
+            f"The question: \"{req.question}\"\n"
+            f"{'User context: ' + user_context if user_context else ''}\n\n"
+            f"State your opening position through your lens ({char_data['lens']}). "
+            f"Ground it in something concrete — a real pattern, study, named example, or known risk. "
+            f"Make it specific to this user's situation. "
+            f"**Bold your single most important claim** by wrapping it in **double asterisks**. "
+            f"3-5 sentences. Speak in your character's voice."
+        )
+    else:
+        others_said = "\n\n".join([f"{t['emoji']} {t['name']}: {t['text']}" for t in round_turns])
+        instruction = (
+            f"ROUND {req.round} — Others have already spoken. React to what was just said.\n"
+            f"The question: \"{req.question}\"\n"
+            f"{'User context: ' + user_context if user_context else ''}\n\n"
+            f"What has been said this round:\n{others_said}\n\n"
+            f"Full debate history:\n{prior_transcript}\n\n"
+            f"Your FIRST sentence MUST be a direct reaction to {speakers_this_round[-1]} — name them, engage their specific point. "
+            f"Then add your own angle through your lens ({char_data['lens']}). "
+            f"If your view has shifted after hearing them, say so. "
+            f"**Bold your single most important claim** by wrapping it in **double asterisks**. "
+            f"3-5 sentences. Speak in your character's voice."
+        )
+
+    messages = [
+        {"role": "system", "content": char_data["prompt"]},
+        {"role": "user", "content": instruction}
+    ]
+    raw = await call_groq(messages, max_tokens=320)
+
+    change_signals = ["changed my mind", "i now agree", "i concede", "you've convinced me", "i was wrong", "i update my", "fair point, i"]
+    position_updated = any(s in raw.lower() for s in change_signals)
+
+    turn = {
+        "type": "agent",
+        "id": char_data["id"],
+        "name": char_data["name"],
+        "title": char_data["title"],
+        "emoji": char_data["emoji"],
+        "color": char_data["color"],
+        "text": raw,
+        "position_updated": position_updated,
+        "round": req.round,
+    }
+    return {"turn": turn}
+
+
+@app.post("/debate/checkin")
+@limiter.limit("20/minute")
+async def debate_checkin(request: Request, req: CheckinRequest):
+    req.question = sanitize(req.question)
+    transcript = build_transcript(req.history)
+    user_context = build_user_context_summary(req.context, None)
+    character_names = ", ".join([c.name for c in req.characters])
+
+    messages = [
+        {"role": "system", "content": MODERATOR_PROMPT},
+        {"role": "user", "content": (
+            f"Topic: \"{req.question}\"\n"
+            f"{'User context: ' + user_context if user_context else ''}\n"
+            f"Council: {character_names}\n\n"
+            f"Round {req.round} transcript:\n{transcript}\n\n"
+            f"PHASE 1 — After Round {req.round} (max 3 rounds total):\n"
+            f"Summarize 2-3 key tensions (name debaters). "
+            f"{'IMPORTANT: This is round 3 — set needs_more_round to false.' if req.round >= 3 else 'Decide if a genuinely new unresolved tension warrants another round.'} "
+            f"You may also optionally address a direct challenge or question TO a specific council member (not the user) if it would sharpen the debate — use the council_question field. "
+            f"If going to verdict: omit question field. "
+            f"Respond ONLY with valid JSON: {{\"phase\": \"checkin\", \"summary\": [\"b1\",\"b2\"], "
+            f"\"question\": \"for user, only if needs_more_round\", "
+            f"\"council_question\": {{\"to\": \"MemberName\", \"question\": \"sharp question\"}} or null, "
+            f"\"needs_more_round\": true/false}}"
+        )}
+    ]
+    raw = await call_groq(messages, max_tokens=400)
     result = parse_json_response(raw)
 
     needs_more = result.get("needs_more_round", False)
-    # Force no more rounds after round 3
     if req.round >= 3:
         needs_more = False
+
     return {
         "summary": result.get("summary", []),
         "question": result.get("question") if needs_more else None,
+        "council_question": result.get("council_question"),
         "needs_more_round": needs_more,
+    }
+
+
+@app.post("/debate/council_response")
+@limiter.limit("20/minute")
+async def council_response(request: Request, req: SingleTurnRequest):
+    """A council member responds to a direct question from Dan."""
+    req.question = sanitize(req.question)
+    char_data = CHARACTERS.get(req.character_id)
+    if not char_data:
+        raise HTTPException(status_code=404, detail="Character not found")
+
+    user_context = build_user_context_summary(req.context, req.checkin_answer)
+    prior_transcript = build_transcript(req.history)
+    dan_question = req.checkin_answer  # reusing field to pass Dan's question
+
+    instruction = (
+        f"Dan, the judge, has put a direct question to you: \"{dan_question}\"\n\n"
+        f"The debate topic: \"{req.question}\"\n"
+        f"{'User context: ' + user_context if user_context else ''}\n\n"
+        f"Debate so far:\n{prior_transcript}\n\n"
+        f"Respond directly and concisely to Dan's question through your lens ({char_data['lens']}). "
+        f"**Bold your single most important claim**. "
+        f"2-4 sentences. Stay in character."
+    )
+    messages = [
+        {"role": "system", "content": char_data["prompt"]},
+        {"role": "user", "content": instruction}
+    ]
+    raw = await call_groq(messages, max_tokens=200)
+
+    return {
+        "turn": {
+            "type": "agent",
+            "id": char_data["id"],
+            "name": char_data["name"],
+            "title": char_data["title"],
+            "emoji": char_data["emoji"],
+            "color": char_data["color"],
+            "text": raw,
+            "position_updated": False,
+            "round": req.round,
+            "responding_to_dan": True,
+        }
     }
 
 
 @app.post("/debate/verdict")
 @limiter.limit("20/minute")
 async def debate_verdict(request: Request, req: VerdictRequest):
-    """Dan delivers the final verdict."""
     req.question = sanitize(req.question)
     transcript = build_transcript(req.history)
     user_context = build_user_context_summary(req.context, req.checkin_answer)
@@ -292,12 +403,12 @@ async def debate_verdict(request: Request, req: VerdictRequest):
             f"{'User context: ' + user_context if user_context else ''}\n\n"
             f"Full debate transcript:\n{transcript}\n\n"
             f"PHASE 2: Deliver the final verdict for THIS specific user. "
-            f"Reference the debaters by name. Connect the recommendation to what the user shared. "
-            f"Respond ONLY with valid JSON: {{\"phase\": \"verdict\", \"insights\": [\"i1\",\"i2\",\"i3\"], "
-            f"\"consensus\": \"...\", \"dissent\": \"...\", \"recommendation\": \"...\"}}"
+            f"Reference debaters by name. Connect recommendation to what the user shared. "
+            f"Respond ONLY with valid JSON: {{\"phase\": \"verdict\", \"insights\": [\"i1\",\"i2\"], "
+            f"\"for\": [\"f1\",\"f2\"], \"against\": [\"a1\",\"a2\"], \"recommendation\": \"...\"}}"
         )}
     ]
-    raw = await call_groq(messages, max_tokens=600)
+    raw = await call_groq(messages, max_tokens=700)
     result = parse_json_response(raw)
 
     return {
