@@ -180,6 +180,7 @@ async def get_context_questions(request: Request, req: ContextRequest):
             f"For example: how long has this been going on, have they tried anything before, what are the actual numbers, "
             f"is there a deadline, who else is involved, what have they already decided vs what is still open?\n\n"
             f"Each question must take 5 seconds to answer. No analysis required from the user.\n\n"
+            f"IMPORTANT: Detect the language of the user's question and write your questions in that same language.\n"
             f"Respond ONLY with valid JSON: {{\"phase\": \"context\", \"questions\": [\"q1\", \"q2\"]}}"
         )}
     ]
@@ -205,6 +206,7 @@ async def debate_opening(request: Request, req: OpeningRequest):
             f"OPENING: Deliver a short, dramatic opening statement (2-3 sentences) that frames the stakes of this question for this user. "
             f"Name the council members. Set the tension. Make it feel like something important is about to happen. "
             f"Do NOT give a verdict or advice yet — just frame the debate. "
+            f"Detect the language of the question and respond in that language. "
             f"Respond with plain text only, no JSON."
         )}
     ]
