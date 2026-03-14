@@ -227,13 +227,14 @@ async def single_sentence_pitch(request: Request, req: SingleSentenceRequest):
     user_context = build_user_context_summary(req.context, None)
     prior_transcript = build_transcript(req.history)
 
+    is_personal = any(w in req.question.lower() for w in ["i ", "my ", "me ", "should i", "am i", "do i", "can i", "will i", "i'm", "i've", "i am", "i have", "i feel", "i want", "i need"])
     instruction = (
         f"The question before the council: \"{req.question}\"\n"
         f"{'User context: ' + user_context if user_context else ''}\n"
         f"{'Debate so far:\n' + prior_transcript if prior_transcript else ''}\n\n"
         f"You are about to speak in Round {req.round}. "
-        f"Express your single most important insight or practical suggestion through your lens ({char_data['lens']}). "
-        f"This is your PITCH — make it sharp, direct, and useful. Hint at the concrete advice you will give if chosen. "
+        f"Express the sharpest, most specific insight you will bring through your lens ({char_data['lens']}). "
+        f"{'Hint at the concrete action or decision you will recommend.' if is_personal else 'Hint at the direct verdict or answer you will deliver — make them want to hear your full take.'} "
         f"ONE sentence only. No preamble. No citations. Speak in your character voice."
     )
 
@@ -264,30 +265,38 @@ async def single_turn(request: Request, req: SingleTurnRequest):
     speakers_this_round = [t["name"] for t in round_turns]
 
     if not round_turns:
+        is_personal = any(w in req.question.lower() for w in ["i ", "my ", "me ", "should i", "am i", "do i", "can i", "will i", "i'm", "i've", "i am", "i have", "i feel", "i want", "i need", "i think", "i'm"])
+        action_instruction = (
+            "End with one concrete next step THIS user can take — specific, not vague." if is_personal
+            else "End with your direct conclusion on the question — a clear verdict, not a list of considerations. The user wants your judgment, not homework."
+        )
         instruction = (
             f"ROUND {req.round} — You are speaking first.\n"
             f"The question: \"{req.question}\"\n"
-            f"{'FACTS we know about this user: ' + user_context if user_context else 'No user context yet — reason from what the question implies.'}\n\n"
-            f"Use the facts above to make your argument specific to THIS person — not a generic person asking this question. "
-            f"State your position through your lens ({char_data['lens']}). "
-            f"Ground it in a real pattern or known consequence — do NOT cite sources. "
-            f"End with one concrete, specific action this user can take given what we know about their situation. "
+            f"{'FACTS we know about this user: ' + user_context if user_context else ''}\n\n"
+            f"State your position through your lens ({char_data['lens']}). Use real knowledge to back it. "
+            f"Do NOT tell the user to go research, observe, or gather data — you have the knowledge, give the answer. "
+            f"{action_instruction} "
             f"**Bold your single most important claim** using **double asterisks**. "
-            f"3-5 sentences. Speak in your character's voice. Never complain about missing information."
+            f"3-5 sentences. Speak in your character's voice."
         )
     else:
         others_said = "\n\n".join([f"{t['emoji']} {t['name']}: {t['text']}" for t in round_turns])
+        is_personal = any(w in req.question.lower() for w in ["i ", "my ", "me ", "should i", "am i", "do i", "can i", "will i", "i'm", "i've", "i am", "i have", "i feel", "i want", "i need", "i think", "i'm"])
+        action_instruction = (
+            "End with one concrete next step THIS user can take — specific, not vague." if is_personal
+            else "End with your direct verdict on this question — who is right, what is true, what the answer actually is. Own it."
+        )
         instruction = (
             f"ROUND {req.round} — Others have already spoken. React to what was just said.\n"
             f"The question: \"{req.question}\"\n"
-            f"{'FACTS we know about this user: ' + user_context if user_context else 'No user context yet.'}\n\n"
+            f"{'FACTS we know about this user: ' + user_context if user_context else ''}\n\n"
             f"What has been said this round:\n{others_said}\n\n"
             f"Full debate history:\n{prior_transcript}\n\n"
             f"Your FIRST sentence MUST directly react to {speakers_this_round[-1]} — name them, engage their specific point. "
-            f"Use the facts we know about the user to make your argument specific to THEM — not generic. "
+            f"Do NOT tell the user to go research or observe anything — give your judgment directly. "
             f"Add your angle through your lens ({char_data['lens']}). "
-            f"End with one concrete, actionable step for this user given what we know. "
-            f"Do NOT cite sources. Do NOT say information is missing — work with what you have. "
+            f"{action_instruction} "
             f"**Bold your single most important claim** using **double asterisks**. "
             f"3-5 sentences. Speak in your character's voice."
         )

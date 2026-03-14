@@ -654,30 +654,38 @@ const DebateScreen = ({ characters, onClose }) => {
     setLoading(true); setLoadingLabel("Dan prepares his questions…"); setLoadingSpeaker(DAN); setActiveSpeaker("dan");
     try {
       const data = await post("/debate/context", { question, characters:charConfigs });
-      setFeed(p => [...p, { type:"context_block", questions:data.questions }]);
-      setPhase("context");
+      if(data.questions && data.questions.length > 0) {
+        setFeed(p => [...p, { type:"context_block", questions:data.questions }]);
+        setPhase("context");
+      } else {
+        // General question — skip context, go straight to opening
+        setLoading(false); setLoadingSpeaker(null); setActiveSpeaker(null);
+        await startDebateFromContext({}, []);
+      }
     } catch(e) { console.error(e); }
     setLoading(false); setLoadingSpeaker(null); setActiveSpeaker(null);
   };
 
-  const handleContextSubmit = async (answers) => {
-    const ctxMap = {};
-    const qs = feed.find(f => f.type==="context_block")?.questions || [];
-    qs.forEach((q,i) => { ctxMap[q] = answers[i]; });
+  const startDebateFromContext = async (ctxMap, ctxHistory) => {
     setContext(ctxMap);
-    setFeed(p => p.map(f => f.type==="context_block" ? {...f, answered:true} : f));
-    const ctxHistory = [{ type:"user_context", text:Object.entries(ctxMap).map(([q,a])=>`${q} → ${a}`).join(" | ") }];
     setHistory(ctxHistory);
-
     setLoading(true); setLoadingLabel("Dan opens the session…"); setLoadingSpeaker(DAN); setActiveSpeaker("dan");
     try {
       const data = await post("/debate/opening", { question, characters:charConfigs, context:ctxMap });
       setFeed(p => [...p, { type:"opening", text:data.opening }]);
     } catch(e) { console.error(e); }
     setLoading(false); setLoadingSpeaker(null); setActiveSpeaker(null);
-
     setCurrentRound(1);
     await startRoundPicking(1, ctxMap, ctxHistory);
+  };
+
+  const handleContextSubmit = async (answers) => {
+    const ctxMap = {};
+    const qs = feed.find(f => f.type==="context_block")?.questions || [];
+    qs.forEach((q,i) => { ctxMap[q] = answers[i]; });
+    setFeed(p => p.map(f => f.type==="context_block" ? {...f, answered:true} : f));
+    const ctxHistory = [{ type:"user_context", text:Object.entries(ctxMap).map(([q,a])=>`${q} → ${a}`).join(" | ") }];
+    await startDebateFromContext(ctxMap, ctxHistory);
   };
 
   const startRoundPicking = async (roundNum, ctx=context, hist=history) => {
@@ -789,8 +797,13 @@ const DebateScreen = ({ characters, onClose }) => {
     setLoading(true); setLoadingLabel("Dan prepares…"); setLoadingSpeaker(DAN); setActiveSpeaker("dan");
     try {
       const data = await post("/debate/context", { question:q, characters:charConfigs });
-      setFeed(p => [...p, { type:"context_block", questions:data.questions }]);
-      setPhase("context");
+      if(data.questions && data.questions.length > 0) {
+        setFeed(p => [...p, { type:"context_block", questions:data.questions }]);
+        setPhase("context");
+      } else {
+        setLoading(false); setLoadingSpeaker(null); setActiveSpeaker(null);
+        await startDebateFromContext({}, []);
+      }
     } catch(e) { console.error(e); }
     setLoading(false); setLoadingSpeaker(null); setActiveSpeaker(null);
   };
