@@ -729,25 +729,31 @@ const DebateScreen = ({ characters, onClose, lang }) => {
       if(data.questions && data.questions.length > 0) {
         setFeed(p => [...p, { type:"context_block", questions:data.questions }]);
         setPhase("context");
+        setLoading(false); setLoadingSpeaker(null); setActiveSpeaker(null);
       } else {
-        // General question — skip context, go straight to opening
         setLoading(false); setLoadingSpeaker(null); setActiveSpeaker(null);
         await startDebateFromContext({}, []);
       }
-    } catch(e) { console.error(e); }
-    setLoading(false); setLoadingSpeaker(null); setActiveSpeaker(null);
+    } catch(e) {
+      console.error(e);
+      setLoading(false); setLoadingSpeaker(null); setActiveSpeaker(null);
+    }
   };
 
   const startDebateFromContext = async (ctxMap, ctxHistory) => {
     setContext(ctxMap);
     setHistory(ctxHistory);
-    setLoading(true); setLoadingLabel("Dan opens the session…"); setLoadingSpeaker(DAN); setActiveSpeaker("dan");
+    setCurrentRound(1);
+    // Dan's opening
+    setLoading(true); setLoadingLabel("…"); setLoadingSpeaker(DAN); setActiveSpeaker("dan");
+    let openingText = null;
     try {
       const data = await post("/debate/opening", { question, characters:charConfigs, context:ctxMap, language:lang });
-      setFeed(p => [...p, { type:"opening", text:data.opening }]);
+      openingText = data.opening;
     } catch(e) { console.error(e); }
     setLoading(false); setLoadingSpeaker(null); setActiveSpeaker(null);
-    setCurrentRound(1);
+    // Add opening to feed once, then start round picking
+    if(openingText) setFeed(p => [...p, { type:"opening", text:openingText }]);
     await startRoundPicking(1, ctxMap, ctxHistory);
   };
 
@@ -872,6 +878,7 @@ const DebateScreen = ({ characters, onClose, lang }) => {
       if(data.questions && data.questions.length > 0) {
         setFeed(p => [...p, { type:"context_block", questions:data.questions }]);
         setPhase("context");
+        setLoading(false); setLoadingSpeaker(null); setActiveSpeaker(null);
       } else {
         setLoading(false); setLoadingSpeaker(null); setActiveSpeaker(null);
         await startDebateFromContext({}, []);

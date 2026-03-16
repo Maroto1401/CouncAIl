@@ -186,6 +186,7 @@ async def get_context_questions(request: Request, req: ContextRequest):
     messages = [
         {"role": "system", "content": MODERATOR_PROMPT},
         {"role": "user", "content": (
+            f"{language_instruction(req.language)}\n\n"
             f"A user has brought this question to the council: \"{req.question}\"\n\n"
             f"The debaters are: {character_names}\n\n"
             f"PHASE 0. Classify the question, then ask accordingly.\n\n"
@@ -214,13 +215,13 @@ async def debate_opening(request: Request, req: OpeningRequest):
     messages = [
         {"role": "system", "content": MODERATOR_PROMPT},
         {"role": "user", "content": (
+            f"{language_instruction(req.language)}\n\n"
             f"Topic: \"{req.question}\"\n"
             f"{'User context: ' + user_context if user_context else ''}\n"
             f"Council assembled: {character_names}\n\n"
             f"OPENING: Deliver a short, dramatic opening statement (2-3 sentences) that frames the stakes of this question for this user. "
             f"Name the council members. Set the tension. Make it feel like something important is about to happen. "
             f"Do NOT give a verdict or advice yet — just frame the debate with what's at stake for this specific person. "
-            f"{language_instruction(req.language)}\n"
             f"Respond with plain text only, no JSON. 2-3 sentences maximum."
         )}
     ]
@@ -245,6 +246,7 @@ async def single_sentence_pitch(request: Request, req: SingleSentenceRequest):
         f"DEBATE TOPIC: \"{req.question}\"\n"
         f"{'USER CONTEXT: ' + user_context if user_context else ''}\n"
         f"{'DEBATE SO FAR:\n' + prior_transcript if prior_transcript else ''}\n\n"
+        f"{language_instruction(req.language)}\n\n"
         f"You are about to speak in Round {req.round}. Write ONE sentence — your sharpest, most specific claim through your lens ({char_data['lens']}). "
         f"Make it a real argument, not a description. Make it provocative enough that the user wants to hear you expand on it. "
         f"Speak in your character's voice. No preamble.\n{language_instruction(req.language)}"
@@ -286,6 +288,7 @@ async def single_turn(request: Request, req: SingleTurnRequest):
 
     if not round_turns:
         instruction = (
+            f"{language_instruction(req.language)}\n\n"
             f"DEBATE TOPIC: \"{req.question}\"\n"
             f"{'USER CONTEXT — READ THIS CAREFULLY BEFORE SAYING ANYTHING: ' + user_context if user_context else 'No user context yet.'}\n\n"
             f"ROUND {req.round} — You are the first to speak.\n\n"
@@ -312,6 +315,7 @@ async def single_turn(request: Request, req: SingleTurnRequest):
             all_user_context += f"\nNew information from user mid-debate: {req.checkin_answer}"
 
         instruction = (
+            f"{language_instruction(req.language)}\n\n"
             f"DEBATE TOPIC: \"{req.question}\"\n"
             f"{'USER CONTEXT — THIS IS WHAT WE KNOW ABOUT THIS SPECIFIC PERSON: ' + all_user_context if all_user_context else ''}\n\n"
             f"ROUND {req.round} — {prev_speaker} just argued: \"{prev_text}...\"\n\n"
@@ -366,6 +370,7 @@ async def debate_checkin(request: Request, req: CheckinRequest):
             f"Topic: \"{req.question}\"\n"
             f"{'What the user told us before the debate: ' + user_context if user_context else ''}\n"
             f"Council members: {character_names}\n\n"
+            f"{language_instruction(req.language)}\n\n"
             f"FULL debate transcript so far (read carefully before forming your summary and question):\n{transcript}\n\n"
             f"PHASE 1 — After Round {req.round} (max 3 rounds total).\n"
             f"Your summary must reference what debaters actually argued this round — specific points, not themes. "
@@ -454,6 +459,7 @@ async def debate_verdict(request: Request, req: VerdictRequest):
             f"Topic: \"{req.question}\"\n"
             f"{'User context: ' + user_context if user_context else ''}\n\n"
             f"Full debate transcript:\n{transcript}\n\n"
+            f"{language_instruction(req.language)}\n\n"
             f"PHASE 2: Deliver the final verdict for THIS specific user. "
             f"Reference debaters by name. Connect every point to what this user actually shared about their situation. "
             f"Give a real recommendation — not a menu of options. Tell them what to do or what is true. "
