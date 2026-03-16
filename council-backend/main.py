@@ -49,12 +49,14 @@ class CharacterConfig(BaseModel):
 class ContextRequest(BaseModel):
     question: str
     characters: List[CharacterConfig]
+    language: str = 'en'
 
 class OpeningRequest(BaseModel):
     """Dan's dramatic opening statement before round 1."""
     question: str
     characters: List[CharacterConfig]
     context: Dict[str, str] = {}
+    language: str = "en"
 
 class SingleTurnRequest(BaseModel):
     """Request a single character's turn."""
@@ -65,6 +67,7 @@ class SingleTurnRequest(BaseModel):
     context: Dict[str, str] = {}
     checkin_answer: Optional[str] = None
     history: List[Dict] = []
+    language: str = "en"
 
 class SingleSentenceRequest(BaseModel):
     """A character's one-sentence pitch to be chosen."""
@@ -74,6 +77,7 @@ class SingleSentenceRequest(BaseModel):
     round: int
     context: Dict[str, str] = {}
     history: List[Dict] = []
+    language: str = "en"
 
 class CheckinRequest(BaseModel):
     question: str
@@ -81,12 +85,14 @@ class CheckinRequest(BaseModel):
     history: List[Dict]
     context: Dict[str, str] = {}
     round: int = 1
+    language: str = "en"
 
 class VerdictRequest(BaseModel):
     question: str
     history: List[Dict]
     context: Dict[str, str] = {}
     checkin_answer: Optional[str] = None
+    language: str = "en"
 
 
 # ── Helpers ───────────────────────────────────────────────────
@@ -138,6 +144,15 @@ def build_transcript(history: List[Dict]) -> str:
             lines.append(f"[User context: {turn['text']}]")
     return "\n\n".join(lines)
 
+LANGUAGE_NAMES = {
+    'en':'English','es':'Spanish','fr':'French','de':'German','pt':'Portuguese',
+    'it':'Italian','nl':'Dutch','zh':'Chinese','ja':'Japanese','ar':'Arabic'
+}
+
+def language_instruction(lang: str) -> str:
+    name = LANGUAGE_NAMES.get(lang, 'English')
+    return f"MANDATORY: You must write your ENTIRE response in {name}. Every word. No exceptions. Do not mix languages."
+
 def build_user_context_summary(context: Dict[str, str], checkin_answer: Optional[str]) -> str:
     parts = []
     if context:
@@ -178,7 +193,7 @@ async def get_context_questions(request: Request, req: ContextRequest):
             f"5 seconds to answer. E.g. how long, how much money, have they tried this before, who else is involved.\n\n"
             f"GENERAL (world, comparison, topic): Ask at most 1 orienting question if the user's context meaningfully changes the answer. "
             f"If truly universal, return empty list.\n\n"
-            f"CRITICAL: Write your questions in the SAME language as the user's question. "
+            f"{language_instruction(req.language)}\n"
             f"If they wrote in Spanish, ask in Spanish. If French, French. Match exactly.\n\n"
             f"Respond ONLY with valid JSON: {{\"phase\": \"context\", \"questions\": [\"q1\"]}} or {{\"phase\": \"context\", \"questions\": []}}"
         )}
@@ -205,7 +220,7 @@ async def debate_opening(request: Request, req: OpeningRequest):
             f"OPENING: Deliver a short, dramatic opening statement (2-3 sentences) that frames the stakes of this question for this user. "
             f"Name the council members. Set the tension. Make it feel like something important is about to happen. "
             f"Do NOT give a verdict or advice yet — just frame the debate with what's at stake for this specific person. "
-            f"CRITICAL: Respond in the EXACT language the user wrote in. If Spanish, write in Spanish. If English, English. "
+            f"{language_instruction(req.language)}\n"
             f"Respond with plain text only, no JSON. 2-3 sentences maximum."
         )}
     ]
@@ -232,7 +247,7 @@ async def single_sentence_pitch(request: Request, req: SingleSentenceRequest):
         f"{'DEBATE SO FAR:\n' + prior_transcript if prior_transcript else ''}\n\n"
         f"You are about to speak in Round {req.round}. Write ONE sentence — your sharpest, most specific claim through your lens ({char_data['lens']}). "
         f"Make it a real argument, not a description. Make it provocative enough that the user wants to hear you expand on it. "
-        f"Speak in your character's voice. Match the user's language exactly. No preamble."
+        f"Speak in your character's voice. No preamble.\n{language_instruction(req.language)}"
     )
 
     messages = [
@@ -272,33 +287,46 @@ async def single_turn(request: Request, req: SingleTurnRequest):
     if not round_turns:
         instruction = (
             f"DEBATE TOPIC: \"{req.question}\"\n"
-            f"{'USER CONTEXT: ' + user_context if user_context else ''}\n\n"
+            f"{'USER CONTEXT — READ THIS CAREFULLY BEFORE SAYING ANYTHING: ' + user_context if user_context else 'No user context yet.'}\n\n"
             f"ROUND {req.round} — You are the first to speak.\n\n"
-            f"Give your opening argument through your specific lens: {char_data['lens']}.\n"
+            f"Before writing a single word of advice, ask yourself:\n"
+            f"- What do I know about this specific person from their context?\n"
+            f"- What does my lens ({char_data['lens']}) reveal about their situation that others would miss?\n"
+            f"- What is the single most important insight I can offer that is specific to THEIR facts — not generic advice for anyone?\n\n"
+            f"If the user has given you specific facts (skills, location, experience, numbers), your argument must be built ON those facts, not around them.\n"
+            f"Generic advice that ignores their specific situation is a failure.\n\n"
             f"Requirements:\n"
-            f"- Draw on real knowledge: patterns, consequences, how this type of situation actually plays out.\n"
-            f"- Be specific to this user's situation — not a generic person asking this question.\n"
-            f"- Make a claim that someone could disagree with. Don't just describe — argue.\n"
+            f"- Argue from their specific facts. If they have a rare skill or credential, name it and reason from it.\n"
+            f"- Make a claim that someone could disagree with. Don't describe — argue.\n"
             f"- {closing_rule}\n"
             f"- Bold your most important claim using **double asterisks**.\n"
-            f"- 4-6 sentences. Speak in your character's voice. Match the user's language exactly."
+            f"- 4-6 sentences. Speak in your character's voice.\n- {language_instruction(req.language)}"
         )
     else:
         others_said = "\n\n".join([f"{t['emoji']} {t['name']}: {t['text']}" for t in round_turns])
         prev_speaker = speakers_this_round[-1]
         prev_text = round_turns[-1]['text'][:200]
+        # Check if new context arrived (user answered a checkin question)
+        all_user_context = user_context
+        if req.checkin_answer:
+            all_user_context += f"\nNew information from user mid-debate: {req.checkin_answer}"
+
         instruction = (
             f"DEBATE TOPIC: \"{req.question}\"\n"
-            f"{'USER CONTEXT: ' + user_context if user_context else ''}\n\n"
+            f"{'USER CONTEXT — THIS IS WHAT WE KNOW ABOUT THIS SPECIFIC PERSON: ' + all_user_context if all_user_context else ''}\n\n"
             f"ROUND {req.round} — {prev_speaker} just argued: \"{prev_text}...\"\n\n"
             f"FULL DEBATE SO FAR:\n{prior_transcript}\n\n"
-            f"You must now respond. Requirements:\n"
-            f"- Open by directly addressing {prev_speaker}'s specific argument — name them, quote or closely paraphrase their point, then agree/challenge/reframe it.\n"
-            f"- Add a new dimension through your lens ({char_data['lens']}) that hasn't been said yet.\n"
-            f"- If {prev_speaker} made a point you genuinely cannot refute, acknowledge it and build on it rather than talking past it.\n"
+            f"CRITICAL CHECK before you write anything:\n"
+            f"- Has new information arrived from the user since the last round? If yes, your argument must update to reflect it.\n"
+            f"- Is your planned argument actually specific to this person's facts, or is it generic advice anyone could get?\n"
+            f"- Have you or {prev_speaker} already made this point? If yes, you must add something genuinely new or concede.\n\n"
+            f"Requirements:\n"
+            f"- Open by engaging {prev_speaker}'s specific argument — name them, quote or paraphrase their point, challenge or build on it.\n"
+            f"- Add a new dimension through your lens ({char_data['lens']}) using THIS user's specific facts.\n"
+            f"- If the user has a specific skill, credential, or constraint you haven't yet addressed — address it now.\n"
             f"- {closing_rule}\n"
             f"- Bold your most important claim using **double asterisks**.\n"
-            f"- 4-6 sentences. Speak in your character's voice. Match the user's language exactly."
+            f"- 4-6 sentences. Speak in your character's voice.\n- {language_instruction(req.language)}"
         )
 
     messages = [
@@ -345,7 +373,7 @@ async def debate_checkin(request: Request, req: CheckinRequest):
             f"If you ask the user a follow-up, it must be instant to answer (factual or feeling) and specific to their situation — not analytical. "
             f"You may optionally direct a sharp question TO a specific council member if it would expose a gap in their argument — use council_question. "
             f"If going to verdict: omit the question field entirely. "
-            f"CRITICAL: Write everything — summaries, questions — in the SAME language as the user's question.\n"
+            f"{language_instruction(req.language)}\n"
             f"Respond ONLY with valid JSON: {{\"phase\": \"checkin\", \"summary\": [\"b1\",\"b2\"], "
             f"\"question\": \"only if needs_more_round true\", "
             f"\"council_question\": {{\"to\": \"MemberName\", \"question\": \"sharp question\"}} or null, "
@@ -429,7 +457,7 @@ async def debate_verdict(request: Request, req: VerdictRequest):
             f"PHASE 2: Deliver the final verdict for THIS specific user. "
             f"Reference debaters by name. Connect every point to what this user actually shared about their situation. "
             f"Give a real recommendation — not a menu of options. Tell them what to do or what is true. "
-            f"CRITICAL: Write everything in the SAME language as the user's question. "
+            f"{language_instruction(req.language)}\n"
             f"Respond ONLY with valid JSON: {{\"phase\": \"verdict\", \"insights\": [\"i1\",\"i2\"], "
             f"\"for\": [\"f1\",\"f2\"], \"against\": [\"a1\",\"a2\"], \"recommendation\": \"...\"}}"
         )}

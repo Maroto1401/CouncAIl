@@ -2,6 +2,34 @@ import { useState, useRef, useEffect, useCallback } from "react";
 
 const API_URL = "https://councail.onrender.com";
 
+// ── Supported languages ───────────────────────────────────────
+const LANGUAGES = [
+  { code:"en", label:"English",    flag:"🇬🇧" },
+  { code:"es", label:"Español",    flag:"🇪🇸" },
+  { code:"fr", label:"Français",   flag:"🇫🇷" },
+  { code:"de", label:"Deutsch",    flag:"🇩🇪" },
+  { code:"pt", label:"Português",  flag:"🇧🇷" },
+  { code:"it", label:"Italiano",   flag:"🇮🇹" },
+  { code:"nl", label:"Nederlands", flag:"🇳🇱" },
+  { code:"zh", label:"中文",        flag:"🇨🇳" },
+  { code:"ja", label:"日本語",      flag:"🇯🇵" },
+  { code:"ar", label:"العربية",    flag:"🇸🇦" },
+];
+
+// ── UI translations ───────────────────────────────────────────
+const UI = {
+  en: { enterChamber:"Enter the Chamber", selectMembers:"Council Members", alwaysPresent:"always present", selectAtLeast:"Select at least 2 council members", convene:"Enter the Chamber →", danDesc:"Opens the debate. Questions the council. Delivers the final verdict.", questionPlaceholder:"What is your question for the council?", councilAwaits:"The council awaits your question.", conveneCouncil:"Convene the Council →", speakTruth:"Speak your truth…", beforeConvenes:"Before the council convenes, I must understand your situation.", whoSpeaks:"Who shall speak?", danSpeaks:"Dan speaks", hearVerdict:"Hear the verdict", theCouncilSpoke:"The council has spoken", danReady:"Dan is ready to deliver his judgment.", anotherQuestion:"Pose another question to the council, or take your leave.", followUpPlaceholder:"Another question…", leave:"Leave", respondingToDan:"responding to Dan", stanceShifted:"stance shifted", collapse:"collapse", expand:"expand", whatEstablished:"What was established", for:"For", against:"Against", theJudgment:"The Judgment" },
+  es: { enterChamber:"Entrar a la Cámara", selectMembers:"Miembros del Consejo", alwaysPresent:"siempre presente", selectAtLeast:"Selecciona al menos 2 miembros", convene:"Entrar a la Cámara →", danDesc:"Abre el debate. Interroga al consejo. Dicta el veredicto final.", questionPlaceholder:"¿Cuál es tu pregunta para el consejo?", councilAwaits:"El consejo aguarda tu pregunta.", conveneCouncil:"Convocar el Consejo →", speakTruth:"Habla tu verdad…", beforeConvenes:"Antes de que el consejo se reúna, debo entender tu situación.", whoSpeaks:"¿Quién hablará?", danSpeaks:"Dan habla", hearVerdict:"Escuchar el veredicto", theCouncilSpoke:"El consejo ha deliberado", danReady:"Dan está listo para dictar su juicio.", anotherQuestion:"Plantea otra pregunta al consejo, o retírate.", followUpPlaceholder:"Otra pregunta…", leave:"Salir", respondingToDan:"respondiendo a Dan", stanceShifted:"posición cambiada", collapse:"colapsar", expand:"expandir", whatEstablished:"Lo que se estableció", for:"A favor", against:"En contra", theJudgment:"El Juicio" },
+  fr: { enterChamber:"Entrer dans la Chambre", selectMembers:"Membres du Conseil", alwaysPresent:"toujours présent", selectAtLeast:"Sélectionnez au moins 2 membres", convene:"Entrer dans la Chambre →", danDesc:"Ouvre le débat. Interroge le conseil. Rend le verdict final.", questionPlaceholder:"Quelle est votre question pour le conseil?", councilAwaits:"Le conseil attend votre question.", conveneCouncil:"Réunir le Conseil →", speakTruth:"Parlez votre vérité…", beforeConvenes:"Avant que le conseil se réunisse, je dois comprendre votre situation.", whoSpeaks:"Qui parlera?", danSpeaks:"Dan parle", hearVerdict:"Entendre le verdict", theCouncilSpoke:"Le conseil a délibéré", danReady:"Dan est prêt à rendre son jugement.", anotherQuestion:"Posez une autre question au conseil, ou prenez congé.", followUpPlaceholder:"Une autre question…", leave:"Partir", respondingToDan:"répondant à Dan", stanceShifted:"position changée", collapse:"réduire", expand:"développer", whatEstablished:"Ce qui a été établi", for:"Pour", against:"Contre", theJudgment:"Le Jugement" },
+  de: { enterChamber:"Die Kammer betreten", selectMembers:"Ratsmitglieder", alwaysPresent:"immer anwesend", selectAtLeast:"Mindestens 2 Mitglieder wählen", convene:"Die Kammer betreten →", danDesc:"Eröffnet die Debatte. Befragt den Rat. Fällt das endgültige Urteil.", questionPlaceholder:"Was ist Ihre Frage an den Rat?", councilAwaits:"Der Rat wartet auf Ihre Frage.", conveneCouncil:"Den Rat einberufen →", speakTruth:"Sprechen Sie Ihre Wahrheit…", beforeConvenes:"Bevor der Rat zusammentritt, muss ich Ihre Situation verstehen.", whoSpeaks:"Wer wird sprechen?", danSpeaks:"Dan spricht", hearVerdict:"Das Urteil hören", theCouncilSpoke:"Der Rat hat gesprochen", danReady:"Dan ist bereit, sein Urteil zu sprechen.", anotherQuestion:"Stellen Sie eine weitere Frage an den Rat, oder nehmen Sie Abschied.", followUpPlaceholder:"Eine weitere Frage…", leave:"Verlassen", respondingToDan:"antwortet Dan", stanceShifted:"Haltung geändert", collapse:"einklappen", expand:"ausklappen", whatEstablished:"Was festgestellt wurde", for:"Dafür", against:"Dagegen", theJudgment:"Das Urteil" },
+  pt: { enterChamber:"Entrar na Câmara", selectMembers:"Membros do Conselho", alwaysPresent:"sempre presente", selectAtLeast:"Selecione pelo menos 2 membros", convene:"Entrar na Câmara →", danDesc:"Abre o debate. Questiona o conselho. Entrega o veredicto final.", questionPlaceholder:"Qual é a sua pergunta para o conselho?", councilAwaits:"O conselho aguarda a sua pergunta.", conveneCouncil:"Convocar o Conselho →", speakTruth:"Fale a sua verdade…", beforeConvenes:"Antes do conselho se reunir, preciso entender a sua situação.", whoSpeaks:"Quem falará?", danSpeaks:"Dan fala", hearVerdict:"Ouvir o veredicto", theCouncilSpoke:"O conselho deliberou", danReady:"Dan está pronto para proferir o seu julgamento.", anotherQuestion:"Faça outra pergunta ao conselho, ou despeça-se.", followUpPlaceholder:"Outra pergunta…", leave:"Sair", respondingToDan:"respondendo a Dan", stanceShifted:"posição alterada", collapse:"recolher", expand:"expandir", whatEstablished:"O que foi estabelecido", for:"A favor", against:"Contra", theJudgment:"O Julgamento" },
+  it: { enterChamber:"Entra nella Camera", selectMembers:"Membri del Consiglio", alwaysPresent:"sempre presente", selectAtLeast:"Seleziona almeno 2 membri", convene:"Entra nella Camera →", danDesc:"Apre il dibattito. Interroga il consiglio. Emette il verdetto finale.", questionPlaceholder:"Qual è la tua domanda per il consiglio?", councilAwaits:"Il consiglio attende la tua domanda.", conveneCouncil:"Convocare il Consiglio →", speakTruth:"Parla la tua verità…", beforeConvenes:"Prima che il consiglio si riunisca, devo capire la tua situazione.", whoSpeaks:"Chi parlerà?", danSpeaks:"Dan parla", hearVerdict:"Ascolta il verdetto", theCouncilSpoke:"Il consiglio ha deliberato", danReady:"Dan è pronto a pronunciare il suo giudizio.", anotherQuestion:"Poni un'altra domanda al consiglio, o prendi commiato.", followUpPlaceholder:"Un'altra domanda…", leave:"Uscire", respondingToDan:"risponde a Dan", stanceShifted:"posizione cambiata", collapse:"comprimi", expand:"espandi", whatEstablished:"Ciò che è stato stabilito", for:"A favore", against:"Contro", theJudgment:"Il Giudizio" },
+  nl: { enterChamber:"De Kamer betreden", selectMembers:"Raadsleden", alwaysPresent:"altijd aanwezig", selectAtLeast:"Selecteer minimaal 2 leden", convene:"De Kamer betreden →", danDesc:"Opent het debat. Ondervraagt de raad. Velt het eindoordeel.", questionPlaceholder:"Wat is uw vraag voor de raad?", councilAwaits:"De raad wacht op uw vraag.", conveneCouncil:"De Raad bijeen roepen →", speakTruth:"Spreek uw waarheid…", beforeConvenes:"Voordat de raad bijeenkomt, moet ik uw situatie begrijpen.", whoSpeaks:"Wie zal spreken?", danSpeaks:"Dan spreekt", hearVerdict:"Het oordeel horen", theCouncilSpoke:"De raad heeft gesproken", danReady:"Dan is klaar om zijn oordeel uit te spreken.", anotherQuestion:"Stel de raad nog een vraag, of neem afscheid.", followUpPlaceholder:"Nog een vraag…", leave:"Vertrekken", respondingToDan:"antwoord aan Dan", stanceShifted:"standpunt gewijzigd", collapse:"inklappen", expand:"uitklappen", whatEstablished:"Wat is vastgesteld", for:"Voor", against:"Tegen", theJudgment:"Het Oordeel" },
+  zh: { enterChamber:"进入议事厅", selectMembers:"议会成员", alwaysPresent:"始终在场", selectAtLeast:"请至少选择2名成员", convene:"进入议事厅 →", danDesc:"主持辩论。审问议会。宣布最终裁决。", questionPlaceholder:"您对议会的问题是什么？", councilAwaits:"议会等待您的问题。", conveneCouncil:"召集议会 →", speakTruth:"说出您的真相…", beforeConvenes:"议会召开前，我需要了解您的情况。", whoSpeaks:"谁来发言？", danSpeaks:"丹发言", hearVerdict:"听取裁决", theCouncilSpoke:"议会已经审议", danReady:"丹已准备好宣布他的判决。", anotherQuestion:"向议会再提一个问题，或告辞。", followUpPlaceholder:"另一个问题…", leave:"离开", respondingToDan:"回应丹", stanceShifted:"立场转变", collapse:"收起", expand:"展开", whatEstablished:"已确立的内容", for:"支持", against:"反对", theJudgment:"判决" },
+  ja: { enterChamber:"議場に入る", selectMembers:"議会メンバー", alwaysPresent:"常に出席", selectAtLeast:"少なくとも2人のメンバーを選択", convene:"議場に入る →", danDesc:"討論を開始します。議会を尋問します。最終判決を下します。", questionPlaceholder:"議会への質問は何ですか？", councilAwaits:"議会はあなたの質問を待っています。", conveneCouncil:"議会を召集する →", speakTruth:"あなたの真実を語ってください…", beforeConvenes:"議会が開かれる前に、あなたの状況を理解する必要があります。", whoSpeaks:"誰が話しますか？", danSpeaks:"ダンが話す", hearVerdict:"判決を聞く", theCouncilSpoke:"議会が審議しました", danReady:"ダンは判決を下す準備ができています。", anotherQuestion:"議会にもう一つ質問するか、おいとまください。", followUpPlaceholder:"もう一つの質問…", leave:"退出", respondingToDan:"ダンへの返答", stanceShifted:"立場が変わった", collapse:"折りたたむ", expand:"展開する", whatEstablished:"確立されたこと", for:"賛成", against:"反対", theJudgment:"判決" },
+  ar: { enterChamber:"الدخول إلى القاعة", selectMembers:"أعضاء المجلس", alwaysPresent:"حاضر دائماً", selectAtLeast:"اختر عضوين على الأقل", convene:"الدخول إلى القاعة →", danDesc:"يفتح النقاش. يستجوب المجلس. يصدر الحكم النهائي.", questionPlaceholder:"ما هو سؤالك للمجلس؟", councilAwaits:"المجلس ينتظر سؤالك.", conveneCouncil:"عقد جلسة المجلس →", speakTruth:"قل حقيقتك…", beforeConvenes:"قبل انعقاد المجلس، يجب أن أفهم وضعك.", whoSpeaks:"من سيتكلم؟", danSpeaks:"دان يتكلم", hearVerdict:"استمع إلى الحكم", theCouncilSpoke:"تداول المجلس", danReady:"دان مستعد لإصدار حكمه.", anotherQuestion:"اطرح سؤالاً آخر على المجلس، أو انصرف.", followUpPlaceholder:"سؤال آخر…", leave:"المغادرة", respondingToDan:"رداً على دان", stanceShifted:"تغير الموقف", collapse:"طي", expand:"توسيع", whatEstablished:"ما تم إثباته", for:"مع", against:"ضد", theJudgment:"الحكم" },
+};
+
 const CHARACTERS = {
   surfer:    { id:"surfer",    name:"Maui",     title:"The Surfer",    emoji:"🏄", color:"#38bdf8", avatarBg:"#0c1f2e", description:"Risk & instinct. Reads situations like waves.", lens:"risk & instinct",       tagline:"The wave is forming. Will you paddle?" },
   inspector: { id:"inspector", name:"Lamia",    title:"The Inspector", emoji:"🔍", color:"#e879f9", avatarBg:"#1e0a2e", description:"Evidence & detail. Finds what others miss.",   lens:"evidence & detail",      tagline:"The truth is in what no one examined." },
@@ -101,7 +129,7 @@ const DanTypewriter = ({ text, onDone }) => {
 };
 
 // ── Dan block ─────────────────────────────────────────────────
-const DanBlock = ({ summary, question, councilQuestion, needsMoreRound, onAnswer, answered, userAnswer, revealed, onReveal }) => {
+const DanBlock = ({ summary, question, councilQuestion, needsMoreRound, onAnswer, answered, userAnswer, revealed, onReveal, t=UI.en }) => {
   const [ans, setAns] = useState("");
   const [vis, setVis] = useState(false);
   const showQ = needsMoreRound && question && !answered;
@@ -120,7 +148,7 @@ const DanBlock = ({ summary, question, councilQuestion, needsMoreRound, onAnswer
         onMouseEnter={e=>{ e.currentTarget.style.borderColor="rgba(201,168,76,0.5)"; e.currentTarget.style.color="#c9a84c"; }}
         onMouseLeave={e=>{ e.currentTarget.style.borderColor="rgba(201,168,76,0.2)"; e.currentTarget.style.color="rgba(201,168,76,0.55)"; }}
       >
-        <Avatar char={DAN} size={18} /> Dan speaks
+        <Avatar char={DAN} size={18} /> {t.danSpeaks}
       </button>
     </div>
   );
@@ -164,7 +192,7 @@ const DanBlock = ({ summary, question, councilQuestion, needsMoreRound, onAnswer
             <div style={{ display:"flex", gap:"8px" }}>
               <input value={ans} onChange={e=>setAns(e.target.value)}
                 onKeyDown={e=>{if(e.key==="Enter"&&ans.trim()){onAnswer(ans);setAns("");}}}
-                placeholder="Speak…"
+                placeholder={t.speakTruth}
                 style={{ flex:1,minWidth:0,background:"rgba(201,168,76,0.04)",border:"1px solid rgba(201,168,76,0.15)",borderRadius:"6px",color:"#d4c4a0",fontSize:"14px",padding:"9px 12px",outline:"none",fontFamily:"'Palatino Linotype',serif" }}
                 onFocus={e=>e.target.style.borderColor="rgba(201,168,76,0.4)"} onBlur={e=>e.target.style.borderColor="rgba(201,168,76,0.15)"}
               />
@@ -207,7 +235,7 @@ const OpeningBlock = ({ text }) => {
 };
 
 // ── Context block ─────────────────────────────────────────────
-const ContextBlock = ({ questions, onSubmit }) => {
+const ContextBlock = ({ questions, onSubmit, t=UI.en }) => {
   const [answers, setAnswers] = useState({});
   const [vis, setVis] = useState(false);
   const allAnswered = questions.every((_,i) => answers[i]?.trim());
@@ -225,13 +253,13 @@ const ContextBlock = ({ questions, onSubmit }) => {
       </div>
       <div style={{ background:"linear-gradient(160deg,rgba(13,10,2,0.95),rgba(8,6,0,0.98))", border:"1px solid rgba(201,168,76,0.18)", borderRadius:"12px", padding:"18px 22px", position:"relative" }}>
         <div style={{ position:"absolute",top:0,left:"20%",right:"20%",height:"1px",background:"linear-gradient(to right,transparent,rgba(201,168,76,0.4),transparent)" }}/>
-        <p style={{ color:"#6a5c3a", fontSize:"12px", marginBottom:"18px", fontStyle:"italic", fontFamily:"'Palatino Linotype',serif" }}>Before the council convenes, I must understand your situation.</p>
+        <p style={{ color:"#6a5c3a", fontSize:"12px", marginBottom:"18px", fontStyle:"italic", fontFamily:"'Palatino Linotype',serif" }}>{t.beforeConvenes}</p>
         {questions.map((q,i) => (
           <div key={i} style={{ marginBottom:"16px" }}>
             <p style={{ color:"#d4c4a0", fontSize:"14px", marginBottom:"9px", lineHeight:"1.5", fontFamily:"'Palatino Linotype',serif" }}>{q}</p>
             <input value={answers[i]||""} onChange={e=>setAnswers(p=>({...p,[i]:e.target.value}))}
               onKeyDown={e=>{if(e.key==="Enter"&&allAnswered)onSubmit(questions.map((_,j)=>answers[j]||""));}}
-              placeholder="Speak your truth…"
+              placeholder={t.speakTruth}
               style={{ width:"100%",background:"rgba(201,168,76,0.04)",border:"1px solid rgba(201,168,76,0.15)",borderRadius:"6px",color:"#d4c4a0",fontSize:"14px",padding:"10px 13px",outline:"none",fontFamily:"'Palatino Linotype',serif",boxSizing:"border-box" }}
               onFocus={e=>e.target.style.borderColor="rgba(201,168,76,0.4)"} onBlur={e=>e.target.style.borderColor="rgba(201,168,76,0.15)"}
             />
@@ -239,7 +267,7 @@ const ContextBlock = ({ questions, onSubmit }) => {
         ))}
         <button onClick={()=>allAnswered&&onSubmit(questions.map((_,i)=>answers[i]||""))} disabled={!allAnswered}
           style={{ background:allAnswered?"rgba(201,168,76,0.12)":"transparent", color:allAnswered?"#c9a84c":"#3a3020", border:`1px solid ${allAnswered?"rgba(201,168,76,0.3)":"rgba(201,168,76,0.06)"}`, borderRadius:"6px", padding:"10px 22px", fontWeight:700, cursor:allAnswered?"pointer":"not-allowed", fontSize:"13px", letterSpacing:"0.08em", textTransform:"uppercase", fontFamily:"'Palatino Linotype',serif" }}>
-          Convene the Council →
+          {t.conveneCouncil}
         </button>
       </div>
     </div>
@@ -256,7 +284,7 @@ const RoundHeader = ({ label }) => (
 );
 
 // ── Agent turn — slides from side ────────────────────────────
-const AgentTurn = ({ turn, slideDir="left", respondingToDan=false }) => {
+const AgentTurn = ({ turn, slideDir="left", respondingToDan=false, t=UI.en }) => {
   const [vis, setVis] = useState(false);
   const [exp, setExp] = useState(false);
   const isLeft = slideDir === "left";
@@ -269,7 +297,7 @@ const AgentTurn = ({ turn, slideDir="left", respondingToDan=false }) => {
       opacity:vis?1:0, transform:vis?"translateX(0)":`translateX(${isLeft?"-44px":"44px"})`,
       transition:"all 0.45s cubic-bezier(0.16,1,0.3,1)" }}>
       {respondingToDan && (
-        <div style={{ fontSize:"9px", color:"rgba(201,168,76,0.35)", marginBottom:"4px", [isLeft?"marginLeft":"marginRight"]:"52px", letterSpacing:"0.08em", textTransform:"uppercase" }}>responding to Dan</div>
+        <div style={{ fontSize:"9px", color:"rgba(201,168,76,0.35)", marginBottom:"4px", [isLeft?"marginLeft":"marginRight"]:"52px", letterSpacing:"0.08em", textTransform:"uppercase" }}>{t.respondingToDan}</div>
       )}
       <div style={{ display:"flex", alignItems:"flex-start", gap:"10px", flexDirection:isLeft?"row":"row-reverse", maxWidth:"92%" }}>
         <Avatar char={turn} size={42} active />
@@ -283,7 +311,7 @@ const AgentTurn = ({ turn, slideDir="left", respondingToDan=false }) => {
             <span style={{ color:turn.color, fontWeight:800, fontSize:"11px", letterSpacing:"0.1em", textTransform:"uppercase", fontFamily:"'Palatino Linotype',serif" }}>{turn.name}</span>
             <span style={{ color:hex2rgba(turn.color,0.4), fontSize:"10px", fontStyle:"italic" }}>{turn.title}</span>
             {turn.position_updated && <span style={{ fontSize:"9px", background:hex2rgba(turn.color,0.12), color:turn.color, borderRadius:"4px", padding:"2px 6px", fontWeight:700 }}>↻ shifted</span>}
-            {long && <button onClick={()=>setExp(!exp)} style={{ marginLeft:"auto", fontSize:"10px", color:"#4a4030", background:"transparent", border:"none", cursor:"pointer" }}>{exp?"↑":"↓"}</button>}
+            {long && <button onClick={()=>setExp(!exp)} style={{ marginLeft:"auto", fontSize:"10px", color:"#4a4030", background:"transparent", border:"none", cursor:"pointer" }}>{exp ? t.collapse : t.expand}</button>}
           </div>
           <ParsedText text={displayText} fontSize="15px" color="#c8b99a" />
         </div>
@@ -293,7 +321,7 @@ const AgentTurn = ({ turn, slideDir="left", respondingToDan=false }) => {
 };
 
 // ── Speaker picker ────────────────────────────────────────────
-const SpeakerPicker = ({ pitches, onChoose, loading }) => {
+const SpeakerPicker = ({ pitches, onChoose, loading, t=UI.en }) => {
   const [vis, setVis] = useState(false);
   useEffect(() => { const t = setTimeout(() => setVis(true), 80); return () => clearTimeout(t); }, []);
 
@@ -301,7 +329,7 @@ const SpeakerPicker = ({ pitches, onChoose, loading }) => {
     <div style={{ opacity:vis?1:0, transform:vis?"translateY(0)":"translateY(10px)", transition:"all 0.35s ease", margin:"18px 0" }}>
       <div style={{ display:"flex", alignItems:"center", gap:"10px", marginBottom:"14px" }}>
         <div style={{ flex:1, height:"1px", background:"linear-gradient(to right,transparent,rgba(201,168,76,0.12))" }}/>
-        <span style={{ fontSize:"9px", color:"rgba(201,168,76,0.35)", fontWeight:800, letterSpacing:"0.16em", textTransform:"uppercase", fontFamily:"'Palatino Linotype',serif" }}>Who shall speak?</span>
+        <span style={{ fontSize:"9px", color:"rgba(201,168,76,0.35)", fontWeight:800, letterSpacing:"0.16em", textTransform:"uppercase", fontFamily:"'Palatino Linotype',serif" }}>{t.whoSpeaks}</span>
         <div style={{ flex:1, height:"1px", background:"linear-gradient(to left,transparent,rgba(201,168,76,0.12))" }}/>
       </div>
       <div style={{ display:"flex", flexDirection:"column", gap:"7px" }}>
@@ -331,7 +359,7 @@ const SpeakerPicker = ({ pitches, onChoose, loading }) => {
 };
 
 // ── Debate closed banner ──────────────────────────────────────
-const DebateClosedBanner = ({ onReveal, revealed }) => {
+const DebateClosedBanner = ({ onReveal, revealed, t=UI.en }) => {
   const [vis, setVis] = useState(false);
   useEffect(() => { const t = setTimeout(() => setVis(true), 200); return () => clearTimeout(t); }, []);
   if(revealed) return null;
@@ -341,19 +369,19 @@ const DebateClosedBanner = ({ onReveal, revealed }) => {
         <div style={{ position:"absolute",top:0,left:0,right:0,height:"1px",background:"linear-gradient(to right,transparent,rgba(201,168,76,0.5),transparent)" }}/>
         <div style={{ position:"absolute",bottom:0,left:0,right:0,height:"1px",background:"linear-gradient(to right,transparent,rgba(201,168,76,0.3),transparent)" }}/>
         <div style={{ fontSize:"32px", marginBottom:"14px", opacity:0.8 }}>⚖️</div>
-        <p style={{ color:"rgba(201,168,76,0.6)", fontWeight:700, fontSize:"11px", letterSpacing:"0.2em", textTransform:"uppercase", marginBottom:"8px", fontFamily:"'Palatino Linotype',serif" }}>The council has spoken</p>
+        <p style={{ color:"rgba(201,168,76,0.6)", fontWeight:700, fontSize:"11px", letterSpacing:"0.2em", textTransform:"uppercase", marginBottom:"8px", fontFamily:"'Palatino Linotype',serif" }}>{t.theCouncilSpoke}</p>
         <p style={{ color:"#4a3e28", fontSize:"13px", lineHeight:"1.6", marginBottom:"22px", fontFamily:"'Palatino Linotype',serif", fontStyle:"italic" }}>Dan is ready to deliver his judgment.</p>
         <button onClick={onReveal} style={{ background:"rgba(201,168,76,0.1)", color:"#c9a84c", border:"1px solid rgba(201,168,76,0.35)", borderRadius:"8px", padding:"11px 28px", fontSize:"13px", fontWeight:700, cursor:"pointer", letterSpacing:"0.1em", textTransform:"uppercase", fontFamily:"'Palatino Linotype',serif", transition:"all 0.2s" }}
           onMouseEnter={e=>{ e.currentTarget.style.background="rgba(201,168,76,0.18)"; }}
           onMouseLeave={e=>{ e.currentTarget.style.background="rgba(201,168,76,0.1)"; }}
-        >Hear the verdict</button>
+        >{t.hearVerdict}</button>
       </div>
     </div>
   );
 };
 
 // ── Verdict ───────────────────────────────────────────────────
-const VerdictBlock = ({ verdict }) => {
+const VerdictBlock = ({ verdict, t=UI.en }) => {
   const [vis, setVis] = useState(false);
   useEffect(() => { const t = setTimeout(() => setVis(true), 100); return () => clearTimeout(t); }, []);
   return (
@@ -371,7 +399,7 @@ const VerdictBlock = ({ verdict }) => {
 
         {verdict.insights?.length>0 && (
           <div style={{ marginBottom:"20px" }}>
-            <div style={{ fontSize:"9px",color:"rgba(201,168,76,0.35)",fontWeight:800,letterSpacing:"0.16em",textTransform:"uppercase",marginBottom:"12px",fontFamily:"'Palatino Linotype',serif" }}>What was established</div>
+            <div style={{ fontSize:"9px",color:"rgba(201,168,76,0.35)",fontWeight:800,letterSpacing:"0.16em",textTransform:"uppercase",marginBottom:"12px",fontFamily:"'Palatino Linotype',serif" }}>{t.whatEstablished}</div>
             {verdict.insights.map((b,i) => (
               <div key={i} style={{ display:"flex",gap:"10px",marginBottom:"10px",alignItems:"baseline" }}>
                 <span style={{ color:"rgba(201,168,76,0.3)",flexShrink:0,fontSize:"8px" }}>◆</span>
@@ -385,7 +413,7 @@ const VerdictBlock = ({ verdict }) => {
           <div style={{ display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(200px,1fr))",gap:"12px",marginBottom:"20px" }}>
             {verdict.for_points?.length>0 && (
               <div style={{ background:"rgba(74,222,128,0.04)",border:"1px solid rgba(74,222,128,0.15)",borderRadius:"10px",padding:"14px 16px" }}>
-                <div style={{ fontSize:"9px",color:"rgba(74,222,128,0.6)",fontWeight:800,letterSpacing:"0.14em",textTransform:"uppercase",marginBottom:"10px",fontFamily:"'Palatino Linotype',serif" }}>For</div>
+                <div style={{ fontSize:"9px",color:"rgba(74,222,128,0.6)",fontWeight:800,letterSpacing:"0.14em",textTransform:"uppercase",marginBottom:"10px",fontFamily:"'Palatino Linotype',serif" }}>{t.for}</div>
                 {verdict.for_points.map((p,i)=>(
                   <div key={i} style={{ display:"flex",gap:"8px",marginBottom:"9px",alignItems:"baseline" }}>
                     <span style={{ color:"rgba(74,222,128,0.5)",flexShrink:0,fontSize:"12px" }}>+</span>
@@ -396,7 +424,7 @@ const VerdictBlock = ({ verdict }) => {
             )}
             {verdict.against_points?.length>0 && (
               <div style={{ background:"rgba(251,146,60,0.04)",border:"1px solid rgba(251,146,60,0.15)",borderRadius:"10px",padding:"14px 16px" }}>
-                <div style={{ fontSize:"9px",color:"rgba(251,146,60,0.6)",fontWeight:800,letterSpacing:"0.14em",textTransform:"uppercase",marginBottom:"10px",fontFamily:"'Palatino Linotype',serif" }}>Against</div>
+                <div style={{ fontSize:"9px",color:"rgba(251,146,60,0.6)",fontWeight:800,letterSpacing:"0.14em",textTransform:"uppercase",marginBottom:"10px",fontFamily:"'Palatino Linotype',serif" }}>{t.against}</div>
                 {verdict.against_points.map((p,i)=>(
                   <div key={i} style={{ display:"flex",gap:"8px",marginBottom:"9px",alignItems:"baseline" }}>
                     <span style={{ color:"rgba(251,146,60,0.5)",flexShrink:0,fontSize:"12px" }}>−</span>
@@ -442,10 +470,52 @@ const QuestionBubble = ({ text }) => (
   </div>
 );
 
+// ── Language selector screen ──────────────────────────────────
+const LanguageScreen = ({ onSelect }) => {
+  const [vis, setVis] = useState(false);
+  const [hovered, setHovered] = useState(null);
+  useEffect(() => { const t = setTimeout(() => setVis(true), 100); return () => clearTimeout(t); }, []);
+
+  return (
+    <div style={{ minHeight:"100vh", background:"#020200", display:"flex", alignItems:"center", justifyContent:"center", flexDirection:"column", position:"relative", overflow:"hidden" }}>
+      <div style={{ position:"absolute", top:"30%", left:"50%", transform:"translate(-50%,-50%)", width:"500px", height:"500px", background:"radial-gradient(circle, rgba(201,168,76,0.04) 0%, transparent 70%)", pointerEvents:"none" }}/>
+
+      <div style={{ textAlign:"center", marginBottom:"clamp(28px,5vw,44px)", opacity:vis?1:0, transform:vis?"translateY(0)":"translateY(16px)", transition:"all 0.8s cubic-bezier(0.16,1,0.3,1)" }}>
+        <div style={{ fontSize:"36px", marginBottom:"16px", opacity:0.5 }}>⚖️</div>
+        <h1 style={{ fontFamily:"'Palatino Linotype','Palatino','Book Antiqua',serif", fontSize:"clamp(28px,5vw,42px)", fontWeight:400, letterSpacing:"0.2em", color:"#c9a84c", textTransform:"uppercase", marginBottom:"8px" }}>The Council</h1>
+        <div style={{ width:"40px", height:"1px", background:"rgba(201,168,76,0.3)", margin:"12px auto" }}/>
+        <p style={{ color:"rgba(201,168,76,0.3)", fontSize:"11px", letterSpacing:"0.14em", fontStyle:"italic", fontFamily:"'Palatino Linotype',serif" }}>Choose your language</p>
+      </div>
+
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(130px,1fr))", gap:"8px", maxWidth:"580px", width:"90%", opacity:vis?1:0, transition:"opacity 0.8s ease 0.2s" }}>
+        {LANGUAGES.map((lang, i) => (
+          <button key={lang.code} onClick={() => onSelect(lang.code)}
+            style={{
+              display:"flex", alignItems:"center", gap:"9px",
+              background: hovered===lang.code ? "rgba(201,168,76,0.08)" : "rgba(201,168,76,0.02)",
+              border:`1px solid ${hovered===lang.code ? "rgba(201,168,76,0.4)" : "rgba(201,168,76,0.12)"}`,
+              borderRadius:"8px", padding:"10px 14px", cursor:"pointer",
+              transition:"all 0.18s", color:"#c8b99a",
+              fontFamily:"'Palatino Linotype',serif",
+              animation:`fadeSlideIn 0.4s ease ${i*0.04}s both`,
+            }}
+            onMouseEnter={() => setHovered(lang.code)}
+            onMouseLeave={() => setHovered(null)}
+          >
+            <span style={{ fontSize:"18px" }}>{lang.flag}</span>
+            <span style={{ fontSize:"13px", fontWeight: hovered===lang.code ? 700 : 400, letterSpacing:"0.04em", color: hovered===lang.code ? "#c9a84c" : "#8a7a5a" }}>{lang.label}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 // ══════════════════════════════════════════════════════════════
 // SETUP SCREEN — Mythological oracle opening
 // ══════════════════════════════════════════════════════════════
-const SetupScreen = ({ onStart }) => {
+const SetupScreen = ({ onStart, lang }) => {
+  const t = UI[lang] || UI.en;
   const [stage, setStage] = useState("intro");   // intro | assembling | ready
   const [selected, setSelected] = useState([]);
   const [introStep, setIntroStep] = useState(0); // 0=fade in title, 1=show tagline, 2=show enter
@@ -557,7 +627,7 @@ const SetupScreen = ({ onStart }) => {
           <div>
             <div style={{ display:"flex", alignItems:"center", gap:"10px", marginBottom:"5px" }}>
               <span style={{ fontWeight:700, color:"#c9a84c", fontSize:"17px" }}>Dan</span>
-              <span style={{ fontSize:"9px", background:"rgba(201,168,76,0.1)", color:"rgba(201,168,76,0.6)", borderRadius:"4px", padding:"2px 8px", fontWeight:700, letterSpacing:"0.1em", textTransform:"uppercase" }}>always present</span>
+              <span style={{ fontSize:"9px", background:"rgba(201,168,76,0.1)", color:"rgba(201,168,76,0.6)", borderRadius:"4px", padding:"2px 8px", fontWeight:700, letterSpacing:"0.1em", textTransform:"uppercase" }}>{t.alwaysPresent}</span>
             </div>
             <p style={{ fontSize:"12px", color:"rgba(201,168,76,0.35)", fontStyle:"italic", lineHeight:"1.5", margin:0 }}>{DAN.tagline}</p>
           </div>
@@ -565,7 +635,7 @@ const SetupScreen = ({ onStart }) => {
 
         {/* Council label */}
         <div style={{ fontSize:"9px", fontWeight:800, letterSpacing:"0.16em", textTransform:"uppercase", color:"rgba(201,168,76,0.25)", marginBottom:"14px", display:"flex", alignItems:"center", gap:"10px" }}>
-          <span>Council Members</span>
+          <span>{t.selectMembers}</span>
           <span style={{ color:selected.length>=2?"rgba(74,222,128,0.6)":"rgba(201,168,76,0.2)" }}>({selected.length} / 4)</span>
         </div>
 
@@ -617,7 +687,8 @@ const SetupScreen = ({ onStart }) => {
 // ══════════════════════════════════════════════════════════════
 // DEBATE SCREEN
 // ══════════════════════════════════════════════════════════════
-const DebateScreen = ({ characters, onClose }) => {
+const DebateScreen = ({ characters, onClose, lang }) => {
+  const t = UI[lang] || UI.en;
   const [phase, setPhase] = useState("question");
   const [question, setQuestion] = useState("");
   const [feed, setFeed] = useState([]);
@@ -646,14 +717,15 @@ const DebateScreen = ({ characters, onClose }) => {
   };
 
   const charConfigs = characters.map(c => ({ id:c.id, name:c.name, title:c.title, emoji:c.emoji, color:c.color, prompt:"" }));
+  const langHeader = { language: lang };
 
   const handleQuestion = async () => {
     if(!question.trim()) return;
     setPhase("loading");
     setFeed([{ type:"question_bubble", text:question }]);
-    setLoading(true); setLoadingLabel("Dan prepares his questions…"); setLoadingSpeaker(DAN); setActiveSpeaker("dan");
+    setLoading(true); setLoadingLabel("…"); setLoadingSpeaker(DAN); setActiveSpeaker("dan");
     try {
-      const data = await post("/debate/context", { question, characters:charConfigs });
+      const data = await post("/debate/context", { question, characters:charConfigs, language:lang });
       if(data.questions && data.questions.length > 0) {
         setFeed(p => [...p, { type:"context_block", questions:data.questions }]);
         setPhase("context");
@@ -671,7 +743,7 @@ const DebateScreen = ({ characters, onClose }) => {
     setHistory(ctxHistory);
     setLoading(true); setLoadingLabel("Dan opens the session…"); setLoadingSpeaker(DAN); setActiveSpeaker("dan");
     try {
-      const data = await post("/debate/opening", { question, characters:charConfigs, context:ctxMap });
+      const data = await post("/debate/opening", { question, characters:charConfigs, context:ctxMap, language:lang });
       setFeed(p => [...p, { type:"opening", text:data.opening }]);
     } catch(e) { console.error(e); }
     setLoading(false); setLoadingSpeaker(null); setActiveSpeaker(null);
@@ -696,7 +768,7 @@ const DebateScreen = ({ characters, onClose }) => {
     const fetchedPitches = [];
     for(const c of characters) {
       try {
-        const data = await post("/debate/single_sentence", { question, character_id:c.id, characters:charConfigs, round:roundNum, context:ctx, history:hist });
+        const data = await post("/debate/single_sentence", { question, character_id:c.id, characters:charConfigs, round:roundNum, context:ctx, history:hist, language:lang });
         fetchedPitches.push({ character_id:c.id, pitch:data.pitch, char:c });
       } catch(e) { console.error(e); }
     }
@@ -713,7 +785,7 @@ const DebateScreen = ({ characters, onClose }) => {
     setLoading(true); setLoadingLabel(`${char.name} speaks…`); setLoadingSpeaker(char);
 
     try {
-      const data = await post("/debate/single_turn", { question, character_id:characterId, characters:charConfigs, round:currentRound, context, checkin_answer:checkinAnswer, history });
+      const data = await post("/debate/single_turn", { question, character_id:characterId, characters:charConfigs, round:currentRound, context, checkin_answer:checkinAnswer, history, language:lang });
       const turn = data.turn;
       const newHistory = [...history, turn];
       setHistory(newHistory);
@@ -739,7 +811,7 @@ const DebateScreen = ({ characters, onClose }) => {
 
   const runCheckin = async (roundNum, hist=history) => {
     try {
-      const data = await post("/debate/checkin", { question, characters:charConfigs, history:hist, context, round:roundNum });
+      const data = await post("/debate/checkin", { question, characters:charConfigs, history:hist, context, round:roundNum, language:lang });
       if(roundNum >= 3){ data.needs_more_round=false; data.question=null; }
 
       let councilResponseTurn = null;
@@ -748,7 +820,7 @@ const DebateScreen = ({ characters, onClose }) => {
         if(targetChar) {
           setActiveSpeaker(targetChar.id); setLoadingLabel(`${targetChar.name} responds to Dan…`); setLoadingSpeaker(targetChar);
           try {
-            const resp = await post("/debate/council_response", { question, character_id:targetChar.id, characters:charConfigs, round:roundNum, context, checkin_answer:data.council_question.question, history:hist });
+            const resp = await post("/debate/council_response", { question, character_id:targetChar.id, characters:charConfigs, round:roundNum, context, checkin_answer:data.council_question.question, history:hist, language:lang });
             councilResponseTurn = resp.turn;
             hist = [...hist, councilResponseTurn];
             setHistory(hist);
@@ -779,7 +851,7 @@ const DebateScreen = ({ characters, onClose }) => {
   const runVerdict = async (hist=history) => {
     setActiveSpeaker("dan"); setLoadingLabel("Dan writes his judgment…"); setLoadingSpeaker(DAN);
     try {
-      const data = await post("/debate/verdict", { question, history:hist, context, checkin_answer:checkinAnswer });
+      const data = await post("/debate/verdict", { question, history:hist, context, checkin_answer:checkinAnswer, language:lang });
       setFeed(p => [...p, { type:"verdict", data }]);
       setPhase("done");
     } catch(e) { console.error(e); }
@@ -794,9 +866,9 @@ const DebateScreen = ({ characters, onClose }) => {
     setVerdictRevealed(false); setCurrentRound(1); setPitches([]); setRemainingPickers([]);
     setPhase("loading");
     setFeed([{ type:"question_bubble", text:q }]);
-    setLoading(true); setLoadingLabel("Dan prepares…"); setLoadingSpeaker(DAN); setActiveSpeaker("dan");
+    setLoading(true); setLoadingLabel("…"); setLoadingSpeaker(DAN); setActiveSpeaker("dan");
     try {
-      const data = await post("/debate/context", { question:q, characters:charConfigs });
+      const data = await post("/debate/context", { question:q, characters:charConfigs, language:lang });
       if(data.questions && data.questions.length > 0) {
         setFeed(p => [...p, { type:"context_block", questions:data.questions }]);
         setPhase("context");
@@ -834,27 +906,27 @@ const DebateScreen = ({ characters, onClose }) => {
 
           {feed.map((item, i) => {
             if(item.type==="question_bubble") return <QuestionBubble key={i} text={item.text}/>;
-            if(item.type==="context_block") return <ContextBlock key={i} questions={item.questions} onSubmit={handleContextSubmit}/>;
+            if(item.type==="context_block") return <ContextBlock key={i} questions={item.questions} onSubmit={handleContextSubmit} t={t}/>;
             if(item.type==="opening") return <OpeningBlock key={i} text={item.text}/>;
             if(item.type==="round_header") return <RoundHeader key={i} label={item.label}/>;
-            if(item.type==="agent") return <AgentTurn key={i} turn={item} slideDir={item.slideDir||"left"} respondingToDan={item.respondingToDan}/>;
+            if(item.type==="agent") return <AgentTurn key={i} turn={item} slideDir={item.slideDir||"left"} respondingToDan={item.respondingToDan} t={t}/>;
             if(item.type==="picker") {
               const isLatest = feed.filter(f=>f.type==="picker").at(-1)===item;
               if(!isLatest||phase!=="picking") return null;
-              return <SpeakerPicker key={i} pitches={item.pitches} onChoose={handlePickSpeaker} loading={loading}/>;
+              return <SpeakerPicker key={i} pitches={item.pitches} onChoose={handlePickSpeaker} loading={loading} t={t}/>;
             }
             if(item.type==="dan_checkin") return (
               <DanBlock key={i} summary={item.summary} question={item.question} councilQuestion={item.councilQuestion}
                 needsMoreRound={item.needsMoreRound} answered={item.answered} userAnswer={item.userAnswer}
-                revealed={item.revealed}
+                revealed={item.revealed} t={t}
                 onReveal={()=>setFeed(p=>p.map((f,j)=>j===i?{...f,revealed:true}:f))}
                 onAnswer={ans=>handleCheckinAnswer(ans,item.roundNum)}
               />
             );
             if(item.type==="verdict") return (
               <div key={i}>
-                <DebateClosedBanner revealed={verdictRevealed} onReveal={()=>setVerdictRevealed(true)}/>
-                {verdictRevealed && <VerdictBlock verdict={item.data}/>}
+                <DebateClosedBanner revealed={verdictRevealed} onReveal={()=>setVerdictRevealed(true)} t={t}/>
+                {verdictRevealed && <VerdictBlock verdict={item.data} t={t}/>}
               </div>
             );
             return null;
@@ -864,7 +936,7 @@ const DebateScreen = ({ characters, onClose }) => {
 
           {phase==="done" && !loading && verdictRevealed && (
             <div style={{ marginTop:"28px", borderTop:"1px solid rgba(201,168,76,0.06)", paddingTop:"22px" }}>
-              <p style={{ color:"rgba(201,168,76,0.2)", fontSize:"12px", marginBottom:"12px", fontStyle:"italic", letterSpacing:"0.06em" }}>Pose another question to the council, or take your leave.</p>
+              <p style={{ color:"rgba(201,168,76,0.2)", fontSize:"12px", marginBottom:"12px", fontStyle:"italic", letterSpacing:"0.06em" }}>{t.anotherQuestion}</p>
               <div style={{ display:"flex", gap:"8px", flexWrap:"wrap" }}>
                 <input value={followUpQ} onChange={e=>setFollowUpQ(e.target.value)}
                   onKeyDown={e=>{if(e.key==="Enter")handleFollowUp();}}
@@ -910,8 +982,13 @@ const DebateScreen = ({ characters, onClose }) => {
 // ROOT
 // ══════════════════════════════════════════════════════════════
 export default function App() {
-  const [screen, setScreen] = useState("setup");
+  const [screen, setScreen] = useState("language"); // language | setup | debate
+  const [lang, setLang] = useState("en");
   const [characters, setCharacters] = useState([]);
+
+  const handleSelectLang = (code) => { setLang(code); setScreen("setup"); };
+  const handleStartDebate = (chars) => { setCharacters(chars); setScreen("debate"); };
+  const handleCloseDebate = () => { setScreen("setup"); setCharacters([]); };
 
   return (
     <div style={{ width:"100%", minHeight:"100vh", background:"#020200" }}>
@@ -924,10 +1001,9 @@ export default function App() {
         @keyframes pulse{0%,100%{opacity:.2;transform:scale(.7)}50%{opacity:.8;transform:scale(1)}}
         @keyframes fadeSlideIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
       `}</style>
-      {screen==="debate"
-        ? <DebateScreen characters={characters} onClose={()=>{setScreen("setup");setCharacters([]);}}/>
-        : <SetupScreen onStart={chars=>{setCharacters(chars);setScreen("debate");}}/>
-      }
+      {screen==="language" && <LanguageScreen onSelect={handleSelectLang}/>}
+      {screen==="setup"    && <SetupScreen onStart={handleStartDebate} lang={lang}/>}
+      {screen==="debate"   && <DebateScreen characters={characters} onClose={handleCloseDebate} lang={lang}/>}
     </div>
   );
 }
