@@ -247,6 +247,46 @@ const CHAR_FIELDS = {
     general:   { title:"O General",     description:"Estratégia e consequências. Sem pensamento ilusório.", lens:"estratégia e consequências", tagline:"Os planos falham. As contingências não." },
     dan:       { title:"O Juiz",        description:"Abre o debate. Questiona o conselho. Entrega o veredicto.", lens:"julgamento", tagline:"Presidi dez mil decisões. Traga-me a sua." },
   },
+  it: {
+    surfer:    { title:"Il Surfista",   description:"Rischio e istinto. Legge le situazioni come onde.", lens:"rischio e istinto", tagline:"L'onda si sta formando. Remerai?" },
+    inspector: { title:"L'Ispettrice",  description:"Prove e dettagli. Trova ciò che gli altri perdono.", lens:"prove e dettagli", tagline:"La verità è in ciò che nessuno ha esaminato." },
+    artist:    { title:"L'Artista",     description:"Creatività e libertà. Sfida la premessa.", lens:"creatività e libertà", tagline:"La domanda stessa potrebbe essere la trappola." },
+    monk:      { title:"Il Monaco",     description:"Lungo termine e significato. La lente dei 10 anni.", lens:"significato a lungo termine", tagline:"Tra dieci anni, quale scelta rimpiangerai?" },
+    general:   { title:"Il Generale",   description:"Strategia e conseguenze. Niente pensiero illusorio.", lens:"strategia e conseguenze", tagline:"I piani falliscono. I piani di riserva no." },
+    dan:       { title:"Il Giudice",    description:"Apre il dibattito. Interroga il consiglio. Emette il verdetto.", lens:"giudizio", tagline:"Ho presieduto diecimila decisioni. Portami la tua." },
+  },
+  nl: {
+    surfer:    { title:"De Surfer",     description:"Risico en instinct. Leest situaties als golven.", lens:"risico & instinct", tagline:"De golf vormt zich. Ga je peddelen?" },
+    inspector: { title:"De Inspectrice",description:"Bewijs en detail. Vindt wat anderen missen.", lens:"bewijs & detail", tagline:"De waarheid zit in wat niemand heeft onderzocht." },
+    artist:    { title:"De Kunstenaar", description:"Creativiteit en vrijheid. Daagt de premisse uit.", lens:"creativiteit & vrijheid", tagline:"De vraag zelf kan de val zijn." },
+    monk:      { title:"De Monnik",     description:"Lange termijn en betekenis. De 10-jaars lens.", lens:"langetermijnbetekenis", tagline:"Over tien jaar — welke keuze zul je betreuren?" },
+    general:   { title:"De Generaal",   description:"Strategie en gevolgen. Geen wensdenken.", lens:"strategie & gevolgen", tagline:"Plannen mislukken. Noodplannen niet." },
+    dan:       { title:"De Rechter",    description:"Opent het debat. Ondervraagt de raad. Velt het oordeel.", lens:"oordeel", tagline:"Ik heb tienduizend beslissingen voorgezeten. Breng me die van jou." },
+  },
+  zh: {
+    surfer:    { title:"冲浪者",   description:"风险与直觉。像波浪一样读懂局势。", lens:"风险与直觉", tagline:"浪头正在形成。你会划水吗？" },
+    inspector: { title:"调查员",   description:"证据与细节。发现他人遗漏的东西。", lens:"证据与细节", tagline:"真相藏在无人检视之处。" },
+    artist:    { title:"艺术家",   description:"创造力与自由。挑战前提假设。", lens:"创造力与自由", tagline:"问题本身可能就是陷阱。" },
+    monk:      { title:"僧侣",     description:"长远与意义。十年维度的视角。", lens:"长远意义", tagline:"十年后，你会为哪个选择而惋惜？" },
+    general:   { title:"将军",     description:"战略与后果。不容一厢情愿。", lens:"战略与后果", tagline:"计划会失败。应急方案不会。" },
+    dan:       { title:"法官",     description:"主持辩论。审问议会。宣布最终裁决。", lens:"判断", tagline:"我已主持过一万次决策。把你的带来吧。" },
+  },
+  ja: {
+    surfer:    { title:"サーファー",     description:"リスクと直感。波のように状況を読む。", lens:"リスクと直感", tagline:"波が形成されています。漕ぎ出しますか？" },
+    inspector: { title:"インスペクター", description:"証拠と細部。他が見逃すものを見つける。", lens:"証拠と細部", tagline:"真実は誰も調べなかったものの中にある。" },
+    artist:    { title:"アーティスト",   description:"創造性と自由。前提に挑戦する。", lens:"創造性と自由", tagline:"質問自体が罠かもしれない。" },
+    monk:      { title:"僧侶",           description:"長期的視点と意味。10年のレンズ。", lens:"長期的意味", tagline:"10年後、どの選択を後悔しますか？" },
+    general:   { title:"将軍",           description:"戦略と結果。希望的観測は不要。", lens:"戦略と結果", tagline:"計画は失敗する。コンティンジェンシーは失敗しない。" },
+    dan:       { title:"裁判官",         description:"討論を開始し、議会を尋問し、最終判決を下す。", lens:"判断", tagline:"私は一万の決断を主宰してきた。あなたのを持ってきてください。" },
+  },
+  ar: {
+    surfer:    { title:"المتزلج",  description:"المخاطرة والحدس. يقرأ المواقف كالأمواج.", lens:"المخاطرة والحدس", tagline:"الموجة تتشكل. هل ستجدف؟" },
+    inspector: { title:"المحققة",  description:"الأدلة والتفاصيل. تجد ما يفوت الآخرين.", lens:"الأدلة والتفاصيل", tagline:"الحقيقة فيما لم يفحصه أحد." },
+    artist:    { title:"الفنان",   description:"الإبداع والحرية. يتحدى الافتراض.", lens:"الإبداع والحرية", tagline:"السؤال نفسه قد يكون الفخ." },
+    monk:      { title:"الراهب",   description:"المدى البعيد والمعنى. عدسة العشر سنوات.", lens:"المعنى بعيد المدى", tagline:"بعد عشر سنوات، أي قرار ستندم عليه؟" },
+    general:   { title:"الجنرال",  description:"الاستراتيجية والعواقب. لا مجال للتمني.", lens:"الاستراتيجية والعواقب", tagline:"الخطط تفشل. خطط الطوارئ لا تفشل." },
+    dan:       { title:"القاضي",   description:"يفتح النقاش ويستجوب المجلس ويصدر الحكم النهائي.", lens:"الحكم", tagline:"ترأست عشرة آلاف قرار. أحضر لي قرارك." },
+  },
 };
 // Fallback to English for languages not fully translated
 const getCharFields = (charId, lang) => {

@@ -256,9 +256,15 @@ async def single_sentence_pitch(request: Request, req: SingleSentenceRequest):
         {"role": "system", "content": char_data["prompt"]},
         {"role": "user", "content": instruction}
     ]
-    raw = await call_groq(messages, max_tokens=80)
-    # Trim to first sentence
-    sentence = raw.split(".")[0].strip() + "."
+    raw = await call_groq(messages, max_tokens=120)
+    # Extract first complete sentence safely
+    raw = raw.strip()
+    # Split on sentence-ending punctuation
+    import re as _re
+    parts = _re.split(r'(?<=[.!?])\s', raw)
+    sentence = parts[0].strip() if parts and parts[0].strip() else raw[:150].strip()
+    if not sentence.endswith(('.','!','?')):
+        sentence += '.'
     return {"character_id": req.character_id, "pitch": sentence}
 
 
