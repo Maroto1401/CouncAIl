@@ -249,14 +249,14 @@ async def single_sentence_pitch(request: Request, req: SingleSentenceRequest):
         f"{language_instruction(req.language)}\n\n"
         f"You are about to speak in Round {req.round}. Write ONE sentence — your sharpest, most specific claim through your lens ({char_data['lens']}). "
         f"Make it a real argument, not a description. Make it provocative enough that the user wants to hear you expand on it. "
-        f"Speak in your character's voice. No preamble.\n{language_instruction(req.language)}"
+        f"Speak in your character's voice. No preamble."
     )
 
     messages = [
-        {"role": "system", "content": char_data["prompt"]},
+        {"role": "system", "content": f"{language_instruction(req.language)}\n\n{char_data['prompt']}"},
         {"role": "user", "content": instruction}
     ]
-    raw = await call_groq(messages, max_tokens=120)
+    raw = await call_groq(messages, max_tokens=150)
     # Extract first complete sentence safely
     raw = raw.strip()
     # Split on sentence-ending punctuation
@@ -340,10 +340,10 @@ async def single_turn(request: Request, req: SingleTurnRequest):
         )
 
     messages = [
-        {"role": "system", "content": char_data["prompt"]},
+        {"role": "system", "content": f"{language_instruction(req.language)}\n\n{char_data['prompt']}"},
         {"role": "user", "content": instruction}
     ]
-    raw = await call_groq(messages, max_tokens=420)
+    raw = await call_groq(messages, max_tokens=600)
 
     change_signals = ["changed my mind", "i now agree", "i concede", "you've convinced me", "i was wrong", "i update my", "fair point, i"]
     position_updated = any(s in raw.lower() for s in change_signals)
@@ -434,10 +434,10 @@ async def council_response(request: Request, req: SingleTurnRequest):
         f"2-4 sentences. Stay in character."
     )
     messages = [
-        {"role": "system", "content": char_data["prompt"]},
+        {"role": "system", "content": f"{language_instruction(req.language)}\n\n{char_data['prompt']}"},
         {"role": "user", "content": instruction}
     ]
-    raw = await call_groq(messages, max_tokens=200)
+    raw = await call_groq(messages, max_tokens=250)
 
     return {
         "turn": {
@@ -477,7 +477,7 @@ async def debate_verdict(request: Request, req: VerdictRequest):
             f"\"for\": [\"f1\",\"f2\"], \"against\": [\"a1\",\"a2\"], \"recommendation\": \"...\"}}"
         )}
     ]
-    raw = await call_groq(messages, max_tokens=700)
+    raw = await call_groq(messages, max_tokens=900)
     result = parse_json_response(raw)
 
     return {
