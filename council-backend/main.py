@@ -201,7 +201,7 @@ async def get_context_questions(request: Request, req: ContextRequest):
     ]
     raw = await call_groq(messages, max_tokens=200)
     result = parse_json_response(raw)
-    return {"questions": result.get("questions", ["What's your current situation regarding this question?"])}
+    return {"questions": result.get("questions", [])}
 
 
 @app.post("/debate/opening")
@@ -385,8 +385,10 @@ async def debate_checkin(request: Request, req: CheckinRequest):
             f"You may optionally direct a sharp question TO a specific council member if it would expose a gap in their argument — use council_question. "
             f"If going to verdict: omit the question field entirely. "
             f"{language_instruction(req.language)}\n"
+            f"If needs_more_round is false and you have no question for the user, set user_prompt to a short invitation for them to add anything (e.g. '¿Hay algo que quieras añadir antes del veredicto?'). "
             f"Respond ONLY with valid JSON: {{\"phase\": \"checkin\", \"summary\": [\"b1\",\"b2\"], "
             f"\"question\": \"only if needs_more_round true\", "
+            f"\"user_prompt\": \"short invitation to add something, only if needs_more_round false and going to verdict\", "
             f"\"council_question\": {{\"to\": \"MemberName\", \"question\": \"sharp question\"}} or null, "
             f"\"needs_more_round\": true/false}}"
         )}
@@ -401,6 +403,7 @@ async def debate_checkin(request: Request, req: CheckinRequest):
     return {
         "summary": result.get("summary", []),
         "question": result.get("question") if needs_more else None,
+        "user_prompt": result.get("user_prompt") if not needs_more else None,
         "council_question": result.get("council_question"),
         "needs_more_round": needs_more,
     }

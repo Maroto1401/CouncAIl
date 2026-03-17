@@ -378,8 +378,27 @@ const DanTypewriter = ({ text, onDone }) => {
   return <ParsedText text={displayed} fontSize="14px" color="#b8a882" serif={false} />;
 };
 
+// ── Optional user input before verdict ───────────────────────
+const UserPromptInput = ({ onSubmit, t=UI.en }) => {
+  const [val, setVal] = useState("");
+  return (
+    <div style={{ display:"flex", gap:"8px" }}>
+      <input value={val} onChange={e=>setVal(e.target.value)}
+        onKeyDown={e=>{if(e.key==="Enter"){onSubmit(val||"—");setVal("");}}}
+        placeholder="…"
+        style={{ flex:1,minWidth:0,background:"rgba(201,168,76,0.04)",border:"1px solid rgba(201,168,76,0.15)",borderRadius:"6px",color:"#d4c4a0",fontSize:"13px",padding:"8px 11px",outline:"none",fontFamily:"'Palatino Linotype',serif" }}
+        onFocus={e=>e.target.style.borderColor="rgba(201,168,76,0.4)"} onBlur={e=>e.target.style.borderColor="rgba(201,168,76,0.15)"}
+      />
+      <button onClick={()=>{onSubmit(val||"—");setVal("");}}
+        style={{ background:"rgba(201,168,76,0.1)",color:"#c9a84c",border:"1px solid rgba(201,168,76,0.2)",borderRadius:"6px",padding:"8px 14px",fontWeight:700,cursor:"pointer",fontSize:"12px" }}>→</button>
+      <button onClick={()=>onSubmit("—")}
+        style={{ background:"transparent",color:"rgba(201,168,76,0.3)",border:"1px solid rgba(201,168,76,0.08)",borderRadius:"6px",padding:"8px 12px",cursor:"pointer",fontSize:"11px" }}>Skip</button>
+    </div>
+  );
+};
+
 // ── Dan block ─────────────────────────────────────────────────
-const DanBlock = ({ summary, question, councilQuestion, needsMoreRound, onAnswer, answered, userAnswer, revealed, onReveal, t=UI.en }) => {
+const DanBlock = ({ summary, question, userPrompt, councilQuestion, needsMoreRound, onAnswer, onUserPromptAnswer, answered, userAnswer, revealed, onReveal, t=UI.en }) => {
   const [ans, setAns] = useState("");
   const [vis, setVis] = useState(false);
   const showQ = needsMoreRound && question && !answered;
@@ -435,6 +454,12 @@ const DanBlock = ({ summary, question, councilQuestion, needsMoreRound, onAnswer
             <p style={{ color:"#b8a882", fontSize:"13px", lineHeight:"1.55", margin:"5px 0 0", fontFamily:"'Palatino Linotype',serif" }}>{councilQuestion.question}</p>
           </div>
         )}
+      {userPrompt && !needsMoreRound && !answered && (
+        <div style={{ borderTop:"1px solid rgba(201,168,76,0.08)", paddingTop:"12px", marginTop:"4px" }}>
+          <p style={{ color:"#c9a84c", fontSize:"13px", lineHeight:"1.55", marginBottom:"10px", fontFamily:"'Palatino Linotype',serif", opacity:0.8 }}>{userPrompt}</p>
+          <UserPromptInput onSubmit={onUserPromptAnswer} t={t} />
+        </div>
+      )}
 
         {showQ && (
           <div style={{ borderTop:"1px solid rgba(201,168,76,0.08)", paddingTop:"14px" }}>
@@ -1107,7 +1132,7 @@ const DebateScreen = ({ characters, onClose, lang }) => {
 
       setFeed(p => [
         ...p,
-        { type:"dan_checkin", summary:data.summary, question:data.question, councilQuestion:data.council_question, answered:false, needsMoreRound:data.needs_more_round, roundNum, revealed:false },
+        { type:"dan_checkin", summary:data.summary, question:data.question, userPrompt:data.user_prompt, councilQuestion:data.council_question, answered:false, needsMoreRound:data.needs_more_round, roundNum, revealed:false },
         ...(councilResponseTurn ? [{ type:"agent", ...councilResponseTurn, slideDir:"right", respondingToDan:true }] : []),
       ]);
 
