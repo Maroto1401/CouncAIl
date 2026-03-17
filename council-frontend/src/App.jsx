@@ -18,16 +18,176 @@ const LANGUAGES = [
 
 // ── UI translations ───────────────────────────────────────────
 const UI = {
-  en: { enterChamber:"Enter the Chamber", selectMembers:"Council Members", alwaysPresent:"always present", selectAtLeast:"Select at least 2 council members", convene:"Enter the Chamber →", danDesc:"Opens the debate. Questions the council. Delivers the final verdict.", questionPlaceholder:"What is your question for the council?", councilAwaits:"The council awaits your question.", conveneCouncil:"Convene the Council →", speakTruth:"Speak your truth…", beforeConvenes:"Before the council convenes, I must understand your situation.", whoSpeaks:"Who shall speak?", danSpeaks:"Dan speaks", hearVerdict:"Hear the verdict", theCouncilSpoke:"The council has spoken", danReady:"Dan is ready to deliver his judgment.", anotherQuestion:"Pose another question to the council, or take your leave.", followUpPlaceholder:"Another question…", leave:"Leave", respondingToDan:"responding to Dan", stanceShifted:"stance shifted", collapse:"collapse", expand:"expand", whatEstablished:"What was established", for:"For", against:"Against", theJudgment:"The Judgment" },
-  es: { enterChamber:"Entrar a la Cámara", selectMembers:"Miembros del Consejo", alwaysPresent:"siempre presente", selectAtLeast:"Selecciona al menos 2 miembros", convene:"Entrar a la Cámara →", danDesc:"Abre el debate. Interroga al consejo. Dicta el veredicto final.", questionPlaceholder:"¿Cuál es tu pregunta para el consejo?", councilAwaits:"El consejo aguarda tu pregunta.", conveneCouncil:"Convocar el Consejo →", speakTruth:"Habla tu verdad…", beforeConvenes:"Antes de que el consejo se reúna, debo entender tu situación.", whoSpeaks:"¿Quién hablará?", danSpeaks:"Dan habla", hearVerdict:"Escuchar el veredicto", theCouncilSpoke:"El consejo ha deliberado", danReady:"Dan está listo para dictar su juicio.", anotherQuestion:"Plantea otra pregunta al consejo, o retírate.", followUpPlaceholder:"Otra pregunta…", leave:"Salir", respondingToDan:"respondiendo a Dan", stanceShifted:"posición cambiada", collapse:"colapsar", expand:"expandir", whatEstablished:"Lo que se estableció", for:"A favor", against:"En contra", theJudgment:"El Juicio" },
-  fr: { enterChamber:"Entrer dans la Chambre", selectMembers:"Membres du Conseil", alwaysPresent:"toujours présent", selectAtLeast:"Sélectionnez au moins 2 membres", convene:"Entrer dans la Chambre →", danDesc:"Ouvre le débat. Interroge le conseil. Rend le verdict final.", questionPlaceholder:"Quelle est votre question pour le conseil?", councilAwaits:"Le conseil attend votre question.", conveneCouncil:"Réunir le Conseil →", speakTruth:"Parlez votre vérité…", beforeConvenes:"Avant que le conseil se réunisse, je dois comprendre votre situation.", whoSpeaks:"Qui parlera?", danSpeaks:"Dan parle", hearVerdict:"Entendre le verdict", theCouncilSpoke:"Le conseil a délibéré", danReady:"Dan est prêt à rendre son jugement.", anotherQuestion:"Posez une autre question au conseil, ou prenez congé.", followUpPlaceholder:"Une autre question…", leave:"Partir", respondingToDan:"répondant à Dan", stanceShifted:"position changée", collapse:"réduire", expand:"développer", whatEstablished:"Ce qui a été établi", for:"Pour", against:"Contre", theJudgment:"Le Jugement" },
-  de: { enterChamber:"Die Kammer betreten", selectMembers:"Ratsmitglieder", alwaysPresent:"immer anwesend", selectAtLeast:"Mindestens 2 Mitglieder wählen", convene:"Die Kammer betreten →", danDesc:"Eröffnet die Debatte. Befragt den Rat. Fällt das endgültige Urteil.", questionPlaceholder:"Was ist Ihre Frage an den Rat?", councilAwaits:"Der Rat wartet auf Ihre Frage.", conveneCouncil:"Den Rat einberufen →", speakTruth:"Sprechen Sie Ihre Wahrheit…", beforeConvenes:"Bevor der Rat zusammentritt, muss ich Ihre Situation verstehen.", whoSpeaks:"Wer wird sprechen?", danSpeaks:"Dan spricht", hearVerdict:"Das Urteil hören", theCouncilSpoke:"Der Rat hat gesprochen", danReady:"Dan ist bereit, sein Urteil zu sprechen.", anotherQuestion:"Stellen Sie eine weitere Frage an den Rat, oder nehmen Sie Abschied.", followUpPlaceholder:"Eine weitere Frage…", leave:"Verlassen", respondingToDan:"antwortet Dan", stanceShifted:"Haltung geändert", collapse:"einklappen", expand:"ausklappen", whatEstablished:"Was festgestellt wurde", for:"Dafür", against:"Dagegen", theJudgment:"Das Urteil" },
-  pt: { enterChamber:"Entrar na Câmara", selectMembers:"Membros do Conselho", alwaysPresent:"sempre presente", selectAtLeast:"Selecione pelo menos 2 membros", convene:"Entrar na Câmara →", danDesc:"Abre o debate. Questiona o conselho. Entrega o veredicto final.", questionPlaceholder:"Qual é a sua pergunta para o conselho?", councilAwaits:"O conselho aguarda a sua pergunta.", conveneCouncil:"Convocar o Conselho →", speakTruth:"Fale a sua verdade…", beforeConvenes:"Antes do conselho se reunir, preciso entender a sua situação.", whoSpeaks:"Quem falará?", danSpeaks:"Dan fala", hearVerdict:"Ouvir o veredicto", theCouncilSpoke:"O conselho deliberou", danReady:"Dan está pronto para proferir o seu julgamento.", anotherQuestion:"Faça outra pergunta ao conselho, ou despeça-se.", followUpPlaceholder:"Outra pergunta…", leave:"Sair", respondingToDan:"respondendo a Dan", stanceShifted:"posição alterada", collapse:"recolher", expand:"expandir", whatEstablished:"O que foi estabelecido", for:"A favor", against:"Contra", theJudgment:"O Julgamento" },
-  it: { enterChamber:"Entra nella Camera", selectMembers:"Membri del Consiglio", alwaysPresent:"sempre presente", selectAtLeast:"Seleziona almeno 2 membri", convene:"Entra nella Camera →", danDesc:"Apre il dibattito. Interroga il consiglio. Emette il verdetto finale.", questionPlaceholder:"Qual è la tua domanda per il consiglio?", councilAwaits:"Il consiglio attende la tua domanda.", conveneCouncil:"Convocare il Consiglio →", speakTruth:"Parla la tua verità…", beforeConvenes:"Prima che il consiglio si riunisca, devo capire la tua situazione.", whoSpeaks:"Chi parlerà?", danSpeaks:"Dan parla", hearVerdict:"Ascolta il verdetto", theCouncilSpoke:"Il consiglio ha deliberato", danReady:"Dan è pronto a pronunciare il suo giudizio.", anotherQuestion:"Poni un'altra domanda al consiglio, o prendi commiato.", followUpPlaceholder:"Un'altra domanda…", leave:"Uscire", respondingToDan:"risponde a Dan", stanceShifted:"posizione cambiata", collapse:"comprimi", expand:"espandi", whatEstablished:"Ciò che è stato stabilito", for:"A favore", against:"Contro", theJudgment:"Il Giudizio" },
-  nl: { enterChamber:"De Kamer betreden", selectMembers:"Raadsleden", alwaysPresent:"altijd aanwezig", selectAtLeast:"Selecteer minimaal 2 leden", convene:"De Kamer betreden →", danDesc:"Opent het debat. Ondervraagt de raad. Velt het eindoordeel.", questionPlaceholder:"Wat is uw vraag voor de raad?", councilAwaits:"De raad wacht op uw vraag.", conveneCouncil:"De Raad bijeen roepen →", speakTruth:"Spreek uw waarheid…", beforeConvenes:"Voordat de raad bijeenkomt, moet ik uw situatie begrijpen.", whoSpeaks:"Wie zal spreken?", danSpeaks:"Dan spreekt", hearVerdict:"Het oordeel horen", theCouncilSpoke:"De raad heeft gesproken", danReady:"Dan is klaar om zijn oordeel uit te spreken.", anotherQuestion:"Stel de raad nog een vraag, of neem afscheid.", followUpPlaceholder:"Nog een vraag…", leave:"Vertrekken", respondingToDan:"antwoord aan Dan", stanceShifted:"standpunt gewijzigd", collapse:"inklappen", expand:"uitklappen", whatEstablished:"Wat is vastgesteld", for:"Voor", against:"Tegen", theJudgment:"Het Oordeel" },
-  zh: { enterChamber:"进入议事厅", selectMembers:"议会成员", alwaysPresent:"始终在场", selectAtLeast:"请至少选择2名成员", convene:"进入议事厅 →", danDesc:"主持辩论。审问议会。宣布最终裁决。", questionPlaceholder:"您对议会的问题是什么？", councilAwaits:"议会等待您的问题。", conveneCouncil:"召集议会 →", speakTruth:"说出您的真相…", beforeConvenes:"议会召开前，我需要了解您的情况。", whoSpeaks:"谁来发言？", danSpeaks:"丹发言", hearVerdict:"听取裁决", theCouncilSpoke:"议会已经审议", danReady:"丹已准备好宣布他的判决。", anotherQuestion:"向议会再提一个问题，或告辞。", followUpPlaceholder:"另一个问题…", leave:"离开", respondingToDan:"回应丹", stanceShifted:"立场转变", collapse:"收起", expand:"展开", whatEstablished:"已确立的内容", for:"支持", against:"反对", theJudgment:"判决" },
-  ja: { enterChamber:"議場に入る", selectMembers:"議会メンバー", alwaysPresent:"常に出席", selectAtLeast:"少なくとも2人のメンバーを選択", convene:"議場に入る →", danDesc:"討論を開始します。議会を尋問します。最終判決を下します。", questionPlaceholder:"議会への質問は何ですか？", councilAwaits:"議会はあなたの質問を待っています。", conveneCouncil:"議会を召集する →", speakTruth:"あなたの真実を語ってください…", beforeConvenes:"議会が開かれる前に、あなたの状況を理解する必要があります。", whoSpeaks:"誰が話しますか？", danSpeaks:"ダンが話す", hearVerdict:"判決を聞く", theCouncilSpoke:"議会が審議しました", danReady:"ダンは判決を下す準備ができています。", anotherQuestion:"議会にもう一つ質問するか、おいとまください。", followUpPlaceholder:"もう一つの質問…", leave:"退出", respondingToDan:"ダンへの返答", stanceShifted:"立場が変わった", collapse:"折りたたむ", expand:"展開する", whatEstablished:"確立されたこと", for:"賛成", against:"反対", theJudgment:"判決" },
-  ar: { enterChamber:"الدخول إلى القاعة", selectMembers:"أعضاء المجلس", alwaysPresent:"حاضر دائماً", selectAtLeast:"اختر عضوين على الأقل", convene:"الدخول إلى القاعة →", danDesc:"يفتح النقاش. يستجوب المجلس. يصدر الحكم النهائي.", questionPlaceholder:"ما هو سؤالك للمجلس؟", councilAwaits:"المجلس ينتظر سؤالك.", conveneCouncil:"عقد جلسة المجلس →", speakTruth:"قل حقيقتك…", beforeConvenes:"قبل انعقاد المجلس، يجب أن أفهم وضعك.", whoSpeaks:"من سيتكلم؟", danSpeaks:"دان يتكلم", hearVerdict:"استمع إلى الحكم", theCouncilSpoke:"تداول المجلس", danReady:"دان مستعد لإصدار حكمه.", anotherQuestion:"اطرح سؤالاً آخر على المجلس، أو انصرف.", followUpPlaceholder:"سؤال آخر…", leave:"المغادرة", respondingToDan:"رداً على دان", stanceShifted:"تغير الموقف", collapse:"طي", expand:"توسيع", whatEstablished:"ما تم إثباته", for:"مع", against:"ضد", theJudgment:"الحكم" },
+  en: {
+    title:"THE COUNCIL", subtitle:"Assemble your council. You control who speaks.", enterChamber:"Enter the Chamber",
+    selectMembers:"Council Members", alwaysPresent:"always present", selectAtLeast:"Select at least 2 council members",
+    convene:"Enter the Chamber →", danDesc:"Opens the debate. Questions the council. Delivers the final verdict.",
+    questionPlaceholder:"What is your question for the council?", councilAwaits:"The council awaits your question.",
+    conveneCouncil:"Convene the Council →", speakTruth:"Speak your truth…",
+    beforeConvenes:"Before the council convenes, I must understand your situation.",
+    whoSpeaks:"Who shall speak?", danSpeaks:"Dan speaks", hearVerdict:"Hear the verdict",
+    theCouncilSpoke:"The council has spoken", danReady:"Dan is ready to deliver his judgment.",
+    anotherQuestion:"Pose another question to the council, or take your leave.",
+    followUpPlaceholder:"Another question…", leave:"Leave", respondingToDan:"responding to Dan",
+    stanceShifted:"stance shifted", collapse:"collapse", expand:"expand",
+    whatEstablished:"What was established", for:"For", against:"Against", theJudgment:"The Judgment",
+    chooseLanguage:"Choose your language", danJudge:"Dan — The Judge", dansJudgment:"Dan's Judgment",
+    councilPrepares:"The council prepares…", danDeliberates:"Dan deliberates…",
+    danWrites:"Dan writes his judgment…", respondsToDan:"responds to Dan",
+  },
+  es: {
+    title:"EL CONSEJO", subtitle:"Reúne a tu consejo. Tú controlas quién habla.", enterChamber:"Entrar a la Cámara",
+    selectMembers:"Miembros del Consejo", alwaysPresent:"siempre presente", selectAtLeast:"Selecciona al menos 2 miembros",
+    convene:"Entrar a la Cámara →", danDesc:"Abre el debate. Interroga al consejo. Dicta el veredicto final.",
+    questionPlaceholder:"¿Cuál es tu pregunta para el consejo?", councilAwaits:"El consejo aguarda tu pregunta.",
+    conveneCouncil:"Convocar el Consejo →", speakTruth:"Habla tu verdad…",
+    beforeConvenes:"Antes de que el consejo se reúna, debo entender tu situación.",
+    whoSpeaks:"¿Quién hablará?", danSpeaks:"Dan habla", hearVerdict:"Escuchar el veredicto",
+    theCouncilSpoke:"El consejo ha deliberado", danReady:"Dan está listo para dictar su juicio.",
+    anotherQuestion:"Plantea otra pregunta al consejo, o retírate.",
+    followUpPlaceholder:"Otra pregunta…", leave:"Salir", respondingToDan:"respondiendo a Dan",
+    stanceShifted:"posición cambiada", collapse:"colapsar", expand:"expandir",
+    whatEstablished:"Lo que se estableció", for:"A favor", against:"En contra", theJudgment:"El Juicio",
+    chooseLanguage:"Elige tu idioma", danJudge:"Dan — El Juez", dansJudgment:"El Juicio de Dan",
+    councilPrepares:"El consejo se prepara…", danDeliberates:"Dan delibera…",
+    danWrites:"Dan escribe su juicio…", respondsToDan:"responde a Dan",
+  },
+  fr: {
+    title:"LE CONSEIL", subtitle:"Assemblez votre conseil. Vous contrôlez qui parle.", enterChamber:"Entrer dans la Chambre",
+    selectMembers:"Membres du Conseil", alwaysPresent:"toujours présent", selectAtLeast:"Sélectionnez au moins 2 membres",
+    convene:"Entrer dans la Chambre →", danDesc:"Ouvre le débat. Interroge le conseil. Rend le verdict final.",
+    questionPlaceholder:"Quelle est votre question pour le conseil?", councilAwaits:"Le conseil attend votre question.",
+    conveneCouncil:"Réunir le Conseil →", speakTruth:"Parlez votre vérité…",
+    beforeConvenes:"Avant que le conseil se réunisse, je dois comprendre votre situation.",
+    whoSpeaks:"Qui parlera?", danSpeaks:"Dan parle", hearVerdict:"Entendre le verdict",
+    theCouncilSpoke:"Le conseil a délibéré", danReady:"Dan est prêt à rendre son jugement.",
+    anotherQuestion:"Posez une autre question au conseil, ou prenez congé.",
+    followUpPlaceholder:"Une autre question…", leave:"Partir", respondingToDan:"répondant à Dan",
+    stanceShifted:"position changée", collapse:"réduire", expand:"développer",
+    whatEstablished:"Ce qui a été établi", for:"Pour", against:"Contre", theJudgment:"Le Jugement",
+    chooseLanguage:"Choisissez votre langue", danJudge:"Dan — Le Juge", dansJudgment:"Le Jugement de Dan",
+    councilPrepares:"Le conseil se prépare…", danDeliberates:"Dan délibère…",
+    danWrites:"Dan rédige son jugement…", respondsToDan:"répond à Dan",
+  },
+  de: {
+    title:"DER RAT", subtitle:"Stellen Sie Ihren Rat zusammen. Sie bestimmen, wer spricht.", enterChamber:"Die Kammer betreten",
+    selectMembers:"Ratsmitglieder", alwaysPresent:"immer anwesend", selectAtLeast:"Mindestens 2 Mitglieder wählen",
+    convene:"Die Kammer betreten →", danDesc:"Eröffnet die Debatte. Befragt den Rat. Fällt das endgültige Urteil.",
+    questionPlaceholder:"Was ist Ihre Frage an den Rat?", councilAwaits:"Der Rat wartet auf Ihre Frage.",
+    conveneCouncil:"Den Rat einberufen →", speakTruth:"Sprechen Sie Ihre Wahrheit…",
+    beforeConvenes:"Bevor der Rat zusammentritt, muss ich Ihre Situation verstehen.",
+    whoSpeaks:"Wer wird sprechen?", danSpeaks:"Dan spricht", hearVerdict:"Das Urteil hören",
+    theCouncilSpoke:"Der Rat hat gesprochen", danReady:"Dan ist bereit, sein Urteil zu sprechen.",
+    anotherQuestion:"Stellen Sie eine weitere Frage an den Rat, oder nehmen Sie Abschied.",
+    followUpPlaceholder:"Eine weitere Frage…", leave:"Verlassen", respondingToDan:"antwortet Dan",
+    stanceShifted:"Haltung geändert", collapse:"einklappen", expand:"ausklappen",
+    whatEstablished:"Was festgestellt wurde", for:"Dafür", against:"Dagegen", theJudgment:"Das Urteil",
+    chooseLanguage:"Sprache wählen", danJudge:"Dan — Der Richter", dansJudgment:"Dans Urteil",
+    councilPrepares:"Der Rat bereitet sich vor…", danDeliberates:"Dan überlegt…",
+    danWrites:"Dan schreibt sein Urteil…", respondsToDan:"antwortet Dan",
+  },
+  pt: {
+    title:"O CONSELHO", subtitle:"Monte seu conselho. Você controla quem fala.", enterChamber:"Entrar na Câmara",
+    selectMembers:"Membros do Conselho", alwaysPresent:"sempre presente", selectAtLeast:"Selecione pelo menos 2 membros",
+    convene:"Entrar na Câmara →", danDesc:"Abre o debate. Questiona o conselho. Entrega o veredicto final.",
+    questionPlaceholder:"Qual é a sua pergunta para o conselho?", councilAwaits:"O conselho aguarda a sua pergunta.",
+    conveneCouncil:"Convocar o Conselho →", speakTruth:"Fale a sua verdade…",
+    beforeConvenes:"Antes do conselho se reunir, preciso entender a sua situação.",
+    whoSpeaks:"Quem falará?", danSpeaks:"Dan fala", hearVerdict:"Ouvir o veredicto",
+    theCouncilSpoke:"O conselho deliberou", danReady:"Dan está pronto para proferir o seu julgamento.",
+    anotherQuestion:"Faça outra pergunta ao conselho, ou despeça-se.",
+    followUpPlaceholder:"Outra pergunta…", leave:"Sair", respondingToDan:"respondendo a Dan",
+    stanceShifted:"posição alterada", collapse:"recolher", expand:"expandir",
+    whatEstablished:"O que foi estabelecido", for:"A favor", against:"Contra", theJudgment:"O Julgamento",
+    chooseLanguage:"Escolha o idioma", danJudge:"Dan — O Juiz", dansJudgment:"O Julgamento de Dan",
+    councilPrepares:"O conselho se prepara…", danDeliberates:"Dan delibera…",
+    danWrites:"Dan escreve seu julgamento…", respondsToDan:"responde a Dan",
+  },
+  it: {
+    title:"IL CONSIGLIO", subtitle:"Assembla il tuo consiglio. Controlli chi parla.", enterChamber:"Entra nella Camera",
+    selectMembers:"Membri del Consiglio", alwaysPresent:"sempre presente", selectAtLeast:"Seleziona almeno 2 membri",
+    convene:"Entra nella Camera →", danDesc:"Apre il dibattito. Interroga il consiglio. Emette il verdetto finale.",
+    questionPlaceholder:"Qual è la tua domanda per il consiglio?", councilAwaits:"Il consiglio attende la tua domanda.",
+    conveneCouncil:"Convocare il Consiglio →", speakTruth:"Parla la tua verità…",
+    beforeConvenes:"Prima che il consiglio si riunisca, devo capire la tua situazione.",
+    whoSpeaks:"Chi parlerà?", danSpeaks:"Dan parla", hearVerdict:"Ascolta il verdetto",
+    theCouncilSpoke:"Il consiglio ha deliberato", danReady:"Dan è pronto a pronunciare il suo giudizio.",
+    anotherQuestion:"Poni un'altra domanda al consiglio, o prendi commiato.",
+    followUpPlaceholder:"Un'altra domanda…", leave:"Uscire", respondingToDan:"risponde a Dan",
+    stanceShifted:"posizione cambiata", collapse:"comprimi", expand:"espandi",
+    whatEstablished:"Ciò che è stato stabilito", for:"A favore", against:"Contro", theJudgment:"Il Giudizio",
+    chooseLanguage:"Scegli la lingua", danJudge:"Dan — Il Giudice", dansJudgment:"Il Giudizio di Dan",
+    councilPrepares:"Il consiglio si prepara…", danDeliberates:"Dan delibera…",
+    danWrites:"Dan scrive il suo giudizio…", respondsToDan:"risponde a Dan",
+  },
+  nl: {
+    title:"DE RAAD", subtitle:"Stel uw raad samen. U bepaalt wie spreekt.", enterChamber:"De Kamer betreden",
+    selectMembers:"Raadsleden", alwaysPresent:"altijd aanwezig", selectAtLeast:"Selecteer minimaal 2 leden",
+    convene:"De Kamer betreden →", danDesc:"Opent het debat. Ondervraagt de raad. Velt het eindoordeel.",
+    questionPlaceholder:"Wat is uw vraag voor de raad?", councilAwaits:"De raad wacht op uw vraag.",
+    conveneCouncil:"De Raad bijeen roepen →", speakTruth:"Spreek uw waarheid…",
+    beforeConvenes:"Voordat de raad bijeenkomt, moet ik uw situatie begrijpen.",
+    whoSpeaks:"Wie zal spreken?", danSpeaks:"Dan spreekt", hearVerdict:"Het oordeel horen",
+    theCouncilSpoke:"De raad heeft gesproken", danReady:"Dan is klaar om zijn oordeel uit te spreken.",
+    anotherQuestion:"Stel de raad nog een vraag, of neem afscheid.",
+    followUpPlaceholder:"Nog een vraag…", leave:"Vertrekken", respondingToDan:"antwoord aan Dan",
+    stanceShifted:"standpunt gewijzigd", collapse:"inklappen", expand:"uitklappen",
+    whatEstablished:"Wat is vastgesteld", for:"Voor", against:"Tegen", theJudgment:"Het Oordeel",
+    chooseLanguage:"Kies taal", danJudge:"Dan — De Rechter", dansJudgment:"Dans Oordeel",
+    councilPrepares:"De raad bereidt zich voor…", danDeliberates:"Dan delibereert…",
+    danWrites:"Dan schrijft zijn oordeel…", respondsToDan:"antwoordt Dan",
+  },
+  zh: {
+    title:"议会", subtitle:"组建你的议会。你控制谁发言。", enterChamber:"进入议事厅",
+    selectMembers:"议会成员", alwaysPresent:"始终在场", selectAtLeast:"请至少选择2名成员",
+    convene:"进入议事厅 →", danDesc:"主持辩论。审问议会。宣布最终裁决。",
+    questionPlaceholder:"您对议会的问题是什么？", councilAwaits:"议会等待您的问题。",
+    conveneCouncil:"召集议会 →", speakTruth:"说出您的真相…",
+    beforeConvenes:"议会召开前，我需要了解您的情况。",
+    whoSpeaks:"谁来发言？", danSpeaks:"丹发言", hearVerdict:"听取裁决",
+    theCouncilSpoke:"议会已经审议", danReady:"丹已准备好宣布他的判决。",
+    anotherQuestion:"向议会再提一个问题，或告辞。",
+    followUpPlaceholder:"另一个问题…", leave:"离开", respondingToDan:"回应丹",
+    stanceShifted:"立场转变", collapse:"收起", expand:"展开",
+    whatEstablished:"已确立的内容", for:"支持", against:"反对", theJudgment:"判决",
+    chooseLanguage:"选择语言", danJudge:"丹 — 法官", dansJudgment:"丹的判决",
+    councilPrepares:"议会准备中…", danDeliberates:"丹在审议…",
+    danWrites:"丹正在写判决…", respondsToDan:"回应丹",
+  },
+  ja: {
+    title:"評議会", subtitle:"評議会を編成してください。誰が発言するかはあなたが決めます。", enterChamber:"議場に入る",
+    selectMembers:"議会メンバー", alwaysPresent:"常に出席", selectAtLeast:"少なくとも2人のメンバーを選択",
+    convene:"議場に入る →", danDesc:"討論を開始します。議会を尋問します。最終判決を下します。",
+    questionPlaceholder:"議会への質問は何ですか？", councilAwaits:"議会はあなたの質問を待っています。",
+    conveneCouncil:"議会を召集する →", speakTruth:"あなたの真実を語ってください…",
+    beforeConvenes:"議会が開かれる前に、あなたの状況を理解する必要があります。",
+    whoSpeaks:"誰が話しますか？", danSpeaks:"ダンが話す", hearVerdict:"判決を聞く",
+    theCouncilSpoke:"議会が審議しました", danReady:"ダンは判決を下す準備ができています。",
+    anotherQuestion:"議会にもう一つ質問するか、おいとまください。",
+    followUpPlaceholder:"もう一つの質問…", leave:"退出", respondingToDan:"ダンへの返答",
+    stanceShifted:"立場が変わった", collapse:"折りたたむ", expand:"展開する",
+    whatEstablished:"確立されたこと", for:"賛成", against:"反対", theJudgment:"判決",
+    chooseLanguage:"言語を選択", danJudge:"ダン — 裁判官", dansJudgment:"ダンの判決",
+    councilPrepares:"評議会が準備中…", danDeliberates:"ダンが審議中…",
+    danWrites:"ダンが判決を書いています…", respondsToDan:"ダンに返答",
+  },
+  ar: {
+    title:"المجلس", subtitle:"اجمع مجلسك. أنت تتحكم في من يتكلم.", enterChamber:"الدخول إلى القاعة",
+    selectMembers:"أعضاء المجلس", alwaysPresent:"حاضر دائماً", selectAtLeast:"اختر عضوين على الأقل",
+    convene:"الدخول إلى القاعة →", danDesc:"يفتح النقاش. يستجوب المجلس. يصدر الحكم النهائي.",
+    questionPlaceholder:"ما هو سؤالك للمجلس؟", councilAwaits:"المجلس ينتظر سؤالك.",
+    conveneCouncil:"عقد جلسة المجلس →", speakTruth:"قل حقيقتك…",
+    beforeConvenes:"قبل انعقاد المجلس، يجب أن أفهم وضعك.",
+    whoSpeaks:"من سيتكلم؟", danSpeaks:"دان يتكلم", hearVerdict:"استمع إلى الحكم",
+    theCouncilSpoke:"تداول المجلس", danReady:"دان مستعد لإصدار حكمه.",
+    anotherQuestion:"اطرح سؤالاً آخر على المجلس، أو انصرف.",
+    followUpPlaceholder:"سؤال آخر…", leave:"المغادرة", respondingToDan:"رداً على دان",
+    stanceShifted:"تغير الموقف", collapse:"طي", expand:"توسيع",
+    whatEstablished:"ما تم إثباته", for:"مع", against:"ضد", theJudgment:"الحكم",
+    chooseLanguage:"اختر اللغة", danJudge:"دان — القاضي", dansJudgment:"حكم دان",
+    councilPrepares:"المجلس يستعد…", danDeliberates:"دان يتداول…",
+    danWrites:"دان يكتب حكمه…", respondsToDan:"يرد على دان",
+  },
 };
 
 const CHARACTERS = {
@@ -44,6 +204,56 @@ const hex2rgba = (hex, alpha) => {
   const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
   return `rgba(${r},${g},${b},${alpha})`;
 };
+
+// ── Character field translations ─────────────────────────────
+const CHAR_FIELDS = {
+  en: {
+    surfer:    { title:"The Surfer",    description:"Risk & instinct. Reads situations like waves.", lens:"risk & instinct",       tagline:"The wave is forming. Will you paddle?" },
+    inspector: { title:"The Inspector", description:"Evidence & detail. Finds what others miss.",   lens:"evidence & detail",      tagline:"The truth is in what no one examined." },
+    artist:    { title:"The Artist",    description:"Creativity & freedom. Challenges the premise.", lens:"creativity & freedom",   tagline:"The question itself may be the trap." },
+    monk:      { title:"The Monk",      description:"Long-term & meaning. The 10-year lens.",        lens:"long-term meaning",      tagline:"In ten years, which choice will you mourn?" },
+    general:   { title:"The General",   description:"Strategy & consequences. No wishful thinking.", lens:"strategy & consequences",tagline:"Plans fail. Contingencies don't." },
+    dan:       { title:"The Judge",     description:"Opens the debate. Questions the council. Delivers the final verdict.", lens:"judgment", tagline:"I have presided over ten thousand decisions. Bring me yours." },
+  },
+  es: {
+    surfer:    { title:"El Surfista",   description:"Riesgo e instinto. Lee situaciones como olas.", lens:"riesgo e instinto",      tagline:"La ola se está formando. ¿Vas a remar?" },
+    inspector: { title:"La Inspectora", description:"Evidencia y detalle. Encuentra lo que otros pierden.", lens:"evidencia y detalle", tagline:"La verdad está en lo que nadie examinó." },
+    artist:    { title:"El Artista",    description:"Creatividad y libertad. Desafía la premisa.",   lens:"creatividad y libertad", tagline:"La pregunta en sí misma puede ser la trampa." },
+    monk:      { title:"El Monje",      description:"Largo plazo y significado. La lente de 10 años.", lens:"significado a largo plazo", tagline:"En diez años, ¿qué elección lamentarás?" },
+    general:   { title:"El General",    description:"Estrategia y consecuencias. Sin pensamiento ilusorio.", lens:"estrategia y consecuencias", tagline:"Los planes fallan. Las contingencias no." },
+    dan:       { title:"El Juez",       description:"Abre el debate. Interroga al consejo. Dicta el veredicto.", lens:"juicio", tagline:"He presidido diez mil decisiones. Tráeme la tuya." },
+  },
+  fr: {
+    surfer:    { title:"Le Surfeur",    description:"Risque et instinct. Lit les situations comme des vagues.", lens:"risque et instinct", tagline:"La vague se forme. Allez-vous ramer?" },
+    inspector: { title:"L'Inspectrice", description:"Preuves et détails. Trouve ce que les autres ratent.", lens:"preuves et détails", tagline:"La vérité est dans ce que personne n'a examiné." },
+    artist:    { title:"L'Artiste",     description:"Créativité et liberté. Remet en question la prémisse.", lens:"créativité et liberté", tagline:"La question elle-même peut être le piège." },
+    monk:      { title:"Le Moine",      description:"Long terme et sens. La lentille des 10 ans.",    lens:"sens à long terme",     tagline:"Dans dix ans, quel choix regretteras-tu?" },
+    general:   { title:"Le Général",    description:"Stratégie et conséquences. Pas de pensée illusoire.", lens:"stratégie et conséquences", tagline:"Les plans échouent. Les contingences non." },
+    dan:       { title:"Le Juge",       description:"Ouvre le débat. Interroge le conseil. Rend le verdict.", lens:"jugement", tagline:"J'ai présidé dix mille décisions. Apportez-moi la vôtre." },
+  },
+  de: {
+    surfer:    { title:"Der Surfer",    description:"Risiko und Instinkt. Liest Situationen wie Wellen.", lens:"Risiko & Instinkt", tagline:"Die Welle bildet sich. Werden Sie paddeln?" },
+    inspector: { title:"Die Inspektorin", description:"Beweise und Details. Findet, was andere übersehen.", lens:"Beweise & Details", tagline:"Die Wahrheit steckt in dem, was niemand untersucht hat." },
+    artist:    { title:"Der Künstler",  description:"Kreativität und Freiheit. Hinterfragt die Prämisse.", lens:"Kreativität & Freiheit", tagline:"Die Frage selbst könnte die Falle sein." },
+    monk:      { title:"Der Mönch",     description:"Langfristig und bedeutungsvoll. Die 10-Jahres-Linse.", lens:"langfristiger Sinn", tagline:"In zehn Jahren — welche Wahl wirst du bereuen?" },
+    general:   { title:"Der General",   description:"Strategie und Konsequenzen. Kein Wunschdenken.", lens:"Strategie & Konsequenzen", tagline:"Pläne scheitern. Notfallpläne nicht." },
+    dan:       { title:"Der Richter",   description:"Eröffnet die Debatte. Befragt den Rat. Fällt das Urteil.", lens:"Urteil", tagline:"Ich habe zehntausend Entscheidungen geleitet. Bringen Sie mir Ihre." },
+  },
+  pt: {
+    surfer:    { title:"O Surfista",    description:"Risco e instinto. Lê situações como ondas.", lens:"risco e instinto", tagline:"A onda está se formando. Você vai remar?" },
+    inspector: { title:"A Inspetora",   description:"Evidências e detalhes. Encontra o que outros perdem.", lens:"evidências e detalhes", tagline:"A verdade está no que ninguém examinou." },
+    artist:    { title:"O Artista",     description:"Criatividade e liberdade. Desafia a premissa.", lens:"criatividade e liberdade", tagline:"A própria pergunta pode ser a armadilha." },
+    monk:      { title:"O Monge",       description:"Longo prazo e significado. A lente de 10 anos.", lens:"significado a longo prazo", tagline:"Em dez anos, qual escolha você vai lamentar?" },
+    general:   { title:"O General",     description:"Estratégia e consequências. Sem pensamento ilusório.", lens:"estratégia e consequências", tagline:"Os planos falham. As contingências não." },
+    dan:       { title:"O Juiz",        description:"Abre o debate. Questiona o conselho. Entrega o veredicto.", lens:"julgamento", tagline:"Presidi dez mil decisões. Traga-me a sua." },
+  },
+};
+// Fallback to English for languages not fully translated
+const getCharFields = (charId, lang) => {
+  const fields = CHAR_FIELDS[lang] || CHAR_FIELDS.en;
+  return fields[charId] || (CHAR_FIELDS.en[charId] || {});
+};
+
 
 // ── Typewriter hook ───────────────────────────────────────────
 const useTypewriter = (text, speed=18, enabled=true) => {
@@ -133,7 +343,7 @@ const DanBlock = ({ summary, question, councilQuestion, needsMoreRound, onAnswer
   const [ans, setAns] = useState("");
   const [vis, setVis] = useState(false);
   const showQ = needsMoreRound && question && !answered;
-  useEffect(() => { const t = setTimeout(() => setVis(true), 60); return () => clearTimeout(t); }, []);
+  useEffect(() => { const timer = setTimeout(() => setVis(true), 60); return () => clearTimeout(timer); }, []);
 
   if(!revealed) return (
     <div style={{ opacity:vis?1:0, transition:"opacity 0.4s", margin:"20px 0", display:"flex", justifyContent:"center" }}>
@@ -160,7 +370,7 @@ const DanBlock = ({ summary, question, councilQuestion, needsMoreRound, onAnswer
         <div style={{ flex:1, height:"1px", background:"linear-gradient(to right,transparent,rgba(201,168,76,0.25))" }}/>
         <div style={{ display:"flex", alignItems:"center", gap:"8px" }}>
           <Avatar char={DAN} size={30} active />
-          <span style={{ color:"#c9a84c", fontWeight:700, fontSize:"10px", letterSpacing:"0.14em", textTransform:"uppercase", fontFamily:"'Palatino Linotype',serif", whiteSpace:"nowrap" }}>Dan — The Judge</span>
+          <span style={{ color:"#c9a84c", fontWeight:700, fontSize:"10px", letterSpacing:"0.14em", textTransform:"uppercase", fontFamily:"'Palatino Linotype',serif", whiteSpace:"nowrap" }}>{t.danJudge}</span>
         </div>
         <div style={{ flex:1, height:"1px", background:"linear-gradient(to left,transparent,rgba(201,168,76,0.25))" }}/>
       </div>
@@ -213,16 +423,16 @@ const DanBlock = ({ summary, question, councilQuestion, needsMoreRound, onAnswer
 };
 
 // ── Opening block with typewriter ────────────────────────────
-const OpeningBlock = ({ text }) => {
+const OpeningBlock = ({ text, t=UI.en }) => {
   const [vis, setVis] = useState(false);
-  useEffect(() => { const t = setTimeout(() => setVis(true), 200); return () => clearTimeout(t); }, []);
+  useEffect(() => { const timer = setTimeout(() => setVis(true), 200); return () => clearTimeout(timer); }, []);
   return (
     <div style={{ opacity:vis?1:0, transition:"opacity 0.6s", margin:"20px 0" }}>
       <div style={{ display:"flex", alignItems:"center", gap:"10px", marginBottom:"12px" }}>
         <div style={{ flex:1, height:"1px", background:"linear-gradient(to right,transparent,rgba(201,168,76,0.25))" }}/>
         <div style={{ display:"flex", alignItems:"center", gap:"8px" }}>
           <Avatar char={DAN} size={30} active />
-          <span style={{ color:"#c9a84c", fontWeight:700, fontSize:"10px", letterSpacing:"0.14em", textTransform:"uppercase", fontFamily:"'Palatino Linotype',serif", whiteSpace:"nowrap" }}>Dan — The Judge</span>
+          <span style={{ color:"#c9a84c", fontWeight:700, fontSize:"10px", letterSpacing:"0.14em", textTransform:"uppercase", fontFamily:"'Palatino Linotype',serif", whiteSpace:"nowrap" }}>{t.danJudge}</span>
         </div>
         <div style={{ flex:1, height:"1px", background:"linear-gradient(to left,transparent,rgba(201,168,76,0.25))" }}/>
       </div>
@@ -239,7 +449,7 @@ const ContextBlock = ({ questions, onSubmit, t=UI.en }) => {
   const [answers, setAnswers] = useState({});
   const [vis, setVis] = useState(false);
   const allAnswered = questions.every((_,i) => answers[i]?.trim());
-  useEffect(() => { const t = setTimeout(() => setVis(true), 100); return () => clearTimeout(t); }, []);
+  useEffect(() => { const timer = setTimeout(() => setVis(true), 100); return () => clearTimeout(timer); }, []);
 
   return (
     <div style={{ opacity:vis?1:0, transform:vis?"translateY(0)":"translateY(10px)", transition:"all 0.4s", margin:"20px 0" }}>
@@ -247,7 +457,7 @@ const ContextBlock = ({ questions, onSubmit, t=UI.en }) => {
         <div style={{ flex:1, height:"1px", background:"linear-gradient(to right,transparent,rgba(201,168,76,0.25))" }}/>
         <div style={{ display:"flex", alignItems:"center", gap:"8px" }}>
           <Avatar char={DAN} size={30} active />
-          <span style={{ color:"#c9a84c", fontWeight:700, fontSize:"10px", letterSpacing:"0.14em", textTransform:"uppercase", fontFamily:"'Palatino Linotype',serif", whiteSpace:"nowrap" }}>Dan — The Judge</span>
+          <span style={{ color:"#c9a84c", fontWeight:700, fontSize:"10px", letterSpacing:"0.14em", textTransform:"uppercase", fontFamily:"'Palatino Linotype',serif", whiteSpace:"nowrap" }}>{t.danJudge}</span>
         </div>
         <div style={{ flex:1, height:"1px", background:"linear-gradient(to left,transparent,rgba(201,168,76,0.25))" }}/>
       </div>
@@ -290,7 +500,7 @@ const AgentTurn = ({ turn, slideDir="left", respondingToDan=false, t=UI.en }) =>
   const isLeft = slideDir === "left";
   const long = turn.text.length > 300;
   const displayText = exp||!long ? turn.text : turn.text.slice(0,300)+"…";
-  useEffect(() => { const t = setTimeout(() => setVis(true), 50); return () => clearTimeout(t); }, []);
+  useEffect(() => { const timer = setTimeout(() => setVis(true), 50); return () => clearTimeout(timer); }, []);
 
   return (
     <div style={{ display:"flex", flexDirection:"column", alignItems:isLeft?"flex-start":"flex-end", marginBottom:"18px",
@@ -310,7 +520,7 @@ const AgentTurn = ({ turn, slideDir="left", respondingToDan=false, t=UI.en }) =>
           <div style={{ display:"flex", alignItems:"center", gap:"8px", marginBottom:"10px", flexWrap:"wrap" }}>
             <span style={{ color:turn.color, fontWeight:800, fontSize:"11px", letterSpacing:"0.1em", textTransform:"uppercase", fontFamily:"'Palatino Linotype',serif" }}>{turn.name}</span>
             <span style={{ color:hex2rgba(turn.color,0.4), fontSize:"10px", fontStyle:"italic" }}>{turn.title}</span>
-            {turn.position_updated && <span style={{ fontSize:"9px", background:hex2rgba(turn.color,0.12), color:turn.color, borderRadius:"4px", padding:"2px 6px", fontWeight:700 }}>↻ shifted</span>}
+            {turn.position_updated && <span style={{ fontSize:"9px", background:hex2rgba(turn.color,0.12), color:turn.color, borderRadius:"4px", padding:"2px 6px", fontWeight:700 }}>↻ {t.stanceShifted}</span>}
             {long && <button onClick={()=>setExp(!exp)} style={{ marginLeft:"auto", fontSize:"10px", color:"#4a4030", background:"transparent", border:"none", cursor:"pointer" }}>{exp ? t.collapse : t.expand}</button>}
           </div>
           <ParsedText text={displayText} fontSize="15px" color="#c8b99a" />
@@ -323,7 +533,7 @@ const AgentTurn = ({ turn, slideDir="left", respondingToDan=false, t=UI.en }) =>
 // ── Speaker picker ────────────────────────────────────────────
 const SpeakerPicker = ({ pitches, onChoose, loading, t=UI.en }) => {
   const [vis, setVis] = useState(false);
-  useEffect(() => { const t = setTimeout(() => setVis(true), 80); return () => clearTimeout(t); }, []);
+  useEffect(() => { const timer = setTimeout(() => setVis(true), 80); return () => clearTimeout(timer); }, []);
 
   return (
     <div style={{ opacity:vis?1:0, transform:vis?"translateY(0)":"translateY(10px)", transition:"all 0.35s ease", margin:"18px 0" }}>
@@ -361,7 +571,7 @@ const SpeakerPicker = ({ pitches, onChoose, loading, t=UI.en }) => {
 // ── Debate closed banner ──────────────────────────────────────
 const DebateClosedBanner = ({ onReveal, revealed, t=UI.en }) => {
   const [vis, setVis] = useState(false);
-  useEffect(() => { const t = setTimeout(() => setVis(true), 200); return () => clearTimeout(t); }, []);
+  useEffect(() => { const timer = setTimeout(() => setVis(true), 200); return () => clearTimeout(timer); }, []);
   if(revealed) return null;
   return (
     <div style={{ opacity:vis?1:0, transform:vis?"scale(1)":"scale(0.97)", transition:"all 0.5s cubic-bezier(0.16,1,0.3,1)", margin:"30px 0", textAlign:"center" }}>
@@ -370,7 +580,7 @@ const DebateClosedBanner = ({ onReveal, revealed, t=UI.en }) => {
         <div style={{ position:"absolute",bottom:0,left:0,right:0,height:"1px",background:"linear-gradient(to right,transparent,rgba(201,168,76,0.3),transparent)" }}/>
         <div style={{ fontSize:"32px", marginBottom:"14px", opacity:0.8 }}>⚖️</div>
         <p style={{ color:"rgba(201,168,76,0.6)", fontWeight:700, fontSize:"11px", letterSpacing:"0.2em", textTransform:"uppercase", marginBottom:"8px", fontFamily:"'Palatino Linotype',serif" }}>{t.theCouncilSpoke}</p>
-        <p style={{ color:"#4a3e28", fontSize:"13px", lineHeight:"1.6", marginBottom:"22px", fontFamily:"'Palatino Linotype',serif", fontStyle:"italic" }}>Dan is ready to deliver his judgment.</p>
+        <p style={{ color:"#4a3e28", fontSize:"13px", lineHeight:"1.6", marginBottom:"22px", fontFamily:"'Palatino Linotype',serif", fontStyle:"italic" }}>{t.danReady}</p>
         <button onClick={onReveal} style={{ background:"rgba(201,168,76,0.1)", color:"#c9a84c", border:"1px solid rgba(201,168,76,0.35)", borderRadius:"8px", padding:"11px 28px", fontSize:"13px", fontWeight:700, cursor:"pointer", letterSpacing:"0.1em", textTransform:"uppercase", fontFamily:"'Palatino Linotype',serif", transition:"all 0.2s" }}
           onMouseEnter={e=>{ e.currentTarget.style.background="rgba(201,168,76,0.18)"; }}
           onMouseLeave={e=>{ e.currentTarget.style.background="rgba(201,168,76,0.1)"; }}
@@ -383,14 +593,14 @@ const DebateClosedBanner = ({ onReveal, revealed, t=UI.en }) => {
 // ── Verdict ───────────────────────────────────────────────────
 const VerdictBlock = ({ verdict, t=UI.en }) => {
   const [vis, setVis] = useState(false);
-  useEffect(() => { const t = setTimeout(() => setVis(true), 100); return () => clearTimeout(t); }, []);
+  useEffect(() => { const timer = setTimeout(() => setVis(true), 100); return () => clearTimeout(timer); }, []);
   return (
     <div style={{ opacity:vis?1:0, transform:vis?"translateY(0)":"translateY(16px)", transition:"all 0.6s cubic-bezier(0.16,1,0.3,1)", margin:"8px 0 28px" }}>
       <div style={{ display:"flex", alignItems:"center", gap:"10px", marginBottom:"14px" }}>
         <div style={{ flex:1, height:"1px", background:"linear-gradient(to right,transparent,rgba(201,168,76,0.3))" }}/>
         <div style={{ display:"flex", alignItems:"center", gap:"8px" }}>
           <Avatar char={DAN} size={36} active glow />
-          <span style={{ color:"#c9a84c", fontWeight:700, fontSize:"10px", letterSpacing:"0.14em", textTransform:"uppercase", fontFamily:"'Palatino Linotype',serif" }}>Dan's Judgment</span>
+          <span style={{ color:"#c9a84c", fontWeight:700, fontSize:"10px", letterSpacing:"0.14em", textTransform:"uppercase", fontFamily:"'Palatino Linotype',serif" }}>{t.dansJudgment}</span>
         </div>
         <div style={{ flex:1, height:"1px", background:"linear-gradient(to left,transparent,rgba(201,168,76,0.3))" }}/>
       </div>
@@ -439,7 +649,7 @@ const VerdictBlock = ({ verdict, t=UI.en }) => {
         {verdict.recommendation && (
           <div style={{ background:"rgba(0,0,0,0.4)",borderRadius:"10px",padding:"18px 20px",border:"1px solid rgba(201,168,76,0.2)",position:"relative" }}>
             <div style={{ position:"absolute",top:0,left:"10%",right:"10%",height:"1px",background:"linear-gradient(to right,transparent,rgba(201,168,76,0.3),transparent)" }}/>
-            <div style={{ fontSize:"9px",color:"rgba(201,168,76,0.45)",fontWeight:800,letterSpacing:"0.16em",textTransform:"uppercase",marginBottom:"12px",fontFamily:"'Palatino Linotype',serif" }}>🎯 The Judgment</div>
+            <div style={{ fontSize:"9px",color:"rgba(201,168,76,0.45)",fontWeight:800,letterSpacing:"0.16em",textTransform:"uppercase",marginBottom:"12px",fontFamily:"'Palatino Linotype',serif" }}>🎯 {t.theJudgment}</div>
             <ParsedText text={verdict.recommendation} fontSize="16px" color="#e8d8b0" />
           </div>
         )}
@@ -471,10 +681,11 @@ const QuestionBubble = ({ text }) => (
 );
 
 // ── Language selector screen ──────────────────────────────────
-const LanguageScreen = ({ onSelect }) => {
+const LanguageScreen = ({ onSelect, lang }) => {
+  const t = UI[lang] || UI.en;
   const [vis, setVis] = useState(false);
   const [hovered, setHovered] = useState(null);
-  useEffect(() => { const t = setTimeout(() => setVis(true), 100); return () => clearTimeout(t); }, []);
+  useEffect(() => { const timer = setTimeout(() => setVis(true), 100); return () => clearTimeout(timer); }, []);
 
   return (
     <div style={{ minHeight:"100vh", background:"#020200", display:"flex", alignItems:"center", justifyContent:"center", flexDirection:"column", position:"relative", overflow:"hidden" }}>
@@ -482,9 +693,9 @@ const LanguageScreen = ({ onSelect }) => {
 
       <div style={{ textAlign:"center", marginBottom:"clamp(28px,5vw,44px)", opacity:vis?1:0, transform:vis?"translateY(0)":"translateY(16px)", transition:"all 0.8s cubic-bezier(0.16,1,0.3,1)" }}>
         <div style={{ fontSize:"36px", marginBottom:"16px", opacity:0.5 }}>⚖️</div>
-        <h1 style={{ fontFamily:"'Palatino Linotype','Palatino','Book Antiqua',serif", fontSize:"clamp(28px,5vw,42px)", fontWeight:400, letterSpacing:"0.2em", color:"#c9a84c", textTransform:"uppercase", marginBottom:"8px" }}>The Council</h1>
+        <h1 style={{ fontFamily:"'Palatino Linotype','Palatino','Book Antiqua',serif", fontSize:"clamp(28px,5vw,42px)", fontWeight:400, letterSpacing:"0.2em", color:"#c9a84c", textTransform:"uppercase", marginBottom:"8px" }}>{t.title}</h1>
         <div style={{ width:"40px", height:"1px", background:"rgba(201,168,76,0.3)", margin:"12px auto" }}/>
-        <p style={{ color:"rgba(201,168,76,0.3)", fontSize:"11px", letterSpacing:"0.14em", fontStyle:"italic", fontFamily:"'Palatino Linotype',serif" }}>Choose your language</p>
+        <p style={{ color:"rgba(201,168,76,0.3)", fontSize:"11px", letterSpacing:"0.14em", fontStyle:"italic", fontFamily:"'Palatino Linotype',serif" }}>{t.chooseLanguage}</p>
       </div>
 
       <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(130px,1fr))", gap:"8px", maxWidth:"580px", width:"90%", opacity:vis?1:0, transition:"opacity 0.8s ease 0.2s" }}>
@@ -574,7 +785,7 @@ const SetupScreen = ({ onStart, lang, onChangeLang }) => {
           opacity:introStep>=1?1:0, transform:introStep>=1?"translateY(0)":"translateY(20px)",
           transition:"all 1.4s cubic-bezier(0.16,1,0.3,1)",
           textShadow:"0 0 40px rgba(201,168,76,0.2)",
-        }}>THE COUNCIL</h1>
+        }}>{t.title}</h1>
 
         <div style={{ width:"60px", height:"1px", background:"linear-gradient(to right,transparent,rgba(201,168,76,0.5),transparent)", margin:"16px auto 20px",
           opacity:introStep>=1?1:0, transition:"opacity 1.4s ease 0.3s" }}/>
@@ -583,7 +794,7 @@ const SetupScreen = ({ onStart, lang, onChangeLang }) => {
         <p style={{ fontFamily:"'Palatino Linotype',serif", fontSize:"clamp(13px,2vw,16px)", color:"rgba(201,168,76,0.4)", letterSpacing:"0.12em", lineHeight:"1.8", fontStyle:"italic",
           opacity:introStep>=2?1:0, transform:introStep>=2?"translateY(0)":"translateY(10px)",
           transition:"all 1s ease 0.2s", marginBottom:"40px" }}>
-          {DAN.tagline}
+          {getCharFields("dan",lang).description || t.danDesc}
         </p>
 
         {/* Enter button */}
@@ -598,7 +809,7 @@ const SetupScreen = ({ onStart, lang, onChangeLang }) => {
           onMouseEnter={e=>{ e.currentTarget.style.color="#c9a84c"; e.currentTarget.style.borderColor="rgba(201,168,76,0.5)"; e.currentTarget.style.background="rgba(201,168,76,0.05)"; }}
           onMouseLeave={e=>{ e.currentTarget.style.color="rgba(201,168,76,0.6)"; e.currentTarget.style.borderColor="rgba(201,168,76,0.25)"; e.currentTarget.style.background="transparent"; }}
         >
-          Enter the Chamber
+          {t.enterChamber}
         </button>
       </div>
     </div>
@@ -615,9 +826,9 @@ const SetupScreen = ({ onStart, lang, onChangeLang }) => {
         {/* Header */}
         <div style={{ textAlign:"center", marginBottom:"clamp(28px,5vw,48px)", opacity:stage==="ready"?1:0.7, transition:"opacity 0.8s" }}>
           <div style={{ fontSize:"24px", marginBottom:"10px", opacity:0.5 }}>⚖️</div>
-          <h1 style={{ fontSize:"clamp(20px,4vw,28px)", fontWeight:400, letterSpacing:"0.2em", color:"#c9a84c", marginBottom:"6px", textTransform:"uppercase" }}>The Council</h1>
+          <h1 style={{ fontSize:"clamp(20px,4vw,28px)", fontWeight:400, letterSpacing:"0.2em", color:"#c9a84c", marginBottom:"6px", textTransform:"uppercase" }}>{t.title}</h1>
           <div style={{ width:"40px", height:"1px", background:"rgba(201,168,76,0.3)", margin:"10px auto 14px" }}/>
-          <p style={{ color:"rgba(201,168,76,0.3)", fontSize:"12px", letterSpacing:"0.1em", fontStyle:"italic" }}>Assemble your council. You control who speaks.</p>
+          <p style={{ color:"rgba(201,168,76,0.3)", fontSize:"12px", letterSpacing:"0.1em", fontStyle:"italic" }}>{t.subtitle}</p>
           <button onClick={onChangeLang} style={{ marginTop:"12px", background:"transparent", border:"1px solid rgba(201,168,76,0.15)", borderRadius:"16px", padding:"4px 14px", color:"rgba(201,168,76,0.4)", fontSize:"11px", cursor:"pointer", letterSpacing:"0.08em", fontFamily:"'Palatino Linotype',serif" }}
             onMouseEnter={e=>{ e.currentTarget.style.borderColor="rgba(201,168,76,0.4)"; e.currentTarget.style.color="rgba(201,168,76,0.7)"; }}
             onMouseLeave={e=>{ e.currentTarget.style.borderColor="rgba(201,168,76,0.15)"; e.currentTarget.style.color="rgba(201,168,76,0.4)"; }}
@@ -635,7 +846,7 @@ const SetupScreen = ({ onStart, lang, onChangeLang }) => {
               <span style={{ fontWeight:700, color:"#c9a84c", fontSize:"17px" }}>Dan</span>
               <span style={{ fontSize:"9px", background:"rgba(201,168,76,0.1)", color:"rgba(201,168,76,0.6)", borderRadius:"4px", padding:"2px 8px", fontWeight:700, letterSpacing:"0.1em", textTransform:"uppercase" }}>{t.alwaysPresent}</span>
             </div>
-            <p style={{ fontSize:"12px", color:"rgba(201,168,76,0.35)", fontStyle:"italic", lineHeight:"1.5", margin:0 }}>{DAN.tagline}</p>
+            <p style={{ fontSize:"12px", color:"rgba(201,168,76,0.35)", fontStyle:"italic", lineHeight:"1.5", margin:0 }}>{t.danDesc}</p>
           </div>
         </div>
 
@@ -663,9 +874,9 @@ const SetupScreen = ({ onStart, lang, onChangeLang }) => {
                 {sel && <div style={{ position:"absolute", top:"12px", right:"14px", color:c.color, fontSize:"12px" }}>✓</div>}
                 <Avatar char={c} size={46} active={sel} glow={sel} />
                 <div style={{ marginTop:"12px", fontWeight:700, fontSize:"16px", color:sel?c.color:"#c8b99a", marginBottom:"3px" }}>{c.name}</div>
-                <div style={{ fontSize:"11px", color:hex2rgba(c.color,0.5), marginBottom:"8px", fontStyle:"italic" }}>{c.title}</div>
-                <p style={{ fontSize:"11px", color:"rgba(201,168,76,0.25)", lineHeight:"1.5", marginBottom:"10px", fontStyle:"italic" }}>"{c.tagline}"</p>
-                <div style={{ fontSize:"9px", background:hex2rgba(c.color,0.08), color:hex2rgba(c.color,0.6), borderRadius:"4px", padding:"3px 8px", display:"inline-block", fontWeight:700, letterSpacing:"0.08em", border:`1px solid ${hex2rgba(c.color,0.15)}`, textTransform:"uppercase" }}>{c.lens}</div>
+                <div style={{ fontSize:"11px", color:hex2rgba(c.color,0.5), marginBottom:"8px", fontStyle:"italic" }}>{getCharFields(c.id,lang).title || c.title}</div>
+                <p style={{ fontSize:"11px", color:"rgba(201,168,76,0.25)", lineHeight:"1.5", marginBottom:"10px", fontStyle:"italic" }}>"{getCharFields(c.id,lang).tagline || c.tagline}"</p>
+                <div style={{ fontSize:"9px", background:hex2rgba(c.color,0.08), color:hex2rgba(c.color,0.6), borderRadius:"4px", padding:"3px 8px", display:"inline-block", fontWeight:700, letterSpacing:"0.08em", border:`1px solid ${hex2rgba(c.color,0.15)}`, textTransform:"uppercase" }}>{getCharFields(c.id,lang).lens || c.lens}</div>
               </div>
             );
           })}
@@ -683,7 +894,7 @@ const SetupScreen = ({ onStart, lang, onChangeLang }) => {
           onMouseEnter={e=>{ if(canStart){ e.currentTarget.style.background="rgba(201,168,76,0.18)"; }}}
           onMouseLeave={e=>{ if(canStart){ e.currentTarget.style.background="rgba(201,168,76,0.1)"; }}}
         >
-          {canStart ? "Enter the Chamber →" : "Select at least 2 council members"}
+          {canStart ? t.convene : t.selectAtLeast}
         </button>
       </div>
     </div>
@@ -712,6 +923,7 @@ const DebateScreen = ({ characters, onClose, lang }) => {
   const [pitches, setPitches] = useState([]);
   const [entered, setEntered] = useState(false);
   const [pendingVerdictHistory, setPendingVerdictHistory] = useState(null);
+  const [apiError, setApiError] = useState(null);
   const bottomRef = useRef(null);
 
   useEffect(() => { setTimeout(() => setEntered(true), 50); }, []);
@@ -719,7 +931,11 @@ const DebateScreen = ({ characters, onClose, lang }) => {
 
   const post = async (path, body) => {
     const res = await fetch(`${API_URL}${path}`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body) });
-    if(!res.ok) throw new Error(`${path} failed: ${res.status}`);
+    if(!res.ok) {
+      let detail = "";
+      try { const err = await res.json(); detail = JSON.stringify(err); } catch(_){}
+      throw new Error(`${path} failed: ${res.status} ${detail}`);
+    }
     return res.json();
   };
 
@@ -729,7 +945,7 @@ const DebateScreen = ({ characters, onClose, lang }) => {
   const handleQuestion = async () => {
     if(!question.trim()) return;
     setPhase("loading");
-    setFeed([{ type:"question_bubble", text:question }]);
+    setFeed([{ type:"question_bubble", text:question }]); setApiError(null);
     setLoading(true); setLoadingLabel("…"); setLoadingSpeaker(DAN); setActiveSpeaker("dan");
     try {
       const data = await post("/debate/context", { question, characters:charConfigs, language:lang });
@@ -776,14 +992,18 @@ const DebateScreen = ({ characters, onClose, lang }) => {
   const startRoundPicking = async (roundNum, ctx=context, hist=history) => {
     setFeed(p => [...p, { type:"round_header", label:`Round ${roundNum}` }]);
     setPhase("picking");
-    setLoading(true); setLoadingLabel("The council prepares their arguments…"); setLoadingSpeaker(null); setActiveSpeaker(null);
+    setLoading(true); setLoadingLabel(t.councilPrepares); setLoadingSpeaker(null); setActiveSpeaker(null);
 
     const fetchedPitches = [];
     for(const c of characters) {
       try {
         const data = await post("/debate/single_sentence", { question, character_id:c.id, characters:charConfigs, round:roundNum, context:ctx, history:hist, language:lang });
         fetchedPitches.push({ character_id:c.id, pitch:data.pitch, char:c });
-      } catch(e) { console.error(e); }
+      } catch(e) { console.error('single_sentence error:', e.message); setApiError(e.message); }
+    }
+    // Fallback: if all API calls failed, use placeholder pitches so UI doesn't freeze
+    if(fetchedPitches.length === 0) {
+      characters.forEach(c => fetchedPitches.push({ character_id:c.id, pitch:"...", char:c }));
     }
     setPitches(fetchedPitches);
     setRemainingPickers(characters.map(c => c.id));
@@ -815,11 +1035,14 @@ const DebateScreen = ({ characters, onClose, lang }) => {
         setPhase("picking");
       } else {
         setActiveSpeaker("dan");
-        setLoadingLabel("Dan deliberates…"); setLoadingSpeaker(DAN);
+        setLoadingLabel(t.danDeliberates); setLoadingSpeaker(DAN);
         await runCheckin(currentRound, newHistory);
       }
-    } catch(e) { console.error(e); }
-    setLoading(false); setLoadingSpeaker(null); setActiveSpeaker(null);
+    } catch(e) {
+      console.error("handlePickSpeaker error:", e.message);
+    } finally {
+      setLoading(false); setLoadingSpeaker(null); setActiveSpeaker(null);
+    }
   };
 
   const runCheckin = async (roundNum, hist=history) => {
@@ -831,7 +1054,7 @@ const DebateScreen = ({ characters, onClose, lang }) => {
       if(data.council_question?.to) {
         const targetChar = characters.find(c => c.name===data.council_question.to);
         if(targetChar) {
-          setActiveSpeaker(targetChar.id); setLoadingLabel(`${targetChar.name} responds to Dan…`); setLoadingSpeaker(targetChar);
+          setActiveSpeaker(targetChar.id); setLoadingLabel(`${targetChar.name} ${t.respondsToDan}…`); setLoadingSpeaker(targetChar);
           try {
             const resp = await post("/debate/council_response", { question, character_id:targetChar.id, characters:charConfigs, round:roundNum, context, checkin_answer:data.council_question.question, history:hist, language:lang });
             councilResponseTurn = resp.turn;
@@ -856,7 +1079,10 @@ const DebateScreen = ({ characters, onClose, lang }) => {
       } else {
         setPhase("checkin");
       }
-    } catch(e) { console.error(e); }
+    } catch(e) {
+      console.error("runCheckin error:", e);
+      setLoading(false); setLoadingSpeaker(null); setActiveSpeaker(null);
+    }
   };
 
   const handleCheckinAnswer = async (answer, roundNum) => {
@@ -868,13 +1094,16 @@ const DebateScreen = ({ characters, onClose, lang }) => {
   };
 
   const runVerdict = async (hist=history) => {
-    setActiveSpeaker("dan"); setLoadingLabel("Dan writes his judgment…"); setLoadingSpeaker(DAN);
+    setLoading(true); setActiveSpeaker("dan"); setLoadingLabel(t.danWrites); setLoadingSpeaker(DAN);
     try {
       const data = await post("/debate/verdict", { question, history:hist, context, checkin_answer:checkinAnswer, language:lang });
       setFeed(p => [...p, { type:"verdict", data }]);
       setPhase("done");
-    } catch(e) { console.error(e); }
-    setActiveSpeaker(null); setLoadingSpeaker(null);
+    } catch(e) {
+      console.error("runVerdict error:", e);
+    } finally {
+      setLoading(false); setLoadingSpeaker(null); setActiveSpeaker(null);
+    }
   };
 
   const handleFollowUp = async () => {
@@ -920,14 +1149,14 @@ const DebateScreen = ({ characters, onClose, lang }) => {
           {phase === "question" && (
             <div style={{ textAlign:"center", padding:"clamp(40px,10vw,90px) 0 24px" }}>
               <div style={{ fontSize:"40px", marginBottom:"16px", opacity:0.4 }}>⚖️</div>
-              <p style={{ color:"rgba(201,168,76,0.25)", fontSize:"15px", fontStyle:"italic", letterSpacing:"0.05em" }}>The council awaits your question.</p>
+              <p style={{ color:"rgba(201,168,76,0.25)", fontSize:"15px", fontStyle:"italic", letterSpacing:"0.05em" }}>{t.councilAwaits}</p>
             </div>
           )}
 
           {feed.map((item, i) => {
             if(item.type==="question_bubble") return <QuestionBubble key={i} text={item.text}/>;
             if(item.type==="context_block") return <ContextBlock key={i} questions={item.questions} onSubmit={handleContextSubmit} t={t}/>;
-            if(item.type==="opening") return <OpeningBlock key={i} text={item.text}/>;
+            if(item.type==="opening") return <OpeningBlock key={i} text={item.text} t={t}/>;
             if(item.type==="round_header") return <RoundHeader key={i} label={item.label}/>;
             if(item.type==="agent") return <AgentTurn key={i} turn={item} slideDir={item.slideDir||"left"} respondingToDan={item.respondingToDan} t={t}/>;
             if(item.type==="picker") {
@@ -960,6 +1189,12 @@ const DebateScreen = ({ characters, onClose, lang }) => {
           })}
 
           {loading && <LoadingPulse label={loadingLabel} speaker={loadingSpeaker}/>}
+          {apiError && !loading && (
+            <div style={{ background:"rgba(251,100,60,0.08)", border:"1px solid rgba(251,100,60,0.2)", borderRadius:"10px", padding:"12px 16px", margin:"12px 0", fontSize:"12px", color:"rgba(251,100,60,0.7)", fontFamily:"monospace" }}>
+              ⚠ {apiError}
+              <button onClick={()=>setApiError(null)} style={{ marginLeft:"12px", background:"transparent", border:"none", color:"rgba(251,100,60,0.5)", cursor:"pointer", fontSize:"11px" }}>✕</button>
+            </div>
+          )}
 
           {phase==="done" && !loading && verdictRevealed && (
             <div style={{ marginTop:"28px", borderTop:"1px solid rgba(201,168,76,0.06)", paddingTop:"22px" }}>
@@ -967,12 +1202,12 @@ const DebateScreen = ({ characters, onClose, lang }) => {
               <div style={{ display:"flex", gap:"8px", flexWrap:"wrap" }}>
                 <input value={followUpQ} onChange={e=>setFollowUpQ(e.target.value)}
                   onKeyDown={e=>{if(e.key==="Enter")handleFollowUp();}}
-                  placeholder="Another question…"
+                  placeholder={t.followUpPlaceholder}
                   style={{ flex:"1 1 200px", minWidth:0, background:"rgba(201,168,76,0.03)", border:"1px solid rgba(201,168,76,0.12)", borderRadius:"6px", color:"#d4c4a0", fontSize:"14px", padding:"10px 14px", outline:"none", fontFamily:"'Palatino Linotype',serif" }}
                   onFocus={e=>e.target.style.borderColor="rgba(201,168,76,0.35)"} onBlur={e=>e.target.style.borderColor="rgba(201,168,76,0.12)"}
                 />
                 <button onClick={handleFollowUp} style={{ background:"rgba(201,168,76,0.08)", color:"#c9a84c", border:"1px solid rgba(201,168,76,0.25)", borderRadius:"6px", padding:"10px 18px", fontWeight:700, cursor:"pointer", fontSize:"13px" }}>→</button>
-                <button onClick={onClose} style={{ background:"transparent", color:"rgba(201,168,76,0.25)", border:"1px solid rgba(201,168,76,0.08)", borderRadius:"6px", padding:"10px 14px", fontSize:"12px", cursor:"pointer", letterSpacing:"0.06em" }}>Leave</button>
+                <button onClick={onClose} style={{ background:"transparent", color:"rgba(201,168,76,0.25)", border:"1px solid rgba(201,168,76,0.08)", borderRadius:"6px", padding:"10px 14px", fontSize:"12px", cursor:"pointer", letterSpacing:"0.06em" }}>{t.leave}</button>
               </div>
             </div>
           )}
@@ -986,7 +1221,7 @@ const DebateScreen = ({ characters, onClose, lang }) => {
           <div style={{ maxWidth:"700px", margin:"0 auto", display:"flex", gap:"10px" }}>
             <input value={question} onChange={e=>setQuestion(e.target.value)}
               onKeyDown={e=>{if(e.key==="Enter")handleQuestion();}}
-              placeholder="What is your question for the council?"
+              placeholder={t.questionPlaceholder}
               style={{ flex:1, minWidth:0, background:"rgba(201,168,76,0.03)", border:"1px solid rgba(201,168,76,0.15)", borderRadius:"8px", color:"#d4c4a0", fontSize:"16px", padding:"13px 16px", outline:"none", fontFamily:"'Palatino Linotype',serif" }}
               onFocus={e=>e.target.style.borderColor="rgba(201,168,76,0.4)"} onBlur={e=>e.target.style.borderColor="rgba(201,168,76,0.15)"}
               autoFocus
@@ -1028,8 +1263,8 @@ export default function App() {
         @keyframes pulse{0%,100%{opacity:.2;transform:scale(.7)}50%{opacity:.8;transform:scale(1)}}
         @keyframes fadeSlideIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
       `}</style>
-      {screen==="language" && <LanguageScreen onSelect={handleSelectLang}/>}
-      {screen==="setup"    && <SetupScreen onStart={handleStartDebate} lang={lang}/>}
+      {screen==="language" && <LanguageScreen onSelect={handleSelectLang} lang={lang}/>}
+      {screen==="setup"    && <SetupScreen onStart={handleStartDebate} lang={lang} onChangeLang={()=>setScreen("language")}/>}
       {screen==="debate"   && <DebateScreen characters={characters} onClose={handleCloseDebate} lang={lang}/>}
     </div>
   );
