@@ -514,7 +514,7 @@ const LanguageScreen = ({ onSelect }) => {
 // ══════════════════════════════════════════════════════════════
 // SETUP SCREEN — Mythological oracle opening
 // ══════════════════════════════════════════════════════════════
-const SetupScreen = ({ onStart, lang }) => {
+const SetupScreen = ({ onStart, lang, onChangeLang }) => {
   const t = UI[lang] || UI.en;
   const [stage, setStage] = useState("intro");   // intro | assembling | ready
   const [selected, setSelected] = useState([]);
@@ -618,6 +618,12 @@ const SetupScreen = ({ onStart, lang }) => {
           <h1 style={{ fontSize:"clamp(20px,4vw,28px)", fontWeight:400, letterSpacing:"0.2em", color:"#c9a84c", marginBottom:"6px", textTransform:"uppercase" }}>The Council</h1>
           <div style={{ width:"40px", height:"1px", background:"rgba(201,168,76,0.3)", margin:"10px auto 14px" }}/>
           <p style={{ color:"rgba(201,168,76,0.3)", fontSize:"12px", letterSpacing:"0.1em", fontStyle:"italic" }}>Assemble your council. You control who speaks.</p>
+          <button onClick={onChangeLang} style={{ marginTop:"12px", background:"transparent", border:"1px solid rgba(201,168,76,0.15)", borderRadius:"16px", padding:"4px 14px", color:"rgba(201,168,76,0.4)", fontSize:"11px", cursor:"pointer", letterSpacing:"0.08em", fontFamily:"'Palatino Linotype',serif" }}
+            onMouseEnter={e=>{ e.currentTarget.style.borderColor="rgba(201,168,76,0.4)"; e.currentTarget.style.color="rgba(201,168,76,0.7)"; }}
+            onMouseLeave={e=>{ e.currentTarget.style.borderColor="rgba(201,168,76,0.15)"; e.currentTarget.style.color="rgba(201,168,76,0.4)"; }}
+          >
+            {LANGUAGES.find(l=>l.code===lang)?.flag} {LANGUAGES.find(l=>l.code===lang)?.label} ↩
+          </button>
         </div>
 
         {/* Dan card */}
@@ -705,6 +711,7 @@ const DebateScreen = ({ characters, onClose, lang }) => {
   const [remainingPickers, setRemainingPickers] = useState([]);
   const [pitches, setPitches] = useState([]);
   const [entered, setEntered] = useState(false);
+  const [pendingVerdictHistory, setPendingVerdictHistory] = useState(null);
   const bottomRef = useRef(null);
 
   useEffect(() => { setTimeout(() => setEntered(true), 50); }, []);
@@ -841,8 +848,14 @@ const DebateScreen = ({ characters, onClose, lang }) => {
         ...(councilResponseTurn ? [{ type:"agent", ...councilResponseTurn, slideDir:"right", respondingToDan:true }] : []),
       ]);
 
-      if(!data.needs_more_round) await runVerdict(hist);
-      else setPhase("checkin");
+      if(!data.needs_more_round) {
+        // Store the history for verdict and mark checkin as going-to-verdict
+        // Verdict will be fetched after user clicks "Dan speaks" to reveal the summary
+        setPendingVerdictHistory(hist);
+        setPhase("checkin");
+      } else {
+        setPhase("checkin");
+      }
     } catch(e) { console.error(e); }
   };
 
@@ -869,7 +882,7 @@ const DebateScreen = ({ characters, onClose, lang }) => {
     const q = followUpQ.trim();
     setFollowUpQ(""); setQuestion(q);
     setHistory([]); setContext({}); setCheckinAnswer(null);
-    setVerdictRevealed(false); setCurrentRound(1); setPitches([]); setRemainingPickers([]);
+    setVerdictRevealed(false); setCurrentRound(1); setPitches([]); setRemainingPickers([]); setPendingVerdictHistory(null);
     setPhase("loading");
     setFeed([{ type:"question_bubble", text:q }]);
     setLoading(true); setLoadingLabel("…"); setLoadingSpeaker(DAN); setActiveSpeaker("dan");
@@ -926,7 +939,14 @@ const DebateScreen = ({ characters, onClose, lang }) => {
               <DanBlock key={i} summary={item.summary} question={item.question} councilQuestion={item.councilQuestion}
                 needsMoreRound={item.needsMoreRound} answered={item.answered} userAnswer={item.userAnswer}
                 revealed={item.revealed} t={t}
-                onReveal={()=>setFeed(p=>p.map((f,j)=>j===i?{...f,revealed:true}:f))}
+                onReveal={()=>{
+                  setFeed(p=>p.map((f,j)=>j===i?{...f,revealed:true}:f));
+                  if(pendingVerdictHistory) {
+                    const h = pendingVerdictHistory;
+                    setPendingVerdictHistory(null);
+                    runVerdict(h);
+                  }
+                }}
                 onAnswer={ans=>handleCheckinAnswer(ans,item.roundNum)}
               />
             );
