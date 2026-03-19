@@ -994,14 +994,23 @@ const DebateScreen = ({ characters, onClose, lang }) => {
   useEffect(() => { setTimeout(() => setEntered(true), 50); }, []);
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior:"smooth" }); }, [feed, loading, pitches]);
 
-  const post = async (path, body) => {
-    const res = await fetch(`${API_URL}${path}`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body) });
-    if(!res.ok) {
-      let detail = "";
-      try { const err = await res.json(); detail = JSON.stringify(err); } catch(_){}
-      throw new Error(`${path} failed: ${res.status} ${detail}`);
+  const post = async (path, body, timeoutMs=55000) => {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const res = await fetch(`${API_URL}${path}`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body), signal:controller.signal });
+      clearTimeout(timer);
+      if(!res.ok) {
+        let detail = "";
+        try { const err = await res.json(); detail = JSON.stringify(err); } catch(_){}
+        throw new Error(`${path} failed: ${res.status} ${detail}`);
+      }
+      return res.json();
+    } catch(e) {
+      clearTimeout(timer);
+      if(e.name === "AbortError") throw new Error(`${path} timed out after ${timeoutMs/1000}s`);
+      throw e;
     }
-    return res.json();
   };
 
   const charConfigs = characters.map(c => ({ id:c.id, name:c.name, title:c.title, emoji:c.emoji, color:c.color, prompt:"" }));
@@ -1060,12 +1069,19 @@ const DebateScreen = ({ characters, onClose, lang }) => {
     setLoading(true); setLoadingLabel(t.councilPrepares); setLoadingSpeaker(null); setActiveSpeaker(null);
 
     const fetchedPitches = [];
-    for(const c of characters) {
-      try {
-        const data = await post("/debate/single_sentence", { question, character_id:c.id, characters:charConfigs, round:roundNum, context:ctx, history:hist, language:lang });
-        fetchedPitches.push({ character_id:c.id, pitch:data.pitch, char:c });
-      } catch(e) { console.error('single_sentence error:', e.message); setApiError(e.message); }
-    }
+    // Fetch all pitches in parallel for speed, with individual error handling
+    const pitchResults = await Promise.allSettled(
+      characters.map(c => post("/debate/single_sentence", { question, character_id:c.id, characters:charConfigs, round:roundNum, context:ctx, history:hist, language:lang }))
+    );
+    pitchResults.forEach((result, i) => {
+      const c = characters[i];
+      if(result.status === "fulfilled" && result.value?.pitch) {
+        fetchedPitches.push({ character_id:c.id, pitch:result.value.pitch, char:c });
+      } else {
+        console.error("pitch failed for", c.name, result.reason?.message);
+        fetchedPitches.push({ character_id:c.id, pitch:"...", char:c });
+      }
+    });
     // Fallback: if all API calls failed, use placeholder pitches so UI doesn't freeze
     if(fetchedPitches.length === 0) {
       characters.forEach(c => fetchedPitches.push({ character_id:c.id, pitch:"...", char:c }));

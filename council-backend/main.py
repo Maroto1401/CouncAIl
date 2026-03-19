@@ -243,26 +243,24 @@ async def single_sentence_pitch(request: Request, req: SingleSentenceRequest):
     prior_transcript = build_transcript(req.history)
 
     instruction = (
-        f"DEBATE TOPIC: \"{req.question}\"\n"
-        f"{'USER CONTEXT: ' + user_context if user_context else ''}\n"
+        f"QUESTION: \"{req.question}\"\n"
+        f"{'CONTEXT: ' + user_context if user_context else ''}\n"
         f"{'DEBATE SO FAR:\n' + prior_transcript if prior_transcript else ''}\n\n"
-        f"{language_instruction(req.language)}\n\n"
-        f"You are about to speak in Round {req.round}. Write ONE sentence — your sharpest, most specific claim through your lens ({char_data['lens']}). "
-        f"Make it a real argument, not a description. Make it provocative enough that the user wants to hear you expand on it. "
-        f"Speak in your character's voice. No preamble."
+        f"Write your single sharpest claim on this topic in ONE sentence. "
+        f"No introduction, no 'I think', no preamble — just the claim itself. "
+        f"Make it provocative and specific enough that the person will want to hear you expand on it."
     )
 
     messages = [
         {"role": "system", "content": f"{language_instruction(req.language)}\n\n{char_data['prompt']}"},
         {"role": "user", "content": instruction}
     ]
-    raw = await call_groq(messages, max_tokens=150)
-    # Extract first complete sentence safely
-    raw = raw.strip()
-    # Split on sentence-ending punctuation
+    raw = await call_groq(messages, max_tokens=120)
     import re as _re
-    parts = _re.split(r'(?<=[.!?])\s', raw)
-    sentence = parts[0].strip() if parts and parts[0].strip() else raw[:150].strip()
+    raw = raw.strip()
+    # Split into sentences and take the longest one (avoids short preambles)
+    parts = [p.strip() for p in _re.split(r'(?<=[.!?])\s+', raw) if p.strip() and len(p.strip()) > 10]
+    sentence = max(parts, key=len) if parts else raw[:120].strip()
     if not sentence.endswith(('.','!','?')):
         sentence += '.'
     return {"character_id": req.character_id, "pitch": sentence}
@@ -343,7 +341,10 @@ async def single_turn(request: Request, req: SingleTurnRequest):
         {"role": "system", "content": f"{language_instruction(req.language)}\n\n{char_data['prompt']}"},
         {"role": "user", "content": instruction}
     ]
-    raw = await call_groq(messages, max_tokens=600)
+    try:
+        raw = await call_groq(messages, max_tokens=600)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"single_turn error for {req.character_id}: {str(e)}")
 
     change_signals = ["changed my mind", "i now agree", "i concede", "you've convinced me", "i was wrong", "i update my", "fair point, i"]
     position_updated = any(s in raw.lower() for s in change_signals)
@@ -373,24 +374,20 @@ async def debate_checkin(request: Request, req: CheckinRequest):
     messages = [
         {"role": "system", "content": MODERATOR_PROMPT},
         {"role": "user", "content": (
-            f"Topic: \"{req.question}\"\n"
-            f"{'What the user told us before the debate: ' + user_context if user_context else ''}\n"
-            f"Council members: {character_names}\n\n"
             f"{language_instruction(req.language)}\n\n"
-            f"FULL debate transcript so far (read carefully before forming your summary and question):\n{transcript}\n\n"
-            f"PHASE 1 — After Round {req.round} (max 3 rounds total).\n"
-            f"Your summary must reference what debaters actually argued this round — specific points, not themes. "
-            f"{'IMPORTANT: Round 3 — set needs_more_round to false, no question.' if req.round >= 3 else 'Only request another round if a genuinely new tension exists that would change the verdict.'} "
-            f"If you ask the user a follow-up, it must be instant to answer (factual or feeling) and specific to their situation — not analytical. "
-            f"You may optionally direct a sharp question TO a specific council member if it would expose a gap in their argument — use council_question. "
-            f"If going to verdict: omit the question field entirely. "
-            f"{language_instruction(req.language)}\n"
-            f"If needs_more_round is false and you have no question for the user, set user_prompt to a short invitation for them to add anything (e.g. '¿Hay algo que quieras añadir antes del veredicto?'). "
-            f"Respond ONLY with valid JSON: {{\"phase\": \"checkin\", \"summary\": [\"b1\",\"b2\"], "
-            f"\"question\": \"only if needs_more_round true\", "
-            f"\"user_prompt\": \"short invitation to add something, only if needs_more_round false and going to verdict\", "
-            f"\"council_question\": {{\"to\": \"MemberName\", \"question\": \"sharp question\"}} or null, "
-            f"\"needs_more_round\": true/false}}"
+            f"TOPIC: \"{req.question}\"\n"
+            f"{'CONTEXT: ' + user_context if user_context else ''}\n"
+            f"DEBATE TRANSCRIPT:\n{transcript}\n\n"
+            f"After round {req.round} of max 3. Summarize and decide next step.\n\n"
+            f"Respond ONLY with this exact JSON structure:\n"
+            f"{{\n"
+            f"  \"summary\": [\"one sharp sentence naming debater + their position\", \"same for second debater\"],\n"
+            f"  \"needs_more_round\": {'false' if req.round >= 3 else 'true or false'},\n"
+            f"  \"question\": \"only include this field if needs_more_round is true — one instant-answer question for the person\",\n"
+            f"  \"user_prompt\": \"only include if needs_more_round is false — short invitation like ¿Algo que añadir antes del veredicto?\",\n"
+            f"  \"council_question\": null\n"
+            f"}}\n\n"
+            f"Rules: summary bullets max 12 words each. needs_more_round=true only if a genuinely new unresolved tension exists."
         )}
     ]
     raw = await call_groq(messages, max_tokens=400)
@@ -400,8 +397,13 @@ async def debate_checkin(request: Request, req: CheckinRequest):
     if req.round >= 3:
         needs_more = False
 
+    summary = result.get("summary", [])
+    # Ensure summary always has at least something
+    if not summary:
+        summary = ["El debate ha concluido."]
+
     return {
-        "summary": result.get("summary", []),
+        "summary": summary,
         "question": result.get("question") if needs_more else None,
         "user_prompt": result.get("user_prompt") if not needs_more else None,
         "council_question": result.get("council_question"),
