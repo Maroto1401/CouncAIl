@@ -33,7 +33,7 @@ async def preflight(rest_of_path: str):
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "your_groq_api_key_here")
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
-MODEL = "openai/gpt-oss-120b"
+MODEL = "llama-3.3-70b-versatile"
 
 
 # ── Models ────────────────────────────────────────────────────
@@ -106,9 +106,9 @@ def sanitize(text: str) -> str:
             raise HTTPException(status_code=400, detail="Invalid input")
     return text.strip()
 
-async def call_groq(messages: list, max_tokens: int = 350) -> str:
+async def call_groq(messages: list, max_tokens: int = 350, temperature: float = 0.85) -> str:
     headers = {"Authorization": f"Bearer {GROQ_API_KEY}", "Content-Type": "application/json"}
-    payload = {"model": MODEL, "messages": messages, "max_tokens": max_tokens, "temperature": 0.85, "stream": False}
+    payload = {"model": MODEL, "messages": messages, "max_tokens": max_tokens, "temperature": temperature, "stream": False}
     async with httpx.AsyncClient(timeout=45) as client:
         response = await client.post(GROQ_URL, headers=headers, json=payload)
         data = response.json()
@@ -117,23 +117,41 @@ async def call_groq(messages: list, max_tokens: int = 350) -> str:
         return data["choices"][0]["message"]["content"].strip()
 
 def parse_json_response(raw: str) -> dict:
+    import re as _re
     cleaned = raw.strip()
+    # Strip markdown code blocks
     if "```" in cleaned:
-        cleaned = cleaned.split("```")[1]
-        if cleaned.startswith("json"):
-            cleaned = cleaned[4:]
+        parts = cleaned.split("```")
+        for part in parts:
+            p = part.strip()
+            if p.startswith("json"):
+                p = p[4:].strip()
+            if p.startswith("{"):
+                cleaned = p
+                break
     cleaned = cleaned.strip()
+    # Try direct parse
     try:
         return json.loads(cleaned)
     except:
-        start = cleaned.find("{")
-        end = cleaned.rfind("}") + 1
-        if start >= 0 and end > start:
-            try:
-                return json.loads(cleaned[start:end])
-            except:
-                pass
-        return {}
+        pass
+    # Extract JSON object
+    start = cleaned.find("{")
+    end = cleaned.rfind("}") + 1
+    if start >= 0 and end > start:
+        candidate = cleaned[start:end]
+        try:
+            return json.loads(candidate)
+        except:
+            pass
+        # Fix trailing commas
+        try:
+            fixed = _re.sub(r',(\s*[}\]])', r'', candidate)
+            return json.loads(fixed)
+        except:
+            pass
+    return {}
+
 
 def build_transcript(history: List[Dict]) -> str:
     lines = []
@@ -199,7 +217,7 @@ async def get_context_questions(request: Request, req: ContextRequest):
             f"Respond ONLY with valid JSON: {{\"phase\": \"context\", \"questions\": [\"q1\"]}} or {{\"phase\": \"context\", \"questions\": []}}"
         )}
     ]
-    raw = await call_groq(messages, max_tokens=200)
+    raw = await call_groq(messages, max_tokens=200, temperature=0.3)
     result = parse_json_response(raw)
     return {"questions": result.get("questions", [])}
 
@@ -390,8 +408,11 @@ async def debate_checkin(request: Request, req: CheckinRequest):
             f"Rules: summary bullets max 12 words each. needs_more_round=true only if a genuinely new unresolved tension exists."
         )}
     ]
-    raw = await call_groq(messages, max_tokens=400)
+    raw = await call_groq(messages, max_tokens=400, temperature=0.3)
+    import logging
+    logging.warning(f"CHECKIN RAW: {raw[:500]}")
     result = parse_json_response(raw)
+    logging.warning(f"CHECKIN PARSED: {result}")
 
     needs_more = result.get("needs_more_round", False)
     if req.round >= 3:
@@ -479,7 +500,7 @@ async def debate_verdict(request: Request, req: VerdictRequest):
             f"\"for\": [\"f1\",\"f2\"], \"against\": [\"a1\",\"a2\"], \"recommendation\": \"...\"}}"
         )}
     ]
-    raw = await call_groq(messages, max_tokens=900)
+    raw = await call_groq(messages, max_tokens=900, temperature=0.3)
     result = parse_json_response(raw)
 
     return {
