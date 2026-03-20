@@ -6,9 +6,12 @@ from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 from agents import CHARACTERS, DAN, MODERATOR_PROMPT
-import httpx
+import anthropic
 import json
 import os
+import time
+import hashlib
+import re
 
 app = FastAPI()
 limiter = Limiter(key_func=get_remote_address)
@@ -31,9 +34,55 @@ async def preflight(rest_of_path: str):
         "Access-Control-Allow-Headers": "*",
     })
 
-GROQ_API_KEY = os.getenv("GROQ_API_KEY", "your_groq_api_key_here")
-GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
-MODEL = "llama-3.3-70b-versatile"
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
+MODEL = "claude-haiku-4-5"
+client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+
+# ── Hard monthly token budget (~$40 cap) ──────────────────────
+# Rough token tracking in memory (resets on server restart)
+# For production: use Redis or a DB
+_token_usage = {"input": 0, "output": 0, "reset_time": time.time()}
+MAX_INPUT_TOKENS_MONTHLY = 35_000_000   # ~$35 input budget
+MAX_OUTPUT_TOKENS_MONTHLY = 7_000_000   # ~$35 output budget
+
+def check_token_budget():
+    """Reset monthly counter and check if we're over budget."""
+    now = time.time()
+    # Reset every 30 days
+    if now - _token_usage["reset_time"] > 30 * 24 * 3600:
+        _token_usage["input"] = 0
+        _token_usage["output"] = 0
+        _token_usage["reset_time"] = now
+    if _token_usage["input"] > MAX_INPUT_TOKENS_MONTHLY:
+        raise HTTPException(status_code=503, detail="Monthly budget reached. Try again next month.")
+    if _token_usage["output"] > MAX_OUTPUT_TOKENS_MONTHLY:
+        raise HTTPException(status_code=503, detail="Monthly budget reached. Try again next month.")
+
+# ── Per-IP session rate limiting ──────────────────────────────
+_ip_sessions: Dict[str, dict] = {}
+FREE_SESSIONS_PER_DAY = 5  # generous free tier
+
+def get_ip_hash(request: Request) -> str:
+    """Hash the IP for privacy."""
+    ip = request.client.host or "unknown"
+    return hashlib.sha256(ip.encode()).hexdigest()[:16]
+
+def check_session_limit(request: Request):
+    """Allow FREE_SESSIONS_PER_DAY debate sessions per IP per day."""
+    ip_hash = get_ip_hash(request)
+    now = time.time()
+    if ip_hash not in _ip_sessions:
+        _ip_sessions[ip_hash] = {"count": 0, "reset": now + 86400}
+    session = _ip_sessions[ip_hash]
+    if now > session["reset"]:
+        session["count"] = 0
+        session["reset"] = now + 86400
+    if session["count"] >= FREE_SESSIONS_PER_DAY:
+        raise HTTPException(
+            status_code=429,
+            detail=f"Daily limit reached. The council can only be consulted {FREE_SESSIONS_PER_DAY} times per day."
+        )
+    session["count"] += 1
 
 
 # ── Models ────────────────────────────────────────────────────
@@ -97,24 +146,75 @@ class VerdictRequest(BaseModel):
 
 # ── Helpers ───────────────────────────────────────────────────
 
+# Patterns that indicate prompt injection attempts
+_INJECTION_PATTERNS = [
+    r"ignore\s+(previous|all|above|prior)",
+    r"system\s*prompt",
+    r"jailbreak",
+    r"you\s+are\s+now",
+    r"disregard\s+(your|all|previous)",
+    r"new\s+instruction",
+    r"override\s+(your|all)",
+    r"forget\s+(your|all|previous)",
+    r"act\s+as\s+(if\s+you\s+are|a\s+different)",
+    r"pretend\s+(you\s+are|to\s+be)",
+    r"roleplay\s+as",
+    r"you\s+must\s+now",
+    r"your\s+(new|real)\s+(instructions?|role|purpose)",
+    r"<\s*system\s*>",
+    r"\[INST\]",
+    r"anthropic|openai|api.key|bearer\s+token",
+]
+_INJECTION_RE = re.compile("|".join(_INJECTION_PATTERNS), re.IGNORECASE)
+
 def sanitize(text: str) -> str:
+    if not text or not text.strip():
+        raise HTTPException(status_code=400, detail="Empty input")
     if len(text) > 1500:
         raise HTTPException(status_code=400, detail="Input too long")
-    banned = ["ignore previous", "ignore all", "system prompt", "jailbreak", "you are now"]
-    for phrase in banned:
-        if phrase.lower() in text.lower():
-            raise HTTPException(status_code=400, detail="Invalid input")
+    # Check for prompt injection patterns
+    if _INJECTION_RE.search(text):
+        raise HTTPException(status_code=400, detail="Invalid input")
+    # Check for suspiciously short or binary-like input
+    printable_ratio = sum(1 for c in text if c.isprintable()) / max(len(text), 1)
+    if printable_ratio < 0.8:
+        raise HTTPException(status_code=400, detail="Invalid input format")
     return text.strip()
 
-async def call_groq(messages: list, max_tokens: int = 350, temperature: float = 0.85) -> str:
-    headers = {"Authorization": f"Bearer {GROQ_API_KEY}", "Content-Type": "application/json"}
-    payload = {"model": MODEL, "messages": messages, "max_tokens": max_tokens, "temperature": temperature, "stream": False}
-    async with httpx.AsyncClient(timeout=45) as client:
-        response = await client.post(GROQ_URL, headers=headers, json=payload)
-        data = response.json()
-        if "choices" not in data:
-            raise HTTPException(status_code=500, detail=f"Groq error: {data}")
-        return data["choices"][0]["message"]["content"].strip()
+async def call_claude(messages: list, max_tokens: int = 350, temperature: float = 0.85, system: str = "") -> str:
+    """Call Claude Haiku. Tracks token usage against monthly budget."""
+    check_token_budget()
+    try:
+        kwargs = {
+            "model": MODEL,
+            "max_tokens": max_tokens,
+            "temperature": temperature,
+            "messages": messages,
+        }
+        if system:
+            kwargs["system"] = system
+        response = client.messages.create(**kwargs)
+        # Track usage
+        _token_usage["input"] += response.usage.input_tokens
+        _token_usage["output"] += response.usage.output_tokens
+        return response.content[0].text.strip()
+    except anthropic.APIError as e:
+        raise HTTPException(status_code=500, detail=f"Claude error: {str(e)}")
+
+async def call_claude_with_system(messages: list, max_tokens: int = 350, temperature: float = 0.85) -> str:
+    """Extract system message and call Claude with proper API format."""
+    system = ""
+    user_messages = []
+    for m in messages:
+        if m["role"] == "system":
+            system = m["content"]
+        else:
+            user_messages.append(m)
+    if not user_messages:
+        raise HTTPException(status_code=500, detail="No user messages")
+    return await call_claude(user_messages, max_tokens=max_tokens, temperature=temperature, system=system)
+
+
 
 def parse_json_response(raw: str) -> dict:
     import re as _re
@@ -199,6 +299,7 @@ async def get_dan():
 @app.post("/debate/context")
 @limiter.limit("30/minute")
 async def get_context_questions(request: Request, req: ContextRequest):
+    check_session_limit(request)  # Count each new debate against daily limit
     req.question = sanitize(req.question)
     character_names = ", ".join([f"{c.emoji} {c.name} the {c.title}" for c in req.characters])
     messages = [
@@ -217,7 +318,7 @@ async def get_context_questions(request: Request, req: ContextRequest):
             f"Respond ONLY with valid JSON: {{\"phase\": \"context\", \"questions\": [\"q1\"]}} or {{\"phase\": \"context\", \"questions\": []}}"
         )}
     ]
-    raw = await call_groq(messages, max_tokens=200, temperature=0.3)
+    raw = await call_claude_with_system(messages, max_tokens=200, temperature=0.3)
     result = parse_json_response(raw)
     return {"questions": result.get("questions", [])}
 
@@ -243,7 +344,7 @@ async def debate_opening(request: Request, req: OpeningRequest):
             f"Respond with plain text only, no JSON. 2-3 sentences maximum."
         )}
     ]
-    raw = await call_groq(messages, max_tokens=180)
+    raw = await call_claude_with_system(messages, max_tokens=180)
     return {"opening": raw}
 
 
@@ -273,7 +374,7 @@ async def single_sentence_pitch(request: Request, req: SingleSentenceRequest):
         {"role": "system", "content": f"{language_instruction(req.language)}\n\n{char_data['prompt']}"},
         {"role": "user", "content": instruction}
     ]
-    raw = await call_groq(messages, max_tokens=120)
+    raw = await call_claude_with_system(messages, max_tokens=120)
     import re as _re
     raw = raw.strip()
     # Split into sentences and take the longest one (avoids short preambles)
@@ -360,7 +461,7 @@ async def single_turn(request: Request, req: SingleTurnRequest):
         {"role": "user", "content": instruction}
     ]
     try:
-        raw = await call_groq(messages, max_tokens=600)
+        raw = await call_claude_with_system(messages, max_tokens=600)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"single_turn error for {req.character_id}: {str(e)}")
 
@@ -414,7 +515,7 @@ async def debate_checkin(request: Request, req: CheckinRequest):
             f"Rules: summary bullets max 12 words each. needs_more_round=true only if a genuinely new unresolved tension exists."
         )}
     ]
-    raw = await call_groq(messages, max_tokens=400, temperature=0.3)
+    raw = await call_claude_with_system(messages, max_tokens=400, temperature=0.3)
     import logging
     logging.warning(f"CHECKIN RAW: {raw[:500]}")
     result = parse_json_response(raw)
@@ -466,7 +567,7 @@ async def council_response(request: Request, req: SingleTurnRequest):
         {"role": "system", "content": f"{language_instruction(req.language)}\n\n{char_data['prompt']}"},
         {"role": "user", "content": instruction}
     ]
-    raw = await call_groq(messages, max_tokens=250)
+    raw = await call_claude_with_system(messages, max_tokens=250)
 
     return {
         "turn": {
@@ -506,7 +607,7 @@ async def debate_verdict(request: Request, req: VerdictRequest):
             f"\"for\": [\"f1\",\"f2\"], \"against\": [\"a1\",\"a2\"], \"recommendation\": \"...\"}}"
         )}
     ]
-    raw = await call_groq(messages, max_tokens=900, temperature=0.3)
+    raw = await call_claude_with_system(messages, max_tokens=900, temperature=0.3)
     result = parse_json_response(raw)
 
     return {
@@ -518,6 +619,18 @@ async def debate_verdict(request: Request, req: VerdictRequest):
         "recommendation": result.get("recommendation", ""),
     }
 
+
+
+@app.get("/budget")
+async def budget_status():
+    """Internal budget monitoring."""
+    return {
+        "input_tokens_used": _token_usage["input"],
+        "output_tokens_used": _token_usage["output"],
+        "input_budget_pct": round(_token_usage["input"] / MAX_INPUT_TOKENS_MONTHLY * 100, 1),
+        "output_budget_pct": round(_token_usage["output"] / MAX_OUTPUT_TOKENS_MONTHLY * 100, 1),
+        "reset_in_days": round(((_token_usage["reset_time"] + 30*24*3600) - time.time()) / 86400, 1),
+    }
 
 @app.get("/health")
 async def health():
