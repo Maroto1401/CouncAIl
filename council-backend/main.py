@@ -364,7 +364,13 @@ async def single_turn(request: Request, req: SingleTurnRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"single_turn error for {req.character_id}: {str(e)}")
 
-    change_signals = ["changed my mind", "i now agree", "i concede", "you've convinced me", "i was wrong", "i update my", "fair point, i"]
+    # For later speakers, prepend the forced opener if not already there
+    if round_turns and not raw.startswith(speakers_this_round[-1]):
+        react_opener_check = speakers_this_round[-1] + ","
+        if not raw.startswith(react_opener_check):
+            raw = react_opener_check + " " + raw
+
+    change_signals = ["changed my mind", "i now agree", "i concede", "you've convinced me", "i was wrong", "i update my", "fair point, i", "tienes razón", "concedo", "me ha convencido"]
     position_updated = any(s in raw.lower() for s in change_signals)
 
     turn = {

@@ -596,9 +596,10 @@ const AgentTurn = ({ turn, slideDir="left", respondingToDan=false, t=UI.en }) =>
 };
 
 // ── Speaker picker ────────────────────────────────────────────
-const SpeakerPicker = ({ pitches, onChoose, loading, t=UI.en }) => {
+const SpeakerPicker = ({ pitches, onChoose, loading, t=UI.en, onRetry }) => {
   const [vis, setVis] = useState(false);
   useEffect(() => { const timer = setTimeout(() => setVis(true), 80); return () => clearTimeout(timer); }, []);
+  const allFailed = pitches.every(p => p.pitch === "...");
 
   return (
     <div style={{ opacity:vis?1:0, transform:vis?"translateY(0)":"translateY(10px)", transition:"all 0.35s ease", margin:"18px 0" }}>
@@ -1243,7 +1244,8 @@ const DebateScreen = ({ characters, onClose, lang }) => {
             if(item.type==="picker") {
               const isLatest = feed.filter(f=>f.type==="picker").at(-1)===item;
               if(!isLatest||phase!=="picking") return null;
-              return <SpeakerPicker key={i} pitches={item.pitches} onChoose={handlePickSpeaker} loading={loading} t={t}/>;
+              // Show picker even while loading so user can see options, just disable interaction
+              return <SpeakerPicker key={i} pitches={item.pitches.filter(p=>p.pitch!=="..."||true)} onChoose={handlePickSpeaker} loading={loading} t={t}/>;
             }
             if(item.type==="dan_checkin") return (
               <DanBlock key={i} summary={item.summary} question={item.question} councilQuestion={item.councilQuestion}
