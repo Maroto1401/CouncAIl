@@ -752,12 +752,12 @@ const QuestionBubble = ({ text }) => (
 // Portrait images — replace these URLs with real character art
 // Recommended: generate with Midjourney using prompts below each character
 const PORTRAIT_URLS = {
-  dan:       "/characters/dan.png",
-  surfer:    "/characters/maui.png",
-  inspector: "/characters/lamia.png",
-  artist:    "/characters/severn.png",
-  monk:      "/characters/hoyt.png",
-  general:   "/characters/morpurgo.png",
+  dan:       "/characters/Dan.png",
+  surfer:    "/characters/Maui.png",
+  inspector: "/characters/Lamia.png",
+  artist:    "/characters/Severn.png",
+  monk:      "/characters/Hoyt.png",
+  general:   "/characters/Morpurgo.png",
 };
 
 const COUNCIL_DATA = [
