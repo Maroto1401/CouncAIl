@@ -648,10 +648,29 @@ async def debate_checkin(request: Request, req: CheckinRequest):
         }
         summary = [fallback_msgs.get(req.language, "The debate has concluded.")]
 
+    # Always provide a user_prompt when going to verdict, with language-aware fallback
+    user_prompt = None
+    if not needs_more:
+        user_prompt = result.get("user_prompt")
+        if not user_prompt:
+            anything_to_add = {
+                "en": "Anything you want to add before I deliver my verdict?",
+                "es": "¿Algo que quieras añadir antes de que dicte mi veredicto?",
+                "fr": "Quelque chose à ajouter avant que je rende mon verdict?",
+                "de": "Möchten Sie noch etwas hinzufügen, bevor ich mein Urteil spreche?",
+                "pt": "Algo que queira adicionar antes de proferir meu veredicto?",
+                "it": "Qualcosa da aggiungere prima che emetta il mio verdetto?",
+                "nl": "Wilt u nog iets toevoegen voordat ik mijn oordeel geef?",
+                "zh": "在我宣布裁决之前，您还有什么要补充的吗？",
+                "ja": "判決を下す前に何か付け加えたいことはありますか？",
+                "ar": "هل هناك شيء تريد إضافته قبل أن أصدر حكمي؟",
+            }
+            user_prompt = anything_to_add.get(req.language, anything_to_add["en"])
+
     return {
         "summary": summary,
         "question": result.get("question") if needs_more else None,
-        "user_prompt": result.get("user_prompt") if not needs_more else None,
+        "user_prompt": user_prompt,
         "council_question": result.get("council_question"),
         "needs_more_round": needs_more,
     }

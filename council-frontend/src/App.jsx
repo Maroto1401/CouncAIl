@@ -28,7 +28,7 @@ const UI = {
     whoSpeaks:"Who shall speak?", danSpeaks:"Dan speaks", hearVerdict:"Hear the verdict",
     theCouncilSpoke:"The council has spoken", danReady:"Dan is ready to deliver his judgment.",
     anotherQuestion:"Pose another question to the council, or take your leave.",
-    followUpPlaceholder:"Another question…", leave:"Leave", respondingToDan:"responding to Dan",
+    followUpPlaceholder:"Another question…", leave:"Leave", leaveCouncil:"Leave the Chamber", sessionComplete:"The council has spoken. Return when you have another question.", respondingToDan:"responding to Dan",
     stanceShifted:"stance shifted", collapse:"collapse", expand:"expand",
     whatEstablished:"What was established", for:"For", against:"Against", theJudgment:"The Judgment",
     chooseLanguage:"Choose your language", danJudge:"Dan — The Judge", dansJudgment:"Dan's Judgment",
@@ -45,7 +45,7 @@ const UI = {
     whoSpeaks:"¿Quién hablará?", danSpeaks:"Dan habla", hearVerdict:"Escuchar el veredicto",
     theCouncilSpoke:"El consejo ha deliberado", danReady:"Dan está listo para dictar su juicio.",
     anotherQuestion:"Plantea otra pregunta al consejo, o retírate.",
-    followUpPlaceholder:"Otra pregunta…", leave:"Salir", respondingToDan:"respondiendo a Dan",
+    followUpPlaceholder:"Otra pregunta…", leave:"Salir", leaveCouncil:"Abandonar la Cámara", sessionComplete:"El consejo ha hablado. Regresa cuando tengas otra pregunta.", respondingToDan:"respondiendo a Dan",
     stanceShifted:"posición cambiada", collapse:"colapsar", expand:"expandir",
     whatEstablished:"Lo que se estableció", for:"A favor", against:"En contra", theJudgment:"El Juicio",
     chooseLanguage:"Elige tu idioma", danJudge:"Dan — El Juez", dansJudgment:"El Juicio de Dan",
@@ -62,7 +62,7 @@ const UI = {
     whoSpeaks:"Qui parlera?", danSpeaks:"Dan parle", hearVerdict:"Entendre le verdict",
     theCouncilSpoke:"Le conseil a délibéré", danReady:"Dan est prêt à rendre son jugement.",
     anotherQuestion:"Posez une autre question au conseil, ou prenez congé.",
-    followUpPlaceholder:"Une autre question…", leave:"Partir", respondingToDan:"répondant à Dan",
+    followUpPlaceholder:"Une autre question…", leave:"Partir", leaveCouncil:"Quitter la Chambre", sessionComplete:"Le conseil a parlé. Revenez quand vous aurez une autre question.", respondingToDan:"répondant à Dan",
     stanceShifted:"position changée", collapse:"réduire", expand:"développer",
     whatEstablished:"Ce qui a été établi", for:"Pour", against:"Contre", theJudgment:"Le Jugement",
     chooseLanguage:"Choisissez votre langue", danJudge:"Dan — Le Juge", dansJudgment:"Le Jugement de Dan",
@@ -79,7 +79,7 @@ const UI = {
     whoSpeaks:"Wer wird sprechen?", danSpeaks:"Dan spricht", hearVerdict:"Das Urteil hören",
     theCouncilSpoke:"Der Rat hat gesprochen", danReady:"Dan ist bereit, sein Urteil zu sprechen.",
     anotherQuestion:"Stellen Sie eine weitere Frage an den Rat, oder nehmen Sie Abschied.",
-    followUpPlaceholder:"Eine weitere Frage…", leave:"Verlassen", respondingToDan:"antwortet Dan",
+    followUpPlaceholder:"Eine weitere Frage…", leave:"Verlassen", leaveCouncil:"Die Kammer verlassen", sessionComplete:"Der Rat hat gesprochen. Kehren Sie zurück, wenn Sie eine weitere Frage haben.", respondingToDan:"antwortet Dan",
     stanceShifted:"Haltung geändert", collapse:"einklappen", expand:"ausklappen",
     whatEstablished:"Was festgestellt wurde", for:"Dafür", against:"Dagegen", theJudgment:"Das Urteil",
     chooseLanguage:"Sprache wählen", danJudge:"Dan — Der Richter", dansJudgment:"Dans Urteil",
@@ -96,7 +96,7 @@ const UI = {
     whoSpeaks:"Quem falará?", danSpeaks:"Dan fala", hearVerdict:"Ouvir o veredicto",
     theCouncilSpoke:"O conselho deliberou", danReady:"Dan está pronto para proferir o seu julgamento.",
     anotherQuestion:"Faça outra pergunta ao conselho, ou despeça-se.",
-    followUpPlaceholder:"Outra pergunta…", leave:"Sair", respondingToDan:"respondendo a Dan",
+    followUpPlaceholder:"Outra pergunta…", leave:"Sair", leaveCouncil:"Deixar a Câmara", sessionComplete:"O conselho falou. Volte quando tiver outra pergunta.", respondingToDan:"respondendo a Dan",
     stanceShifted:"posição alterada", collapse:"recolher", expand:"expandir",
     whatEstablished:"O que foi estabelecido", for:"A favor", against:"Contra", theJudgment:"O Julgamento",
     chooseLanguage:"Escolha o idioma", danJudge:"Dan — O Juiz", dansJudgment:"O Julgamento de Dan",
@@ -113,7 +113,7 @@ const UI = {
     whoSpeaks:"Chi parlerà?", danSpeaks:"Dan parla", hearVerdict:"Ascolta il verdetto",
     theCouncilSpoke:"Il consiglio ha deliberato", danReady:"Dan è pronto a pronunciare il suo giudizio.",
     anotherQuestion:"Poni un'altra domanda al consiglio, o prendi commiato.",
-    followUpPlaceholder:"Un'altra domanda…", leave:"Uscire", respondingToDan:"risponde a Dan",
+    followUpPlaceholder:"Un'altra domanda…", leave:"Uscire", leaveCouncil:"Lasciare la Camera", sessionComplete:"Il consiglio ha parlato. Torna quando avrai un'altra domanda.", respondingToDan:"risponde a Dan",
     stanceShifted:"posizione cambiata", collapse:"comprimi", expand:"espandi",
     whatEstablished:"Ciò che è stato stabilito", for:"A favore", against:"Contro", theJudgment:"Il Giudizio",
     chooseLanguage:"Scegli la lingua", danJudge:"Dan — Il Giudice", dansJudgment:"Il Giudizio di Dan",
@@ -130,7 +130,7 @@ const UI = {
     whoSpeaks:"Wie zal spreken?", danSpeaks:"Dan spreekt", hearVerdict:"Het oordeel horen",
     theCouncilSpoke:"De raad heeft gesproken", danReady:"Dan is klaar om zijn oordeel uit te spreken.",
     anotherQuestion:"Stel de raad nog een vraag, of neem afscheid.",
-    followUpPlaceholder:"Nog een vraag…", leave:"Vertrekken", respondingToDan:"antwoord aan Dan",
+    followUpPlaceholder:"Nog een vraag…", leave:"Vertrekken", leaveCouncil:"De Kamer verlaten", sessionComplete:"De raad heeft gesproken. Kom terug wanneer u een andere vraag heeft.", respondingToDan:"antwoord aan Dan",
     stanceShifted:"standpunt gewijzigd", collapse:"inklappen", expand:"uitklappen",
     whatEstablished:"Wat is vastgesteld", for:"Voor", against:"Tegen", theJudgment:"Het Oordeel",
     chooseLanguage:"Kies taal", danJudge:"Dan — De Rechter", dansJudgment:"Dans Oordeel",
@@ -147,7 +147,7 @@ const UI = {
     whoSpeaks:"谁来发言？", danSpeaks:"丹发言", hearVerdict:"听取裁决",
     theCouncilSpoke:"议会已经审议", danReady:"丹已准备好宣布他的判决。",
     anotherQuestion:"向议会再提一个问题，或告辞。",
-    followUpPlaceholder:"另一个问题…", leave:"离开", respondingToDan:"回应丹",
+    followUpPlaceholder:"另一个问题…", leave:"离开", leaveCouncil:"离开议事厅", sessionComplete:"议会已经发言。有其他问题时请回来。", respondingToDan:"回应丹",
     stanceShifted:"立场转变", collapse:"收起", expand:"展开",
     whatEstablished:"已确立的内容", for:"支持", against:"反对", theJudgment:"判决",
     chooseLanguage:"选择语言", danJudge:"丹 — 法官", dansJudgment:"丹的判决",
@@ -164,7 +164,7 @@ const UI = {
     whoSpeaks:"誰が話しますか？", danSpeaks:"ダンが話す", hearVerdict:"判決を聞く",
     theCouncilSpoke:"議会が審議しました", danReady:"ダンは判決を下す準備ができています。",
     anotherQuestion:"議会にもう一つ質問するか、おいとまください。",
-    followUpPlaceholder:"もう一つの質問…", leave:"退出", respondingToDan:"ダンへの返答",
+    followUpPlaceholder:"もう一つの質問…", leave:"退出", leaveCouncil:"議場を去る", sessionComplete:"評議会は語りました。別の質問があるときに戻ってください。", respondingToDan:"ダンへの返答",
     stanceShifted:"立場が変わった", collapse:"折りたたむ", expand:"展開する",
     whatEstablished:"確立されたこと", for:"賛成", against:"反対", theJudgment:"判決",
     chooseLanguage:"言語を選択", danJudge:"ダン — 裁判官", dansJudgment:"ダンの判決",
@@ -181,7 +181,7 @@ const UI = {
     whoSpeaks:"من سيتكلم؟", danSpeaks:"دان يتكلم", hearVerdict:"استمع إلى الحكم",
     theCouncilSpoke:"تداول المجلس", danReady:"دان مستعد لإصدار حكمه.",
     anotherQuestion:"اطرح سؤالاً آخر على المجلس، أو انصرف.",
-    followUpPlaceholder:"سؤال آخر…", leave:"المغادرة", respondingToDan:"رداً على دان",
+    followUpPlaceholder:"سؤال آخر…", leave:"المغادرة", leaveCouncil:"مغادرة القاعة", sessionComplete:"تحدث المجلس. عد عندما يكون لديك سؤال آخر.", respondingToDan:"رداً على دان",
     stanceShifted:"تغير الموقف", collapse:"طي", expand:"توسيع",
     whatEstablished:"ما تم إثباته", for:"مع", against:"ضد", theJudgment:"الحكم",
     chooseLanguage:"اختر اللغة", danJudge:"دان — القاضي", dansJudgment:"حكم دان",
@@ -746,6 +746,383 @@ const QuestionBubble = ({ text }) => (
   </div>
 );
 
+
+// ── Landing Page ──────────────────────────────────────────────
+
+// Portrait images — replace these URLs with real character art
+// Recommended: generate with Midjourney using prompts below each character
+const PORTRAIT_URLS = {
+  dan:       "/characters/dan.png",
+  surfer:    "/characters/maui.png",
+  inspector: "/characters/lamia.png",
+  artist:    "/characters/severn.png",
+  monk:      "/characters/hoyt.png",
+  general:   "/characters/morpurgo.png",
+};
+
+const COUNCIL_DATA = [
+  { id:"dan",      name:"Dan",      title:"The Judge",     color:"#c9a84c", lens:"Judgment & Clarity",    description:"Dan has presided over ten thousand decisions. He opens the debate, interrogates the council, and delivers the final verdict. Calm. Sharp. No agenda. His only goal is your clarity.", tagline:"I have presided over ten thousand decisions. Bring me yours." },
+  { id:"surfer",    name:"Maui",     title:"The Surfer",    color:"#38bdf8", lens:"Risk & Instinct",        description:"Maui has built and lost companies, ridden waves that crushed others. He reads risk the way a surfer reads the ocean — not from charts, but from feel. He knows when to paddle hard and when to pull back.",           tagline:"The wave is forming. Will you paddle?" },
+  { id:"inspector", name:"Lamia",    title:"The Inspector", color:"#e879f9", lens:"Evidence & Detail",       description:"A decade in forensic analysis finding why decisions fail — not in theory, but in autopsy. Cold. Precise. She finds the variable everyone missed, the number nobody checked, the pattern hiding in plain sight.",      tagline:"The truth is in what no one examined." },
+  { id:"artist",    name:"Severn",   title:"The Artist",    color:"#fb923c", lens:"Creativity & Freedom",    description:"Severn walked away from two secure careers. Both times people said he was crazy. Both times he was right. He challenges the premise of every question — because the real question is almost never the one being asked.", tagline:"The question itself may be the trap." },
+  { id:"monk",      name:"Hoyt",     title:"The Monk",      color:"#4ade80", lens:"Long-term Meaning",       description:"Hoyt has watched thousands of decisions play out over decades — in real lives, with real consequences. Warm but precise. He measures everything against the 10-year arc. He illuminates where the road leads.",        tagline:"In ten years, which choice will you mourn?" },
+  { id:"general",   name:"Morpurgo", title:"The General",   color:"#facc15", lens:"Strategy & Consequences", description:"Thirty years in command where mistakes cost lives. Morpurgo sees everything as a campaign: objectives, terrain, failure modes, contingencies. Blunt. Zero tolerance for wishful thinking.",                          tagline:"Plans fail. Contingencies don't." },
+];
+
+// Particle system for atmosphere
+const Particles = () => {
+  const particles = Array.from({length:24}, (_,i) => ({
+    id:i,
+    x: Math.random()*100,
+    y: Math.random()*100,
+    size: Math.random()*2 + 0.5,
+    delay: Math.random()*8,
+    duration: Math.random()*6 + 6,
+    opacity: Math.random()*0.3 + 0.05,
+  }));
+
+  return (
+    <div style={{ position:"fixed", inset:0, pointerEvents:"none", zIndex:1, overflow:"hidden" }}>
+      <style>{`
+        @keyframes floatUp {
+          0% { transform: translateY(0px) translateX(0px); opacity: 0; }
+          10% { opacity: 1; }
+          90% { opacity: 0.5; }
+          100% { transform: translateY(-120px) translateX(${Math.random()>0.5?'':'-'}20px); opacity: 0; }
+        }
+        @keyframes shimmer {
+          0%, 100% { opacity: 0.05; transform: scaleX(1); }
+          50% { opacity: 0.15; transform: scaleX(1.05); }
+        }
+        @keyframes scanline {
+          0% { transform: translateY(-100%); }
+          100% { transform: translateY(100vh); }
+        }
+        @keyframes breathe {
+          0%, 100% { opacity: 0.03; transform: scale(1); }
+          50% { opacity: 0.07; transform: scale(1.04); }
+        }
+        @keyframes revealChar {
+          0% { opacity: 0; transform: translateY(24px) scale(0.96); filter: blur(4px); }
+          100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+        }
+        @keyframes titleReveal {
+          0% { opacity: 0; letter-spacing: 0.5em; filter: blur(8px); }
+          100% { opacity: 1; letter-spacing: 0.25em; filter: blur(0); }
+        }
+        @keyframes fadeUp {
+          0% { opacity: 0; transform: translateY(16px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes glowPulse {
+          0%, 100% { box-shadow: 0 0 20px rgba(201,168,76,0.1), inset 0 0 20px rgba(201,168,76,0.02); }
+          50% { box-shadow: 0 0 40px rgba(201,168,76,0.18), inset 0 0 30px rgba(201,168,76,0.05); }
+        }
+        @keyframes lineDraw {
+          0% { width: 0; opacity: 0; }
+          100% { width: 80px; opacity: 1; }
+        }
+        @keyframes orb {
+          0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.04; }
+          50% { transform: translate(-50%, -50%) scale(1.08); opacity: 0.08; }
+        }
+      `}</style>
+      {particles.map(p => (
+        <div key={p.id} style={{
+          position:"absolute",
+          left:`${p.x}%`, top:`${p.y}%`,
+          width:`${p.size}px`, height:`${p.size}px`,
+          background:"rgba(201,168,76,0.6)",
+          borderRadius:"50%",
+          animation:`floatUp ${p.duration}s ease-in-out ${p.delay}s infinite`,
+          opacity:p.opacity,
+        }}/>
+      ))}
+    </div>
+  );
+};
+
+const LandingPage = ({ onEnter }) => {
+  const [phase, setPhase] = useState(-1);
+  const [activeChar, setActiveChar] = useState(null);
+  const [charsRevealed, setCharsRevealed] = useState(false);
+
+  useEffect(() => {
+    // Cinematic sequence
+    const t0 = setTimeout(() => setPhase(0), 100);   // particles + glow
+    const t1 = setTimeout(() => setPhase(1), 700);   // seal
+    const t2 = setTimeout(() => setPhase(2), 1800);  // title
+    const t3 = setTimeout(() => setPhase(3), 3000);  // divider + tagline
+    const t4 = setTimeout(() => setPhase(4), 4200);  // "The Council"
+    const t5 = setTimeout(() => { setPhase(5); setCharsRevealed(true); }, 5000); // characters
+    const t6 = setTimeout(() => setPhase(6), 5000 + COUNCIL_DATA.length * 180 + 600); // CTA
+    return () => [t0,t1,t2,t3,t4,t5,t6].forEach(clearTimeout);
+  }, []);
+
+  const active = activeChar !== null ? COUNCIL_DATA[activeChar] : null;
+
+  return (
+    <div style={{
+      minHeight:"100vh", background:"#020200",
+      fontFamily:"'Palatino Linotype','Palatino','Book Antiqua',serif",
+      position:"relative", overflow:"hidden",
+      display:"flex", flexDirection:"column", alignItems:"center",
+    }}>
+
+      {/* ── Atmosphere ── */}
+      <Particles />
+
+      {/* Deep vignette */}
+      <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse at 50% 40%, transparent 20%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0.85) 100%)", pointerEvents:"none", zIndex:2 }}/>
+
+      {/* Breathing orb */}
+      <div style={{ position:"fixed", top:"38%", left:"50%", width:"min(800px,100vw)", height:"min(800px,100vw)", pointerEvents:"none", zIndex:1, animation:"orb 8s ease-in-out infinite", background:"radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 60%)", transform:"translate(-50%,-50%)" }}/>
+
+      {/* Scanline effect — very subtle */}
+      <div style={{ position:"fixed", inset:0, pointerEvents:"none", zIndex:2, background:"repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.015) 2px, rgba(0,0,0,0.015) 4px)" }}/>
+
+      {/* Horizontal accent lines */}
+      <div style={{ position:"fixed", top:"12%", left:0, right:0, height:"1px", background:"linear-gradient(to right,transparent 0%,rgba(201,168,76,0.08) 30%,rgba(201,168,76,0.08) 70%,transparent 100%)", pointerEvents:"none", zIndex:3, opacity:phase>=2?1:0, transition:"opacity 2s ease" }}/>
+      <div style={{ position:"fixed", bottom:"8%", left:0, right:0, height:"1px", background:"linear-gradient(to right,transparent 0%,rgba(201,168,76,0.08) 30%,rgba(201,168,76,0.08) 70%,transparent 100%)", pointerEvents:"none", zIndex:3, opacity:phase>=2?1:0, transition:"opacity 2s ease" }}/>
+
+      {/* ── Content ── */}
+      <div style={{ position:"relative", zIndex:10, width:"100%", maxWidth:"1100px", padding:"clamp(40px,8vw,80px) clamp(16px,4vw,40px)", display:"flex", flexDirection:"column", alignItems:"center" }}>
+
+        {/* Seal */}
+        <div style={{
+          fontSize:"clamp(32px,5vw,52px)",
+          marginBottom:"clamp(16px,3vw,24px)",
+          opacity:phase>=1?0.65:0,
+          transform:phase>=1?"scale(1) translateY(0)":"scale(0.7) translateY(10px)",
+          transition:"all 1.6s cubic-bezier(0.16,1,0.3,1)",
+          filter:phase>=1?"drop-shadow(0 0 30px rgba(201,168,76,0.5))":"none",
+        }}>⚖️</div>
+
+        {/* Title */}
+        <h1 style={{
+          fontSize:"clamp(40px,9vw,100px)",
+          fontWeight:400,
+          color:"#c9a84c",
+          textTransform:"uppercase",
+          margin:"0 0 clamp(6px,1.5vw,12px)",
+          textShadow:"0 0 80px rgba(201,168,76,0.25), 0 2px 8px rgba(0,0,0,0.9)",
+          opacity:phase>=2?1:0,
+          animation:phase>=2?"titleReveal 1.4s cubic-bezier(0.16,1,0.3,1) forwards":"none",
+          letterSpacing:"0.25em",
+        }}>The Council</h1>
+
+        {/* Animated divider */}
+        {phase>=3 && (
+          <div style={{
+            height:"1px",
+            background:"linear-gradient(to right,transparent,rgba(201,168,76,0.7),transparent)",
+            margin:"clamp(10px,2vw,18px) auto",
+            animation:"lineDraw 1.2s ease forwards",
+            width:0,
+          }}/>
+        )}
+
+        {/* Tagline */}
+        <p style={{
+          fontSize:"clamp(12px,2vw,18px)",
+          color:"rgba(201,168,76,0.38)",
+          fontStyle:"italic",
+          letterSpacing:"0.08em",
+          lineHeight:1.8,
+          maxWidth:"500px",
+          textAlign:"center",
+          opacity:phase>=3?1:0,
+          animation:phase>=3?"fadeUp 1s ease 0.3s forwards":"none",
+          marginBottom:"clamp(28px,5vw,52px)",
+        }}>
+          Five minds. One question. No comfortable answers.
+        </p>
+
+        {/* The Council section header */}
+        {phase>=4 && (
+          <div style={{ textAlign:"center", marginBottom:"clamp(20px,3.5vw,32px)", animation:"fadeUp 0.8s ease forwards", opacity:0 }}>
+            <p style={{ fontSize:"clamp(8px,1.1vw,11px)", letterSpacing:"0.3em", color:"rgba(201,168,76,0.2)", textTransform:"uppercase" }}>
+              — The Council —
+            </p>
+          </div>
+        )}
+
+        {/* Characters */}
+        {phase>=5 && (
+          <div style={{ width:"100%", display:"flex", flexDirection:"column", alignItems:"center", gap:"clamp(16px,3vw,28px)" }}>
+
+            {/* ── Dan — center top ── */}
+            {(() => {
+              const dan = COUNCIL_DATA.find(m => m.id==="dan");
+              const danIdx = COUNCIL_DATA.indexOf(dan);
+              const isDanActive = activeChar === danIdx;
+              return dan ? (
+                <div style={{ display:"flex", flexDirection:"column", alignItems:"center", marginBottom:"clamp(16px,3vw,28px)" }}>
+                  <div
+                    onClick={() => setActiveChar(isDanActive ? null : danIdx)}
+                    style={{
+                      cursor:"pointer", display:"flex", flexDirection:"column", alignItems:"center", gap:"10px",
+                      animation:"revealChar 0.7s cubic-bezier(0.16,1,0.3,1) 0ms forwards", opacity:0,
+                    }}
+                  >
+                    <div style={{
+                      position:"relative",
+                      width:"clamp(130px,16vw,200px)",
+                      height:"clamp(240px,32vw,380px)",
+                      borderRadius:"4px", overflow:"hidden",
+                      border:`1px solid ${isDanActive ? dan.color+"99" : "rgba(201,168,76,0.4)"}`,
+                      background:"transparent",
+                      transition:"all 0.4s ease",
+                      boxShadow:isDanActive
+                        ? `0 0 0 1px ${dan.color}55, 0 0 60px ${dan.color}40, 0 12px 40px rgba(0,0,0,0.7)`
+                        : `0 0 0 1px rgba(201,168,76,0.15), 0 0 30px rgba(201,168,76,0.08), 0 8px 32px rgba(0,0,0,0.6)`,
+                      transform:isDanActive?"scale(1.05)":"scale(1)",
+                    }}>
+                      <img src={PORTRAIT_URLS["dan"]} alt="Dan" style={{ width:"100%", height:"100%", objectFit:"contain", objectPosition:"center bottom", filter:`brightness(${isDanActive?1:0.88}) drop-shadow(0 8px 20px rgba(0,0,0,0.5))`, transition:"all 0.5s ease" }} onError={e=>{e.target.style.display='none'}}/>
+                      {/* Subtle color glow at feet */}
+                      <div style={{ position:"absolute", bottom:0, left:0, right:0, height:"30%", background:`linear-gradient(to top, ${dan.color}15 0%, transparent 100%)`, opacity:isDanActive?1:0.5, transition:"opacity 0.4s" }}/>
+                    </div>
+                    <div style={{ textAlign:"center" }}>
+                      <div style={{ fontSize:"clamp(13px,1.8vw,17px)", fontWeight:700, color:isDanActive?dan.color:"rgba(201,168,76,0.8)", letterSpacing:"0.14em", textTransform:"uppercase", transition:"color 0.3s", textShadow:`0 0 ${isDanActive?30:15}px rgba(201,168,76,0.4)` }}>Dan</div>
+                      <div style={{ fontSize:"clamp(8px,1vw,10px)", color:"rgba(201,168,76,0.3)", letterSpacing:"0.15em", textTransform:"uppercase", marginTop:"2px" }}>The Judge</div>
+                      <div style={{ fontSize:"8px", color:"rgba(201,168,76,0.4)", letterSpacing:"0.12em", textTransform:"uppercase", marginTop:"4px", fontStyle:"italic" }}>always present</div>
+                    </div>
+                  </div>
+                  {/* Separator to council */}
+                  <div style={{ display:"flex", alignItems:"center", gap:"12px", marginTop:"clamp(14px,2.5vw,22px)", width:"clamp(200px,40vw,360px)" }}>
+                    <div style={{ flex:1, height:"1px", background:"linear-gradient(to right,transparent,rgba(201,168,76,0.15))" }}/>
+                    <span style={{ fontSize:"8px", color:"rgba(201,168,76,0.2)", letterSpacing:"0.2em", textTransform:"uppercase" }}>The Council</span>
+                    <div style={{ flex:1, height:"1px", background:"linear-gradient(to left,transparent,rgba(201,168,76,0.15))" }}/>
+                  </div>
+                </div>
+              ) : null;
+            })()}
+
+            {/* ── Five council members below ── */}
+            <div style={{ display:"flex", justifyContent:"center", gap:"clamp(8px,1.8vw,20px)", flexWrap:"wrap" }}>
+              {COUNCIL_DATA.filter(m => m.id !== "dan").map((m, i) => {
+                const realIdx = COUNCIL_DATA.indexOf(m);
+                const isActive = activeChar === realIdx;
+                return (
+                  <div key={m.id}
+                    onClick={() => setActiveChar(isActive ? null : realIdx)}
+                    style={{
+                      cursor:"pointer", display:"flex", flexDirection:"column", alignItems:"center", gap:"10px",
+                      animation:`revealChar 0.7s cubic-bezier(0.16,1,0.3,1) ${(i+1)*180}ms forwards`, opacity:0,
+                    }}
+                  >
+                    <div style={{
+                      position:"relative",
+                      width:"clamp(100px,11vw,150px)",
+                      height:"clamp(200px,24vw,320px)",
+                      borderRadius:"4px", overflow:"hidden",
+                      border:"none",
+                      background:"transparent",
+                      transition:"all 0.4s ease",
+                      boxShadow:isActive ? `0 0 40px ${m.color}25, 0 0 80px ${m.color}10` : "none",
+                      transform:isActive?"scale(1.06)":"scale(1)",
+                    }}>
+                      <img src={PORTRAIT_URLS[m.id]} alt={m.name} style={{ width:"100%", height:"100%", objectFit:"contain", objectPosition:"center bottom", filter:`brightness(${isActive?1:0.85}) drop-shadow(0 8px 16px rgba(0,0,0,0.4))`, transition:"all 0.5s ease" }} onError={e=>{e.target.style.display='none'}}/>
+                      {/* Color glow at feet on hover */}
+                      <div style={{ position:"absolute", bottom:0, left:0, right:0, height:"25%", background:`linear-gradient(to top, ${m.color}18 0%, transparent 100%)`, opacity:isActive?1:0.4, transition:"opacity 0.4s" }}/>
+                    </div>
+                    <div style={{ textAlign:"center" }}>
+                      <div style={{ fontSize:"clamp(10px,1.2vw,13px)", fontWeight:700, color:isActive?m.color:"rgba(201,168,76,0.6)", letterSpacing:"0.1em", textTransform:"uppercase", transition:"color 0.3s", textShadow:isActive?`0 0 20px ${m.color}60`:"none" }}>{m.name}</div>
+                      <div style={{ fontSize:"clamp(7px,0.9vw,9px)", color:"rgba(201,168,76,0.22)", letterSpacing:"0.12em", textTransform:"uppercase", marginTop:"2px" }}>{m.title}</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Character detail panel */}
+            <div style={{
+              width:"100%", maxWidth:"640px",
+              maxHeight:active?"400px":"0",
+              overflow:"hidden",
+              transition:"max-height 0.7s cubic-bezier(0.16,1,0.3,1), opacity 0.4s ease",
+              opacity:active?1:0,
+            }}>
+              {active && (
+                <div style={{
+                  padding:"clamp(16px,3vw,28px)",
+                  border:`1px solid ${active.color}20`,
+                  borderRadius:"6px",
+                  background:`linear-gradient(135deg, rgba(${active.color.slice(1).match(/../g).map(h=>parseInt(h,16)).join(",")},0.04) 0%, rgba(2,2,0,0.6) 100%)`,
+                  backdropFilter:"blur(8px)",
+                  textAlign:"center",
+                }}>
+                  <div style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:"12px", marginBottom:"14px" }}>
+                    <div style={{ flex:1, height:"1px", background:`linear-gradient(to right,transparent,${active.color}30)` }}/>
+                    <span style={{ fontSize:"clamp(8px,1vw,10px)", letterSpacing:"0.2em", color:active.color, opacity:0.7, textTransform:"uppercase" }}>{active.lens}</span>
+                    <div style={{ flex:1, height:"1px", background:`linear-gradient(to left,transparent,${active.color}30)` }}/>
+                  </div>
+                  <p style={{ fontSize:"clamp(12px,1.5vw,15px)", color:"rgba(201,168,76,0.55)", lineHeight:1.8, fontStyle:"italic", marginBottom:"16px" }}>
+                    {active.description}
+                  </p>
+                  <p style={{ fontSize:"clamp(11px,1.3vw,13px)", color:active.color, opacity:0.65, fontStyle:"italic", letterSpacing:"0.05em" }}>
+                    "{active.tagline}"
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {!active && phase>=5 && (
+              <p style={{ fontSize:"clamp(8px,1vw,10px)", color:"rgba(201,168,76,0.15)", fontStyle:"italic", letterSpacing:"0.1em", marginTop:"-8px" }}>
+                touch a member to know them
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* CTA */}
+        <div style={{
+          marginTop:"clamp(28px,5vw,52px)",
+          textAlign:"center",
+          opacity:phase>=6?1:0,
+          animation:phase>=6?"fadeUp 1s ease forwards":"none",
+        }}>
+          <button onClick={onEnter} style={{
+            position:"relative",
+            background:"transparent",
+            color:"#c9a84c",
+            border:"1px solid rgba(201,168,76,0.4)",
+            borderRadius:"3px",
+            padding:"clamp(13px,2vw,18px) clamp(32px,5vw,60px)",
+            fontSize:"clamp(10px,1.3vw,13px)",
+            fontWeight:700, cursor:"pointer",
+            letterSpacing:"0.22em", textTransform:"uppercase",
+            fontFamily:"'Palatino Linotype',serif",
+            transition:"all 0.4s ease",
+            overflow:"hidden",
+            animation:"glowPulse 4s ease-in-out infinite",
+          }}
+            onMouseEnter={e=>{
+              e.currentTarget.style.background="rgba(201,168,76,0.08)";
+              e.currentTarget.style.borderColor="rgba(201,168,76,0.7)";
+              e.currentTarget.style.boxShadow="0 0 50px rgba(201,168,76,0.15), 0 0 0 1px rgba(201,168,76,0.3)";
+              e.currentTarget.style.letterSpacing="0.28em";
+            }}
+            onMouseLeave={e=>{
+              e.currentTarget.style.background="transparent";
+              e.currentTarget.style.borderColor="rgba(201,168,76,0.4)";
+              e.currentTarget.style.boxShadow="";
+              e.currentTarget.style.letterSpacing="0.22em";
+            }}
+          >
+            Consult the Council
+          </button>
+          <p style={{ color:"rgba(201,168,76,0.15)", fontSize:"clamp(8px,1vw,10px)", marginTop:"14px", letterSpacing:"0.14em", fontStyle:"italic" }}>
+            One question · One session · One verdict
+          </p>
+        </div>
+
+      </div>
+    </div>
+  );
+};
+
+
 // ── Language selector screen ──────────────────────────────────
 const LanguageScreen = ({ onSelect, lang }) => {
   const t = UI[lang] || UI.en;
@@ -1187,9 +1564,11 @@ const DebateScreen = ({ characters, onClose, lang }) => {
   };
 
   const runVerdict = async (hist=history, currentQuestion=question) => {
+    // Filter out skip markers from history before sending
+    const cleanHist = hist.filter(h => !(h.type==="user_answer" && h.text==="—"));
     setLoading(true); setActiveSpeaker("dan"); setLoadingLabel(t.danWrites); setLoadingSpeaker(DAN);
     try {
-      const data = await post("/debate/verdict", { question:currentQuestion, history:hist, context, checkin_answer:checkinAnswer, language:lang });
+      const data = await post("/debate/verdict", { question:currentQuestion, history:cleanHist, context, checkin_answer:checkinAnswer, language:lang });
       setFeed(p => [...p, { type:"verdict", data }]);
       setPhase("done");
     } catch(e) {
@@ -1259,7 +1638,8 @@ const DebateScreen = ({ characters, onClose, lang }) => {
               return <SpeakerPicker key={i} pitches={item.pitches.filter(p=>p.pitch!=="..."||true)} onChoose={handlePickSpeaker} loading={loading} t={t}/>;
             }
             if(item.type==="dan_checkin") return (
-              <DanBlock key={i} summary={item.summary} question={item.question} councilQuestion={item.councilQuestion}
+              <DanBlock key={i} summary={item.summary} question={item.question}
+                userPrompt={item.userPrompt} councilQuestion={item.councilQuestion}
                 needsMoreRound={item.needsMoreRound} answered={item.answered} userAnswer={item.userAnswer}
                 revealed={item.revealed} t={t}
                 onReveal={()=>{
@@ -1271,6 +1651,15 @@ const DebateScreen = ({ characters, onClose, lang }) => {
                   }
                 }}
                 onAnswer={ans=>handleCheckinAnswer(ans,item.roundNum)}
+                onUserPromptAnswer={ans=>{
+                  // Mark answered, store answer, then trigger verdict with extra context
+                  setFeed(p=>p.map((f,j)=>j===i?{...f,answered:true,userAnswer:ans}:f));
+                  if(pendingVerdictHistory) {
+                    const h = [...pendingVerdictHistory, {type:"user_answer",text:ans}];
+                    setPendingVerdictHistory(null);
+                    runVerdict(h);
+                  }
+                }}
               />
             );
             if(item.type==="verdict") return (
@@ -1338,13 +1727,13 @@ const DebateScreen = ({ characters, onClose, lang }) => {
 // ROOT
 // ══════════════════════════════════════════════════════════════
 export default function App() {
-  const [screen, setScreen] = useState("language"); // language | setup | debate
+  const [screen, setScreen] = useState("landing"); // landing | language | setup | debate
   const [lang, setLang] = useState("en");
   const [characters, setCharacters] = useState([]);
 
   const handleSelectLang = (code) => { setLang(code); setScreen("setup"); };
   const handleStartDebate = (chars) => { setCharacters(chars); setScreen("debate"); };
-  const handleCloseDebate = () => { setScreen("setup"); setCharacters([]); };
+  const handleCloseDebate = () => { setScreen("landing"); setCharacters([]); }; // back to landing after verdict
 
   return (
     <div style={{ width:"100%", minHeight:"100vh", background:"#020200" }}>
@@ -1357,6 +1746,7 @@ export default function App() {
         @keyframes pulse{0%,100%{opacity:.2;transform:scale(.7)}50%{opacity:.8;transform:scale(1)}}
         @keyframes fadeSlideIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
       `}</style>
+      {screen==="landing"  && <LandingPage onEnter={()=>setScreen("language")}/>}
       {screen==="language" && <LanguageScreen onSelect={handleSelectLang} lang={lang}/>}
       {screen==="setup"    && <SetupScreen onStart={handleStartDebate} lang={lang} onChangeLang={()=>setScreen("language")}/>}
       {screen==="debate"   && <DebateScreen characters={characters} onClose={handleCloseDebate} lang={lang}/>}
