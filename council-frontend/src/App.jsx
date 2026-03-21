@@ -989,6 +989,7 @@ const DebateScreen = ({ characters, onClose, lang }) => {
   const [pitches, setPitches] = useState([]);
   const [entered, setEntered] = useState(false);
   const [pendingVerdictHistory, setPendingVerdictHistory] = useState(null);
+  const [fewshotExamples, setFewshotExamples] = useState({});  // charId -> example text
   const [apiError, setApiError] = useState(null);
   const bottomRef = useRef(null);
 
@@ -1042,13 +1043,21 @@ const DebateScreen = ({ characters, onClose, lang }) => {
     setContext(ctxMap);
     setHistory(ctxHistory);
     setCurrentRound(1);
-    // Dan's opening
+    // Fetch Dan's opening AND few-shot examples for all characters in parallel
     setLoading(true); setLoadingLabel("…"); setLoadingSpeaker(DAN); setActiveSpeaker("dan");
     let openingText = null;
-    try {
-      const data = await post("/debate/opening", { question:currentQuestion, characters:charConfigs, context:ctxMap, language:lang });
-      openingText = data.opening;
-    } catch(e) { console.error(e); }
+    const [openingResult, ...fewshotResults] = await Promise.allSettled([
+      post("/debate/opening", { question:currentQuestion, characters:charConfigs, context:ctxMap, language:lang }),
+      ...characters.map(c => post("/debate/fewshot", { question:currentQuestion, character_id:c.id, language:lang }))
+    ]);
+    if(openingResult.status === "fulfilled") openingText = openingResult.value?.opening;
+    const examples = {};
+    fewshotResults.forEach((r, i) => {
+      if(r.status === "fulfilled" && r.value?.example) {
+        examples[characters[i].id] = r.value.example;
+      }
+    });
+    setFewshotExamples(examples);
     setLoading(false); setLoadingSpeaker(null); setActiveSpeaker(null);
     // Add opening to feed once, then start round picking
     if(openingText) setFeed(p => [...p, { type:"opening", text:openingText }]);
@@ -1072,7 +1081,7 @@ const DebateScreen = ({ characters, onClose, lang }) => {
     const fetchedPitches = [];
     // Fetch all pitches in parallel for speed, with individual error handling
     const pitchResults = await Promise.allSettled(
-      characters.map(c => post("/debate/single_sentence", { question, character_id:c.id, characters:charConfigs, round:roundNum, context:ctx, history:hist, language:lang }))
+      characters.map(c => post("/debate/single_sentence", { question:currentQuestion, character_id:c.id, characters:charConfigs, round:roundNum, context:ctx, history:hist, language:lang }))
     );
     pitchResults.forEach((result, i) => {
       const c = characters[i];
@@ -1102,7 +1111,7 @@ const DebateScreen = ({ characters, onClose, lang }) => {
     try {
       const pickerItem = feed.filter(f=>f.type==="picker").at(-1);
       const activeQuestion = pickerItem?.currentQuestion || question;
-      const data = await post("/debate/single_turn", { question:activeQuestion, character_id:characterId, characters:charConfigs, round:currentRound, context, checkin_answer:checkinAnswer, history, language:lang });
+      const data = await post("/debate/single_turn", { question:activeQuestion, character_id:characterId, characters:charConfigs, round:currentRound, context, checkin_answer:checkinAnswer, history, language:lang, fewshot_example:fewshotExamples[characterId]||"" });
       const turn = data.turn;
       const newHistory = [...history, turn];
       setHistory(newHistory);
@@ -1195,7 +1204,7 @@ const DebateScreen = ({ characters, onClose, lang }) => {
     const q = followUpQ.trim();
     setFollowUpQ(""); setQuestion(q);
     setHistory([]); setContext({}); setCheckinAnswer(null);
-    setVerdictRevealed(false); setCurrentRound(1); setPitches([]); setRemainingPickers([]); setPendingVerdictHistory(null);
+    setVerdictRevealed(false); setCurrentRound(1); setPitches([]); setRemainingPickers([]); setPendingVerdictHistory(null); setFewshotExamples({});
     setPhase("loading");
     setFeed([{ type:"question_bubble", text:q }]);
     setLoading(true); setLoadingLabel("…"); setLoadingSpeaker(DAN); setActiveSpeaker("dan");
