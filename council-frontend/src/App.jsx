@@ -1038,7 +1038,7 @@ const DebateScreen = ({ characters, onClose, lang }) => {
     }
   };
 
-  const startDebateFromContext = async (ctxMap, ctxHistory) => {
+  const startDebateFromContext = async (ctxMap, ctxHistory, currentQuestion=question) => {
     setContext(ctxMap);
     setHistory(ctxHistory);
     setCurrentRound(1);
@@ -1046,13 +1046,13 @@ const DebateScreen = ({ characters, onClose, lang }) => {
     setLoading(true); setLoadingLabel("…"); setLoadingSpeaker(DAN); setActiveSpeaker("dan");
     let openingText = null;
     try {
-      const data = await post("/debate/opening", { question, characters:charConfigs, context:ctxMap, language:lang });
+      const data = await post("/debate/opening", { question:currentQuestion, characters:charConfigs, context:ctxMap, language:lang });
       openingText = data.opening;
     } catch(e) { console.error(e); }
     setLoading(false); setLoadingSpeaker(null); setActiveSpeaker(null);
     // Add opening to feed once, then start round picking
     if(openingText) setFeed(p => [...p, { type:"opening", text:openingText }]);
-    await startRoundPicking(1, ctxMap, ctxHistory);
+    await startRoundPicking(1, ctxMap, ctxHistory, currentQuestion);
   };
 
   const handleContextSubmit = async (answers) => {
@@ -1064,7 +1064,7 @@ const DebateScreen = ({ characters, onClose, lang }) => {
     await startDebateFromContext(ctxMap, ctxHistory);
   };
 
-  const startRoundPicking = async (roundNum, ctx=context, hist=history) => {
+  const startRoundPicking = async (roundNum, ctx=context, hist=history, currentQuestion=question) => {
     setFeed(p => [...p, { type:"round_header", label:`Round ${roundNum}` }]);
     setPhase("picking");
     setLoading(true); setLoadingLabel(t.councilPrepares); setLoadingSpeaker(null); setActiveSpeaker(null);
@@ -1090,7 +1090,7 @@ const DebateScreen = ({ characters, onClose, lang }) => {
     setPitches(fetchedPitches);
     setRemainingPickers(characters.map(c => c.id));
     setLoading(false);
-    setFeed(p => [...p, { type:"picker", roundNum, pitches:fetchedPitches }]);
+    setFeed(p => [...p, { type:"picker", roundNum, pitches:fetchedPitches, currentQuestion }]);
   };
 
   const handlePickSpeaker = async (characterId) => {
@@ -1100,7 +1100,9 @@ const DebateScreen = ({ characters, onClose, lang }) => {
     setLoading(true); setLoadingLabel(`${char.name} speaks…`); setLoadingSpeaker(char);
 
     try {
-      const data = await post("/debate/single_turn", { question, character_id:characterId, characters:charConfigs, round:currentRound, context, checkin_answer:checkinAnswer, history, language:lang });
+      const pickerItem = feed.filter(f=>f.type==="picker").at(-1);
+      const activeQuestion = pickerItem?.currentQuestion || question;
+      const data = await post("/debate/single_turn", { question:activeQuestion, character_id:characterId, characters:charConfigs, round:currentRound, context, checkin_answer:checkinAnswer, history, language:lang });
       const turn = data.turn;
       const newHistory = [...history, turn];
       setHistory(newHistory);
@@ -1118,7 +1120,7 @@ const DebateScreen = ({ characters, onClose, lang }) => {
       } else {
         setActiveSpeaker("dan");
         setLoadingLabel(t.danDeliberates); setLoadingSpeaker(DAN);
-        await runCheckin(currentRound, newHistory);
+        await runCheckin(currentRound, newHistory, activeQuestion);
       }
     } catch(e) {
       console.error("handlePickSpeaker error:", e.message);
@@ -1127,9 +1129,9 @@ const DebateScreen = ({ characters, onClose, lang }) => {
     }
   };
 
-  const runCheckin = async (roundNum, hist=history) => {
+  const runCheckin = async (roundNum, hist=history, currentQuestion=question) => {
     try {
-      const data = await post("/debate/checkin", { question, characters:charConfigs, history:hist, context, round:roundNum, language:lang });
+      const data = await post("/debate/checkin", { question:currentQuestion, characters:charConfigs, history:hist, context, round:roundNum, language:lang });
       if(roundNum >= 3){ data.needs_more_round=false; data.question=null; }
 
       let councilResponseTurn = null;
@@ -1172,13 +1174,13 @@ const DebateScreen = ({ characters, onClose, lang }) => {
     setFeed(p => p.map(f => f.type==="dan_checkin"&&!f.answered ? {...f,answered:true,userAnswer:answer} : f));
     const nextRound = (roundNum||1)+1;
     setCurrentRound(nextRound);
-    await startRoundPicking(nextRound);
+    await startRoundPicking(nextRound, context, history);
   };
 
-  const runVerdict = async (hist=history) => {
+  const runVerdict = async (hist=history, currentQuestion=question) => {
     setLoading(true); setActiveSpeaker("dan"); setLoadingLabel(t.danWrites); setLoadingSpeaker(DAN);
     try {
-      const data = await post("/debate/verdict", { question, history:hist, context, checkin_answer:checkinAnswer, language:lang });
+      const data = await post("/debate/verdict", { question:currentQuestion, history:hist, context, checkin_answer:checkinAnswer, language:lang });
       setFeed(p => [...p, { type:"verdict", data }]);
       setPhase("done");
     } catch(e) {
@@ -1205,7 +1207,7 @@ const DebateScreen = ({ characters, onClose, lang }) => {
         setLoading(false); setLoadingSpeaker(null); setActiveSpeaker(null);
       } else {
         setLoading(false); setLoadingSpeaker(null); setActiveSpeaker(null);
-        await startDebateFromContext({}, []);
+        await startDebateFromContext({}, [], q);
       }
     } catch(e) { console.error(e); }
     setLoading(false); setLoadingSpeaker(null); setActiveSpeaker(null);

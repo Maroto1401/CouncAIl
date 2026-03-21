@@ -42,8 +42,8 @@ client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
 # Rough token tracking in memory (resets on server restart)
 # For production: use Redis or a DB
 _token_usage = {"input": 0, "output": 0, "reset_time": time.time()}
-MAX_INPUT_TOKENS_MONTHLY = 35_000_000   # ~$35 input budget
-MAX_OUTPUT_TOKENS_MONTHLY = 7_000_000   # ~$35 output budget
+MAX_INPUT_TOKENS_MONTHLY = 20_000_000   # ~$35 input budget
+MAX_OUTPUT_TOKENS_MONTHLY = 1_000_000   # ~$35 output budget
 
 def check_token_budget():
     """Reset monthly counter and check if we're over budget."""
