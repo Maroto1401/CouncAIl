@@ -34,16 +34,24 @@ async def preflight(rest_of_path: str):
         "Access-Control-Allow-Headers": "*",
     })
 
-ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 MODEL = "claude-haiku-4-5"
-client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+_client = None
+
+def get_client():
+    global _client
+    if _client is None:
+        api_key = os.getenv("ANTHROPIC_API_KEY", "")
+        if not api_key:
+            raise HTTPException(status_code=500, detail="ANTHROPIC_API_KEY not configured")
+        _client = anthropic.Anthropic(api_key=api_key)
+    return _client
 
 # ── Hard monthly token budget (~$40 cap) ──────────────────────
 # Rough token tracking in memory (resets on server restart)
 # For production: use Redis or a DB
 _token_usage = {"input": 0, "output": 0, "reset_time": time.time()}
-MAX_INPUT_TOKENS_MONTHLY = 20_000_000   # ~$35 input budget
-MAX_OUTPUT_TOKENS_MONTHLY = 1_000_000   # ~$35 output budget
+MAX_INPUT_TOKENS_MONTHLY = 35_000_000   # ~$35 input budget
+MAX_OUTPUT_TOKENS_MONTHLY = 7_000_000   # ~$35 output budget
 
 def check_token_budget():
     """Reset monthly counter and check if we're over budget."""
@@ -193,7 +201,7 @@ async def call_claude(messages: list, max_tokens: int = 350, temperature: float 
         }
         if system:
             kwargs["system"] = system
-        response = client.messages.create(**kwargs)
+        response = get_client().messages.create(**kwargs)
         # Track usage
         _token_usage["input"] += response.usage.input_tokens
         _token_usage["output"] += response.usage.output_tokens
