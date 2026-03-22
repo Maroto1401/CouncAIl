@@ -763,17 +763,27 @@ const COUNCIL_DATA = [
 const RUNES = ["ᚠ","ᚢ","ᚦ","ᚨ","ᚱ","ᚲ","ᚷ","ᚹ","ᚺ","ᚾ","ᛁ","ᛃ","ᛇ","ᛈ","ᛉ","ᛊ","ᛏ","ᛒ","ᛖ","ᛗ","ᛚ","ᛜ","ᛞ","ᛟ"];
 
 const Particles = () => {
-  const particles = Array.from({length:28}, (_,i) => ({
-    id:i,
-    x: (i*37+11)%100,
-    y: (i*53+7)%100,
-    size: (i%3)+0.8,
-    delay: (i*1.3)%10,
-    duration: 10+(i%7),
-    opacity: 0.06+(i%5)*0.025,
-    isRune: i%5===0,
-    rune: RUNES[i%RUNES.length],
-  }));
+  // Distribute runes deliberately to edges, not centre
+  const edgeXPositions = [2,5,8,92,95,88,4,96,11,89,6,94,3,97,7,91];
+  const particles = Array.from({length:36}, (_,i) => {
+    const isRune = i%3===0;
+    const runeIdx = Math.floor(i/3);
+    // Runes: place along left edge (x 2-12) or right edge (x 88-98), full height
+    const x = isRune
+      ? (runeIdx%2===0 ? 2+(runeIdx*3.1)%10 : 88+(runeIdx*2.7)%10)
+      : (i*37+11)%100;
+    return {
+      id:i,
+      x,
+      y: (i*53+7)%100,
+      size: (i%3)+0.8,
+      delay: (i*1.1)%12,
+      duration: 12+(i%8),
+      opacity: isRune ? 0.09+(i%4)*0.02 : 0.055+(i%5)*0.022,
+      isRune,
+      rune: RUNES[i%RUNES.length],
+    };
+  });
 
   const fogLayers = [
     { y:"20%", dur:22, delay:0,   opacity:0.018 },
@@ -856,12 +866,13 @@ const Particles = () => {
         <div key={p.id} style={{
           position:"absolute",
           left:`${p.x}%`, top:`${p.y}%`,
-          fontSize:`${p.size*5+6}px`,
-          color:"rgba(201,168,76,0.5)",
+          fontSize:`${p.size*4+10}px`,
+          color:"rgba(201,168,76,0.65)",
           fontFamily:"serif",
           animation:`floatRune ${p.duration+4}s ease-in-out ${p.delay}s infinite`,
-          opacity:p.opacity*0.7,
+          opacity:p.opacity,
           userSelect:"none",
+          letterSpacing:"0.1em",
         }}>{p.rune}</div>
       ) : (
         <div key={p.id} style={{
@@ -945,7 +956,7 @@ const LandingPage = ({ onEnter }) => {
               return dan ? (
                 <div style={{ display:"flex", flexDirection:"column", alignItems:"center", marginBottom:"clamp(16px,3vw,28px)" }}>
                   <div onClick={() => setActiveChar(isDanActive ? null : danIdx)} style={{ cursor:"pointer", display:"flex", flexDirection:"column", alignItems:"center", gap:"10px", animation:"revealChar 0.7s cubic-bezier(0.16,1,0.3,1) 0ms forwards", opacity:0 }}>
-                    <div style={{ position:"relative", width:"clamp(130px,16vw,200px)", height:"clamp(240px,32vw,380px)", borderRadius:"4px", overflow:"hidden", border:`1px solid ${isDanActive ? dan.color+"99" : "rgba(201,168,76,0.4)"}`, background:"transparent", transition:"all 0.4s ease", boxShadow:isDanActive ? `0 0 0 1px ${dan.color}55, 0 0 60px ${dan.color}40, 0 12px 40px rgba(0,0,0,0.7)` : `0 0 0 1px rgba(201,168,76,0.15), 0 0 30px rgba(201,168,76,0.08), 0 8px 32px rgba(0,0,0,0.6)`, transform:isDanActive?"scale(1.05)":"scale(1)" }}>
+                    <div style={{ position:"relative", width:"clamp(130px,16vw,200px)", height:"clamp(240px,32vw,380px)", borderRadius:"4px", overflow:"hidden", border:"none", background:"transparent", transition:"all 0.4s ease", boxShadow:isDanActive ? `0 0 80px ${dan.color}35, 0 0 160px ${dan.color}12` : "none", transform:isDanActive?"scale(1.05)":"scale(1)" }}>
                       <img src={PORTRAIT_URLS["dan"]} alt="Dan" style={{ width:"100%", height:"100%", objectFit:"contain", objectPosition:"center bottom", filter:`brightness(${isDanActive?1:0.88}) drop-shadow(0 8px 20px rgba(0,0,0,0.5))`, transition:"all 0.5s ease" }} onError={e=>{e.target.style.display="none"}}/>
                       <div style={{ position:"absolute", bottom:0, left:0, right:0, height:"30%", background:`linear-gradient(to top, ${dan.color}15 0%, transparent 100%)`, opacity:isDanActive?1:0.5, transition:"opacity 0.4s" }}/>
                     </div>
@@ -998,11 +1009,11 @@ const LandingPage = ({ onEnter }) => {
                           opacity:isActive?1:0.3, transition:"opacity 0.5s" }}/>
                       </div>
                       <div style={{ textAlign:"center", transition:"all 0.4s" }}>
-                        <div style={{ fontSize:"clamp(9px,1.1vw,12px)", fontWeight:700,
-                          color: isActive ? m.color : anyActive ? "rgba(201,168,76,0.2)" : "rgba(201,168,76,0.6)",
-                          letterSpacing:"0.1em", textTransform:"uppercase", transition:"all 0.4s",
-                          textShadow: isActive ? `0 0 20px ${m.color}80` : "none" }}>{m.name}</div>
-                        <div style={{ fontSize:"clamp(6px,0.8vw,8px)", color:"rgba(201,168,76,0.18)", letterSpacing:"0.12em", textTransform:"uppercase", marginTop:"2px" }}>{m.title}</div>
+                        <div style={{ fontSize:"clamp(13px,1.5vw,17px)", fontWeight:700,
+                          color: isActive ? m.color : anyActive ? "rgba(201,168,76,0.3)" : "#d4b86a",
+                          letterSpacing:"0.12em", textTransform:"uppercase", transition:"all 0.4s",
+                          textShadow: isActive ? `0 0 24px ${m.color}, 0 0 8px ${m.color}80` : "0 0 10px rgba(201,168,76,0.15)" }}>{m.name}</div>
+                        <div style={{ fontSize:"clamp(8px,0.9vw,10px)", color:"rgba(201,168,76,0.42)", letterSpacing:"0.1em", textTransform:"uppercase", marginTop:"3px", fontStyle:"italic" }}>{m.title}</div>
                       </div>
                     </div>
                   );
