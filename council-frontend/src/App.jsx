@@ -431,7 +431,9 @@ const DanBlock = ({ summary, question, userPrompt, councilQuestion, needsMoreRou
         onMouseEnter={e=>{ e.currentTarget.style.borderColor="rgba(201,168,76,0.5)"; e.currentTarget.style.color="#c9a84c"; }}
         onMouseLeave={e=>{ e.currentTarget.style.borderColor="rgba(201,168,76,0.2)"; e.currentTarget.style.color="rgba(201,168,76,0.55)"; }}
       >
-        <Avatar char={DAN} size={18} /> {t.danSpeaks}
+        <div style={{ width:"18px", height:"30px", borderRadius:"2px", overflow:"hidden", border:"1px solid rgba(201,168,76,0.3)", background:"#020200", flexShrink:0 }}>
+          <img src={PORTRAIT_URLS["dan"]} alt="Dan" style={{ width:"100%", height:"100%", objectFit:"contain", objectPosition:"center bottom" }} onError={e=>{e.target.style.display="none"}}/>
+        </div> {t.danSpeaks}
       </button>
     </div>
   );
@@ -631,7 +633,18 @@ const SpeakerPicker = ({ pitches, onChoose, loading, t=UI.en, onRetry }) => {
             onMouseEnter={e=>{ if(!loading){ e.currentTarget.style.background=hex2rgba(p.char.color,0.07); e.currentTarget.style.borderColor=hex2rgba(p.char.color,0.45); }}}
             onMouseLeave={e=>{ e.currentTarget.style.background="rgba(201,168,76,0.02)"; e.currentTarget.style.borderColor=hex2rgba(p.char.color,0.18); }}
           >
-            <Avatar char={p.char} size={34} />
+            <div style={{ flexShrink:0, width:"38px", height:"64px", borderRadius:"3px", overflow:"hidden",
+              border:`1px solid ${hex2rgba(p.char.color,0.3)}`,
+              background:"#020200", position:"relative",
+              boxShadow:`0 0 10px ${hex2rgba(p.char.color,0.15)}`,
+            }}>
+              <img src={PORTRAIT_URLS[p.char.id]} alt={p.char.name}
+                style={{ width:"100%", height:"100%", objectFit:"contain", objectPosition:"center bottom",
+                  filter:"brightness(0.88)" }}
+                onError={e=>{e.target.style.display="none"}}/>
+              <div style={{ position:"absolute", bottom:0, left:0, right:0, height:"40%",
+                background:`linear-gradient(to top, ${hex2rgba(p.char.color,0.3)} 0%, transparent 100%)` }}/>
+            </div>
             <div style={{ flex:1 }}>
               <div style={{ fontSize:"10px", color:p.char.color, fontWeight:800, letterSpacing:"0.08em", textTransform:"uppercase", marginBottom:"4px", fontFamily:"'Palatino Linotype',serif" }}>{p.char.name}</div>
               <ParsedText text={p.pitch} fontSize="13px" color="#7a6a4a" serif={false} />
@@ -890,7 +903,7 @@ const Particles = () => {
   );
 };
 
-const LandingPage = ({ onEnter }) => {
+const LandingPage = ({ onEnter, lang="en" }) => {
   const [phase, setPhase] = useState(-1);
   const [activeChar, setActiveChar] = useState(null);
   const [charsRevealed, setCharsRevealed] = useState(false);
@@ -928,14 +941,14 @@ const LandingPage = ({ onEnter }) => {
 
         <div style={{ fontSize:"clamp(32px,5vw,52px)", marginBottom:"clamp(16px,3vw,24px)", opacity:phase>=1?0.65:0, transform:phase>=1?"scale(1) translateY(0)":"scale(0.7) translateY(10px)", transition:"all 1.6s cubic-bezier(0.16,1,0.3,1)", filter:phase>=1?"drop-shadow(0 0 30px rgba(201,168,76,0.5))":"none" }}>⚖️</div>
 
-        <h1 style={{ fontSize:"clamp(28px,5.5vw,64px)", fontWeight:400, color:"#c9a84c", textTransform:"uppercase", margin:"0 0 clamp(6px,1.5vw,12px)", textShadow:"0 0 80px rgba(201,168,76,0.25), 0 2px 8px rgba(0,0,0,0.9)", opacity:phase>=2?1:0, animation:phase>=2?"titleReveal 1.4s cubic-bezier(0.16,1,0.3,1) forwards":"none", letterSpacing:"0.25em" }}>The Council</h1>
+        <h1 style={{ fontSize:"clamp(28px,5.5vw,64px)", fontWeight:400, color:"#c9a84c", textTransform:"uppercase", margin:"0 0 clamp(6px,1.5vw,12px)", textShadow:"0 0 80px rgba(201,168,76,0.25), 0 2px 8px rgba(0,0,0,0.9)", opacity:phase>=2?1:0, animation:phase>=2?"titleReveal 1.4s cubic-bezier(0.16,1,0.3,1) forwards":"none", letterSpacing:"0.25em" }}>{(UI[lang]||UI.en).title}</h1>
 
         {phase>=3 && (
           <div style={{ height:"1px", background:"linear-gradient(to right,transparent,rgba(201,168,76,0.7),transparent)", margin:"clamp(10px,2vw,18px) auto", animation:"lineDraw 1.2s ease forwards", width:0 }}/>
         )}
 
-        <p style={{ fontSize:"clamp(12px,2vw,18px)", color:"rgba(201,168,76,0.38)", fontStyle:"italic", letterSpacing:"0.08em", lineHeight:1.8, maxWidth:"500px", textAlign:"center", opacity:phase>=3?1:0, animation:phase>=3?"fadeUp 1s ease 0.3s forwards":"none", marginBottom:"clamp(28px,5vw,52px)" }}>
-          Five minds. One question. No comfortable answers.
+        <p style={{ fontSize:"clamp(12px,2vw,18px)", color:"rgba(201,168,76,0.38)", fontStyle:"italic", letterSpacing:"0.08em", lineHeight:1.8, maxWidth:"500px", textAlign:"center", opacity:0, animation:phase>=3?"fadeUp 1s ease 0.3s forwards":"none", animationFillMode:"forwards", marginBottom:"clamp(28px,5vw,52px)" }}>
+          {(UI[lang]||UI.en).subtitle || "Five minds. One question. No comfortable answers."}
         </p>
 
         {phase>=4 && (
@@ -1002,7 +1015,10 @@ const LandingPage = ({ onEnter }) => {
                         <img src={PORTRAIT_URLS[m.id]} alt={m.name}
                           style={{ width:"100%", height:"100%", objectFit:"contain", objectPosition:"center bottom",
                             filter:`brightness(${isActive?1:anyActive?0.5:0.85})`,
-                            transition:"all 0.5s ease" }}
+                            transition:"all 0.5s ease",
+                            transform: m.id==="surfer" ? "scale(1.6) translateY(-8%)" : "scale(1)",
+                            transformOrigin:"center bottom",
+                          }}
                           onError={e=>{e.target.style.display="none"}}/>
                         <div style={{ position:"absolute", bottom:0, left:0, right:0, height:"35%",
                           background:`linear-gradient(to top, ${m.color}22 0%, transparent 100%)`,
@@ -1562,11 +1578,17 @@ const DebateScreen = ({ characters, onClose, lang }) => {
   );
 };
 
+const SUPPORTED_LANGS = ["en","es","fr","de","pt","it","nl","zh","ja","ar"];
+function detectLang() {
+  const nav = (navigator.language || navigator.userLanguage || "en").toLowerCase().slice(0,2);
+  return SUPPORTED_LANGS.includes(nav) ? nav : "en";
+}
+
 export default function App() {
-  const [screen, setScreen] = useState("landing");
-  const [lang, setLang] = useState("en");
+  const [screen, setScreen] = useState("language");
+  const [lang, setLang] = useState(() => detectLang());
   const [characters, setCharacters] = useState([]);
-  const handleSelectLang = (code) => { setLang(code); setScreen("setup"); };
+  const handleSelectLang = (code) => { setLang(code); setScreen("landing"); };
   const handleStartDebate = (chars) => { setCharacters(chars); setScreen("debate"); };
   const handleCloseDebate = () => { setScreen("landing"); setCharacters([]); };
   return (
@@ -1580,8 +1602,8 @@ export default function App() {
         @keyframes pulse{0%,100%{opacity:.2;transform:scale(.7)}50%{opacity:.8;transform:scale(1)}}
         @keyframes fadeSlideIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
       `}</style>
-      {screen==="landing"  && <LandingPage onEnter={()=>setScreen("language")}/>}
       {screen==="language" && <LanguageScreen onSelect={handleSelectLang} lang={lang}/>}
+      {screen==="landing"  && <LandingPage onEnter={()=>setScreen("setup")} lang={lang}/>}
       {screen==="setup"    && <SetupScreen onStart={handleStartDebate} lang={lang} onChangeLang={()=>setScreen("language")}/>}
       {screen==="debate"   && <DebateScreen characters={characters} onClose={handleCloseDebate} lang={lang}/>}
     </div>
