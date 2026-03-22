@@ -241,7 +241,8 @@ async def call_claude(messages: list, max_tokens: int = 350, temperature: float 
             "messages": messages,
             "system": full_system,
         }
-        response = get_client().messages.create(**kwargs)
+        import asyncio
+        response = await asyncio.to_thread(get_client().messages.create, **kwargs)
         _token_usage["input"] += response.usage.input_tokens
         _token_usage["output"] += response.usage.output_tokens
         text = response.content[0].text.strip()
