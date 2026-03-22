@@ -505,6 +505,13 @@ async def single_turn(request: Request, req: SingleTurnRequest):
         if is_personal else
         "End with a direct verdict: state what is true, who is right, or what the answer is. Own your position."
     )
+    data_rule = (
+        "DATA RULE: Anchor at least one claim with a real specific number, tool name, price, percentage, "
+        "or documented case. E.g. '40% commission on Semrush affiliate', 'Stripe takes 2.9%+30c', "
+        "'HN Show launched Buffer to 100k users'. Never give generic advice without a concrete anchor. "
+        "If you don't know an exact number, give an order of magnitude: 'roughly 3-6 months', 'typically $500-2k'. "
+        "Do NOT invent statistics — only cite what you know to be true."
+    )
 
     if not round_turns:
         instruction = (
@@ -522,6 +529,7 @@ async def single_turn(request: Request, req: SingleTurnRequest):
             f"- Argue from their specific facts. If they have a rare skill or credential, name it and reason from it.\n"
             f"- Make a claim that someone could disagree with. Don't describe — argue.\n"
             f"- {closing_rule}\n"
+            f"- {data_rule}\n"
             f"- Bold your most important claim using **double asterisks**.\n"
             f"- 4-6 sentences. Speak in your character's voice.\n- {language_instruction(req.language)}"
         )
@@ -549,6 +557,7 @@ async def single_turn(request: Request, req: SingleTurnRequest):
             f"- Add a new dimension through your lens ({char_data['lens']}) using THIS user's specific facts.\n"
             f"- If the user has a specific skill, credential, or constraint you haven't yet addressed — address it now.\n"
             f"- {closing_rule}\n"
+            f"- {data_rule}\n"
             f"- Bold your most important claim using **double asterisks**.\n"
             f"- 4-6 sentences. Speak in your character's voice.\n- {language_instruction(req.language)}"
         )
@@ -590,6 +599,40 @@ async def single_turn(request: Request, req: SingleTurnRequest):
         "round": req.round,
     }
     return {"turn": turn}
+
+
+
+class CharQuestionsRequest(BaseModel):
+    turn_text: str
+    character_name: str
+    character_id: str
+    question: str
+    language: str = "en"
+
+@app.post("/debate/char_questions")
+@limiter.limit("30/minute")
+async def extract_char_questions(request: Request, req: CharQuestionsRequest):
+    """Extract 0-1 answerable questions from a character turn."""
+    lang_instr = language_instruction(req.language)
+    turn_safe = req.turn_text.replace('"', "'").replace('\n', ' ')[:600]
+    prompt = lang_instr
+    prompt += "\n\nA council member named " + req.character_name
+    prompt += " just gave this speech about '" + req.question + "':\n"
+    prompt += "SPEECH: " + turn_safe + "\n\n"
+    prompt += "Find at most ONE question " + req.character_name + " asked that the user can answer RIGHT NOW "
+    prompt += "with factual personal info (numbers, timelines, money, specific choices). "
+    prompt += "Only if it would meaningfully change the advice. Not rhetorical. Not hypothetical. "
+    prompt += 'Respond ONLY with one-line JSON: {"question": "the question"} or {"question": null}'
+    messages = [
+        {"role": "system", "content": "Precise extractor. Return only valid JSON on one line."},
+        {"role": "user", "content": prompt},
+    ]
+    raw = await call_claude_with_system(messages, max_tokens=120, temperature=0.1, json_mode=True)
+    result = parse_json_response(raw)
+    q = result.get("question")
+    if q and isinstance(q, str) and 5 < len(q.strip()) < 200 and "?" in q:
+        return {"question": q.strip()}
+    return {"question": None}
 
 
 @app.post("/debate/checkin")
@@ -649,24 +692,8 @@ async def debate_checkin(request: Request, req: CheckinRequest):
         }
         summary = [fallback_msgs.get(req.language, "The debate has concluded.")]
 
-    # Always provide a user_prompt when going to verdict, with language-aware fallback
+    # No user_prompt — go straight to verdict after checkin
     user_prompt = None
-    if not needs_more:
-        user_prompt = result.get("user_prompt")
-        if not user_prompt:
-            anything_to_add = {
-                "en": "Anything you want to add before I deliver my verdict?",
-                "es": "¿Algo que quieras añadir antes de que dicte mi veredicto?",
-                "fr": "Quelque chose à ajouter avant que je rende mon verdict?",
-                "de": "Möchten Sie noch etwas hinzufügen, bevor ich mein Urteil spreche?",
-                "pt": "Algo que queira adicionar antes de proferir meu veredicto?",
-                "it": "Qualcosa da aggiungere prima che emetta il mio verdetto?",
-                "nl": "Wilt u nog iets toevoegen voordat ik mijn oordeel geef?",
-                "zh": "在我宣布裁决之前，您还有什么要补充的吗？",
-                "ja": "判決を下す前に何か付け加えたいことはありますか？",
-                "ar": "هل هناك شيء تريد إضافته قبل أن أصدر حكمي؟",
-            }
-            user_prompt = anything_to_add.get(req.language, anything_to_add["en"])
 
     return {
         "summary": summary,
