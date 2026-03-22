@@ -1013,11 +1013,11 @@ const LandingPage = ({ onEnter, lang="en" }) => {
                         transform: isActive ? "scale(1.08)" : "scale(1)",
                       }}>
                         <img src={PORTRAIT_URLS[m.id]} alt={m.name}
-                          style={{ width:"100%", height:"100%", objectFit:"contain", objectPosition:"center bottom",
+                          style={{ width:"100%", height:"100%",
+                            objectFit: m.id==="surfer" ? "cover" : "contain",
+                            objectPosition: m.id==="surfer" ? "center 15%" : "center bottom",
                             filter:`brightness(${isActive?1:anyActive?0.5:0.85})`,
                             transition:"all 0.5s ease",
-                            transform: m.id==="surfer" ? "scale(1.6) translateY(-8%)" : "scale(1)",
-                            transformOrigin:"center bottom",
                           }}
                           onError={e=>{e.target.style.display="none"}}/>
                         <div style={{ position:"absolute", bottom:0, left:0, right:0, height:"35%",
@@ -1144,9 +1144,9 @@ const LanguageScreen = ({ onSelect, lang }) => {
       <div style={{ position:"absolute", top:"30%", left:"50%", transform:"translate(-50%,-50%)", width:"500px", height:"500px", background:"radial-gradient(circle, rgba(201,168,76,0.04) 0%, transparent 70%)", pointerEvents:"none" }}/>
       <div style={{ textAlign:"center", marginBottom:"clamp(28px,5vw,44px)", opacity:vis?1:0, transform:vis?"translateY(0)":"translateY(16px)", transition:"all 0.8s cubic-bezier(0.16,1,0.3,1)" }}>
         <div style={{ fontSize:"36px", marginBottom:"16px", opacity:0.5 }}>⚖️</div>
-        <h1 style={{ fontFamily:"'Palatino Linotype','Palatino','Book Antiqua',serif", fontSize:"clamp(28px,5vw,42px)", fontWeight:400, letterSpacing:"0.2em", color:"#c9a84c", textTransform:"uppercase", marginBottom:"8px" }}>{t.title}</h1>
+        <h1 style={{ fontFamily:"'Palatino Linotype','Palatino','Book Antiqua',serif", fontSize:"clamp(28px,5vw,42px)", fontWeight:400, letterSpacing:"0.2em", color:"#c9a84c", textTransform:"uppercase", marginBottom:"8px" }}>The Council</h1>
         <div style={{ width:"40px", height:"1px", background:"rgba(201,168,76,0.3)", margin:"12px auto" }}/>
-        <p style={{ color:"rgba(201,168,76,0.3)", fontSize:"11px", letterSpacing:"0.14em", fontStyle:"italic", fontFamily:"'Palatino Linotype',serif" }}>{t.chooseLanguage}</p>
+        <p style={{ color:"rgba(201,168,76,0.3)", fontSize:"11px", letterSpacing:"0.14em", fontStyle:"italic", fontFamily:"'Palatino Linotype',serif" }}>Choose your language</p>
       </div>
       <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(130px,1fr))", gap:"8px", maxWidth:"580px", width:"90%", opacity:vis?1:0, transition:"opacity 0.8s ease 0.2s" }}>
         {LANGUAGES.map((lang, i) => (
@@ -1341,8 +1341,11 @@ const DebateScreen = ({ characters, onClose, lang }) => {
     setPhase("loading");
     setFeed([{ type:"question_bubble", text:question }]); setApiError(null);
     setLoading(true); setLoadingLabel("…"); setLoadingSpeaker(DAN); setActiveSpeaker("dan");
+    // Warm-up label after 8s (Render cold start can take 30-50s)
+    const warmupTimer = setTimeout(() => setLoadingLabel(t.councilPrepares + "…"), 8000);
     try {
-      const data = await post("/debate/context", { question, characters:charConfigs, language:lang });
+      const data = await post("/debate/context", { question, characters:charConfigs, language:lang }, 90000);
+      clearTimeout(warmupTimer);
       if(data.questions && data.questions.length > 0) {
         setFeed(p => [...p, { type:"context_block", questions:data.questions }]);
         setPhase("context");
@@ -1352,8 +1355,11 @@ const DebateScreen = ({ characters, onClose, lang }) => {
         await startDebateFromContext({}, []);
       }
     } catch(e) {
+      clearTimeout(warmupTimer);
       console.error(e);
-      setLoading(false); setLoadingSpeaker(null); setActiveSpeaker(null);
+      setApiError(e.message);
+      setPhase("question");
+      setLoading(false); setLoadingSpeaker(null); setActiveSpeaker(null); setPhase("question");
     }
   };
 
@@ -1578,15 +1584,9 @@ const DebateScreen = ({ characters, onClose, lang }) => {
   );
 };
 
-const SUPPORTED_LANGS = ["en","es","fr","de","pt","it","nl","zh","ja","ar"];
-function detectLang() {
-  const nav = (navigator.language || navigator.userLanguage || "en").toLowerCase().slice(0,2);
-  return SUPPORTED_LANGS.includes(nav) ? nav : "en";
-}
-
 export default function App() {
   const [screen, setScreen] = useState("language");
-  const [lang, setLang] = useState(() => detectLang());
+  const [lang, setLang] = useState("en");
   const [characters, setCharacters] = useState([]);
   const handleSelectLang = (code) => { setLang(code); setScreen("landing"); };
   const handleStartDebate = (chars) => { setCharacters(chars); setScreen("debate"); };
