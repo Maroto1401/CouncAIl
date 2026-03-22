@@ -16,7 +16,6 @@ const LANGUAGES = [
   { code:"ar", label:"العربية",    flag:"🇸🇦" },
 ];
 
-// ── UI translations ───────────────────────────────────────────
 const UI = {
   en: {
     title:"THE COUNCIL", subtitle:"Assemble your council. You control who speaks.", enterChamber:"Enter the Chamber",
@@ -205,7 +204,6 @@ const hex2rgba = (hex, alpha) => {
   return `rgba(${r},${g},${b},${alpha})`;
 };
 
-// ── Character field translations ─────────────────────────────
 const CHAR_FIELDS = {
   en: {
     surfer:    { title:"The Surfer",    description:"Risk & instinct. Reads situations like waves.", lens:"risk & instinct",       tagline:"The wave is forming. Will you paddle?" },
@@ -275,7 +273,7 @@ const CHAR_FIELDS = {
     surfer:    { title:"サーファー",     description:"リスクと直感。波のように状況を読む。", lens:"リスクと直感", tagline:"波が形成されています。漕ぎ出しますか？" },
     inspector: { title:"インスペクター", description:"証拠と細部。他が見逃すものを見つける。", lens:"証拠と細部", tagline:"真実は誰も調べなかったものの中にある。" },
     artist:    { title:"アーティスト",   description:"創造性と自由。前提に挑戦する。", lens:"創造性と自由", tagline:"質問自体が罠かもしれない。" },
-    monk:      { title:"僧侶",           description:"長期的視点と意味。10年のレンズ。", lens:"長期的意味", tagline:"10年後、どの選択を後悔しますか？" },
+    monk:      { title:"僧侣",           description:"長期的視点と意味。10年のレンズ。", lens:"長期的意味", tagline:"10年後、どの選択を後悔しますか？" },
     general:   { title:"将軍",           description:"戦略と結果。希望的観測は不要。", lens:"戦略と結果", tagline:"計画は失敗する。コンティンジェンシーは失敗しない。" },
     dan:       { title:"裁判官",         description:"討論を開始し、議会を尋問し、最終判決を下す。", lens:"判断", tagline:"私は一万の決断を主宰してきた。あなたのを持ってきてください。" },
   },
@@ -288,14 +286,11 @@ const CHAR_FIELDS = {
     dan:       { title:"القاضي",   description:"يفتح النقاش ويستجوب المجلس ويصدر الحكم النهائي.", lens:"الحكم", tagline:"ترأست عشرة آلاف قرار. أحضر لي قرارك." },
   },
 };
-// Fallback to English for languages not fully translated
 const getCharFields = (charId, lang) => {
   const fields = CHAR_FIELDS[lang] || CHAR_FIELDS.en;
   return fields[charId] || (CHAR_FIELDS.en[charId] || {});
 };
 
-
-// ── Typewriter hook ───────────────────────────────────────────
 const useTypewriter = (text, speed=18, enabled=true) => {
   const [displayed, setDisplayed] = useState(enabled ? "" : text);
   const [done, setDone] = useState(!enabled);
@@ -313,7 +308,6 @@ const useTypewriter = (text, speed=18, enabled=true) => {
   return { displayed, done };
 };
 
-// ── Parse **bold** ────────────────────────────────────────────
 const ParsedText = ({ text, fontSize="15px", color="#c8b99a", serif=true }) => {
   const parts = text.split(/(\*\*[^*]+\*\*)/g);
   return (
@@ -327,7 +321,6 @@ const ParsedText = ({ text, fontSize="15px", color="#c8b99a", serif=true }) => {
   );
 };
 
-// ── SVG Avatars ───────────────────────────────────────────────
 const Avatar = ({ char, size=56, active=false, glow=false }) => {
   const c = char.color;
   const bg = char.avatarBg || "#0a0a18";
@@ -353,7 +346,15 @@ const Avatar = ({ char, size=56, active=false, glow=false }) => {
   );
 };
 
-// ── Council seats bar ─────────────────────────────────────────
+
+const PORTRAIT_URLS = {
+  dan:       "/characters/Dan.png",
+  surfer:    "/characters/Maui.png",
+  inspector: "/characters/Lamia.png",
+  artist:    "/characters/Severn.png",
+  monk:      "/characters/Hoyt.png",
+  general:   "/characters/Morpurgo.png",
+};
 const CouncilSeats = ({ characters, activeSpeaker }) => (
   <div style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:"clamp(10px,2.5vw,22px)", padding:"10px 0 8px", flexWrap:"wrap" }}>
     {[DAN, ...characters].map(c => {
@@ -363,7 +364,23 @@ const CouncilSeats = ({ characters, activeSpeaker }) => (
           opacity:activeSpeaker && !isActive ? 0.3 : 1,
           transform:isActive ? "scale(1.12)" : "scale(1)",
           transition:"all 0.35s cubic-bezier(0.34,1.56,0.64,1)" }}>
-          <Avatar char={c} size={isActive?44:34} active={isActive} glow={isActive} />
+          <div style={{
+            width: isActive?"40px":"30px",
+            height: isActive?"66px":"50px",
+            borderRadius:"3px", overflow:"hidden",
+            border:`1px solid ${isActive ? c.color+"80" : hex2rgba(c.color,0.15)}`,
+            background:"#020200",
+            transition:"all 0.35s cubic-bezier(0.34,1.56,0.64,1)",
+            boxShadow: isActive ? `0 0 14px ${c.color}50, 0 0 30px ${c.color}20` : "none",
+            position:"relative",
+          }}>
+            <img src={PORTRAIT_URLS[c.id]} alt={c.name}
+              style={{ width:"100%", height:"100%", objectFit:"contain", objectPosition:"center bottom",
+                filter:`brightness(${isActive?1:0.65})`, transition:"all 0.3s" }}
+              onError={e=>{ e.target.style.display="none"; }}/>
+            {isActive && <div style={{ position:"absolute", bottom:0, left:0, right:0, height:"40%",
+              background:`linear-gradient(to top, ${c.color}30 0%, transparent 100%)` }}/>}
+          </div>
           <span style={{ fontSize:"8px", color:isActive?c.color:"#4a4535", fontWeight:800, letterSpacing:"0.08em", textTransform:"uppercase", transition:"color 0.3s" }}>{c.name}</span>
         </div>
       );
@@ -371,14 +388,12 @@ const CouncilSeats = ({ characters, activeSpeaker }) => (
   </div>
 );
 
-// ── Dan Typewriter block ──────────────────────────────────────
 const DanTypewriter = ({ text, onDone }) => {
   const { displayed, done } = useTypewriter(text, 16, true);
   useEffect(() => { if(done && onDone) onDone(); }, [done]);
   return <ParsedText text={displayed} fontSize="14px" color="#b8a882" serif={false} />;
 };
 
-// ── Optional user input before verdict ───────────────────────
 const UserPromptInput = ({ onSubmit, t=UI.en }) => {
   const [val, setVal] = useState("");
   return (
@@ -397,7 +412,6 @@ const UserPromptInput = ({ onSubmit, t=UI.en }) => {
   );
 };
 
-// ── Dan block ─────────────────────────────────────────────────
 const DanBlock = ({ summary, question, userPrompt, councilQuestion, needsMoreRound, onAnswer, onUserPromptAnswer, answered, userAnswer, revealed, onReveal, t=UI.en }) => {
   const [ans, setAns] = useState("");
   const [vis, setVis] = useState(false);
@@ -424,7 +438,6 @@ const DanBlock = ({ summary, question, userPrompt, councilQuestion, needsMoreRou
 
   return (
     <div style={{ opacity:vis?1:0, transform:vis?"translateY(0)":"translateY(10px)", transition:"all 0.4s ease", margin:"24px 0" }}>
-      {/* Dan label */}
       <div style={{ display:"flex", alignItems:"center", gap:"10px", marginBottom:"12px" }}>
         <div style={{ flex:1, height:"1px", background:"linear-gradient(to right,transparent,rgba(201,168,76,0.25))" }}/>
         <div style={{ display:"flex", alignItems:"center", gap:"8px" }}>
@@ -433,34 +446,20 @@ const DanBlock = ({ summary, question, userPrompt, councilQuestion, needsMoreRou
         </div>
         <div style={{ flex:1, height:"1px", background:"linear-gradient(to left,transparent,rgba(201,168,76,0.25))" }}/>
       </div>
-
       <div style={{ background:"linear-gradient(160deg,rgba(13,10,2,0.95),rgba(8,6,0,0.98))", border:"1px solid rgba(201,168,76,0.14)", borderRadius:"12px", padding:"16px 20px", position:"relative", overflow:"hidden" }}>
         <div style={{ position:"absolute",top:0,left:"20%",right:"20%",height:"1px",background:"linear-gradient(to right,transparent,rgba(201,168,76,0.3),transparent)" }}/>
-
-        {summary?.length > 0 && (
-          <ul style={{ margin:`0 0 ${showQ||councilQuestion?14:0}px`, padding:0, listStyle:"none", display:"flex", flexDirection:"column", gap:"6px" }}>
-            {summary.map((b,i) => (
-              <li key={i} style={{ display:"flex", gap:"8px", alignItems:"baseline" }}>
-                <span style={{ color:"rgba(201,168,76,0.4)", flexShrink:0, fontSize:"8px" }}>◆</span>
-                <ParsedText text={b} fontSize="13px" color="#8a7a5a" serif={false} />
-              </li>
-            ))}
-          </ul>
-        )}
-
         {councilQuestion && !answered && (
           <div style={{ background:"rgba(201,168,76,0.04)", borderRadius:"8px", padding:"10px 14px", marginBottom:"12px", border:"1px solid rgba(201,168,76,0.1)" }}>
             <span style={{ fontSize:"10px", color:"rgba(201,168,76,0.45)", fontWeight:700, letterSpacing:"0.1em", textTransform:"uppercase" }}>Dan asks {councilQuestion.to} →</span>
             <p style={{ color:"#b8a882", fontSize:"13px", lineHeight:"1.55", margin:"5px 0 0", fontFamily:"'Palatino Linotype',serif" }}>{councilQuestion.question}</p>
           </div>
         )}
-      {userPrompt && !needsMoreRound && !answered && (
-        <div style={{ borderTop:"1px solid rgba(201,168,76,0.08)", paddingTop:"12px", marginTop:"4px" }}>
-          <p style={{ color:"#c9a84c", fontSize:"13px", lineHeight:"1.55", marginBottom:"10px", fontFamily:"'Palatino Linotype',serif", opacity:0.8 }}>{userPrompt}</p>
-          <UserPromptInput onSubmit={onUserPromptAnswer} t={t} />
-        </div>
-      )}
-
+        {userPrompt && !needsMoreRound && !answered && (
+          <div style={{ borderTop:"1px solid rgba(201,168,76,0.08)", paddingTop:"12px", marginTop:"4px" }}>
+            <p style={{ color:"#c9a84c", fontSize:"13px", lineHeight:"1.55", marginBottom:"10px", fontFamily:"'Palatino Linotype',serif", opacity:0.8 }}>{userPrompt}</p>
+            <UserPromptInput onSubmit={onUserPromptAnswer} t={t} />
+          </div>
+        )}
         {showQ && (
           <div style={{ borderTop:"1px solid rgba(201,168,76,0.08)", paddingTop:"14px" }}>
             <p style={{ color:"#d4c4a0", fontSize:"14px", marginBottom:"12px", lineHeight:"1.55", fontFamily:"'Palatino Linotype',serif" }}>{question}</p>
@@ -487,7 +486,6 @@ const DanBlock = ({ summary, question, userPrompt, councilQuestion, needsMoreRou
   );
 };
 
-// ── Opening block with typewriter ────────────────────────────
 const OpeningBlock = ({ text, t=UI.en }) => {
   const [vis, setVis] = useState(false);
   useEffect(() => { const timer = setTimeout(() => setVis(true), 200); return () => clearTimeout(timer); }, []);
@@ -509,13 +507,11 @@ const OpeningBlock = ({ text, t=UI.en }) => {
   );
 };
 
-// ── Context block ─────────────────────────────────────────────
 const ContextBlock = ({ questions, onSubmit, t=UI.en }) => {
   const [answers, setAnswers] = useState({});
   const [vis, setVis] = useState(false);
   const allAnswered = questions.every((_,i) => answers[i]?.trim());
   useEffect(() => { const timer = setTimeout(() => setVis(true), 100); return () => clearTimeout(timer); }, []);
-
   return (
     <div style={{ opacity:vis?1:0, transform:vis?"translateY(0)":"translateY(10px)", transition:"all 0.4s", margin:"20px 0" }}>
       <div style={{ display:"flex", alignItems:"center", gap:"10px", marginBottom:"12px" }}>
@@ -549,7 +545,6 @@ const ContextBlock = ({ questions, onSubmit, t=UI.en }) => {
   );
 };
 
-// ── Round header ──────────────────────────────────────────────
 const RoundHeader = ({ label }) => (
   <div style={{ display:"flex", alignItems:"center", gap:"12px", margin:"28px 0 20px" }}>
     <div style={{ flex:1, height:"1px", background:"linear-gradient(to right,transparent,rgba(201,168,76,0.12))" }}/>
@@ -558,7 +553,6 @@ const RoundHeader = ({ label }) => (
   </div>
 );
 
-// ── Agent turn — slides from side ────────────────────────────
 const AgentTurn = ({ turn, slideDir="left", respondingToDan=false, t=UI.en }) => {
   const [vis, setVis] = useState(false);
   const [exp, setExp] = useState(false);
@@ -566,7 +560,6 @@ const AgentTurn = ({ turn, slideDir="left", respondingToDan=false, t=UI.en }) =>
   const long = turn.text.length > 300;
   const displayText = exp||!long ? turn.text : turn.text.slice(0,300)+"…";
   useEffect(() => { const timer = setTimeout(() => setVis(true), 50); return () => clearTimeout(timer); }, []);
-
   return (
     <div style={{ display:"flex", flexDirection:"column", alignItems:isLeft?"flex-start":"flex-end", marginBottom:"18px",
       opacity:vis?1:0, transform:vis?"translateX(0)":`translateX(${isLeft?"-44px":"44px"})`,
@@ -575,7 +568,26 @@ const AgentTurn = ({ turn, slideDir="left", respondingToDan=false, t=UI.en }) =>
         <div style={{ fontSize:"9px", color:"rgba(201,168,76,0.35)", marginBottom:"4px", [isLeft?"marginLeft":"marginRight"]:"52px", letterSpacing:"0.08em", textTransform:"uppercase" }}>{t.respondingToDan}</div>
       )}
       <div style={{ display:"flex", alignItems:"flex-start", gap:"10px", flexDirection:isLeft?"row":"row-reverse", maxWidth:"92%" }}>
-        <Avatar char={turn} size={42} active />
+        <div style={{ flexShrink:0, display:"flex", flexDirection:"column", alignItems:"center", gap:"4px" }}>
+          <div style={{ width:"52px", height:"88px", borderRadius:"4px", overflow:"hidden",
+            border:`1px solid ${hex2rgba(turn.color,0.35)}`,
+            background:"#020200",
+            boxShadow:`0 0 16px ${hex2rgba(turn.color,0.2)}, 0 4px 12px rgba(0,0,0,0.5)`,
+            position:"relative",
+          }}>
+            <img src={PORTRAIT_URLS[turn.id]} alt={turn.name}
+              style={{ width:"100%", height:"100%", objectFit:"contain", objectPosition:"center bottom",
+                filter:`brightness(0.92) drop-shadow(0 2px 6px rgba(0,0,0,0.6))` }}
+              onError={e=>{
+                e.target.style.display="none";
+                e.target.parentElement.style.display="flex";
+                e.target.parentElement.style.alignItems="center";
+                e.target.parentElement.style.justifyContent="center";
+              }}/>
+            <div style={{ position:"absolute", bottom:0, left:0, right:0, height:"35%",
+              background:`linear-gradient(to top, ${hex2rgba(turn.color,0.25)} 0%, transparent 100%)` }}/>
+          </div>
+        </div>
         <div style={{
           background:`linear-gradient(150deg,${hex2rgba(turn.color,0.07)},${hex2rgba(turn.color,0.03)})`,
           border:`1px solid ${hex2rgba(turn.color,0.2)}`,
@@ -595,12 +607,10 @@ const AgentTurn = ({ turn, slideDir="left", respondingToDan=false, t=UI.en }) =>
   );
 };
 
-// ── Speaker picker ────────────────────────────────────────────
 const SpeakerPicker = ({ pitches, onChoose, loading, t=UI.en, onRetry }) => {
   const [vis, setVis] = useState(false);
   useEffect(() => { const timer = setTimeout(() => setVis(true), 80); return () => clearTimeout(timer); }, []);
   const allFailed = pitches.every(p => p.pitch === "...");
-
   return (
     <div style={{ opacity:vis?1:0, transform:vis?"translateY(0)":"translateY(10px)", transition:"all 0.35s ease", margin:"18px 0" }}>
       <div style={{ display:"flex", alignItems:"center", gap:"10px", marginBottom:"14px" }}>
@@ -634,7 +644,6 @@ const SpeakerPicker = ({ pitches, onChoose, loading, t=UI.en, onRetry }) => {
   );
 };
 
-// ── Debate closed banner ──────────────────────────────────────
 const DebateClosedBanner = ({ onReveal, revealed, t=UI.en }) => {
   const [vis, setVis] = useState(false);
   useEffect(() => { const timer = setTimeout(() => setVis(true), 200); return () => clearTimeout(timer); }, []);
@@ -656,7 +665,6 @@ const DebateClosedBanner = ({ onReveal, revealed, t=UI.en }) => {
   );
 };
 
-// ── Verdict ───────────────────────────────────────────────────
 const VerdictBlock = ({ verdict, t=UI.en }) => {
   const [vis, setVis] = useState(false);
   useEffect(() => { const timer = setTimeout(() => setVis(true), 100); return () => clearTimeout(timer); }, []);
@@ -672,7 +680,6 @@ const VerdictBlock = ({ verdict, t=UI.en }) => {
       </div>
       <div style={{ background:"linear-gradient(160deg,rgba(13,10,2,0.98),rgba(5,4,0,0.99))", border:"1px solid rgba(201,168,76,0.2)", borderRadius:"16px", padding:"22px", position:"relative", overflow:"hidden" }}>
         <div style={{ position:"absolute",top:0,left:0,right:0,height:"1px",background:"linear-gradient(to right,transparent,rgba(201,168,76,0.5),transparent)" }}/>
-
         {verdict.insights?.length>0 && (
           <div style={{ marginBottom:"20px" }}>
             <div style={{ fontSize:"9px",color:"rgba(201,168,76,0.35)",fontWeight:800,letterSpacing:"0.16em",textTransform:"uppercase",marginBottom:"12px",fontFamily:"'Palatino Linotype',serif" }}>{t.whatEstablished}</div>
@@ -684,7 +691,6 @@ const VerdictBlock = ({ verdict, t=UI.en }) => {
             ))}
           </div>
         )}
-
         {(verdict.for_points?.length>0||verdict.against_points?.length>0) && (
           <div style={{ display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(200px,1fr))",gap:"12px",marginBottom:"20px" }}>
             {verdict.for_points?.length>0 && (
@@ -711,7 +717,6 @@ const VerdictBlock = ({ verdict, t=UI.en }) => {
             )}
           </div>
         )}
-
         {verdict.recommendation && (
           <div style={{ background:"rgba(0,0,0,0.4)",borderRadius:"10px",padding:"18px 20px",border:"1px solid rgba(201,168,76,0.2)",position:"relative" }}>
             <div style={{ position:"absolute",top:0,left:"10%",right:"10%",height:"1px",background:"linear-gradient(to right,transparent,rgba(201,168,76,0.3),transparent)" }}/>
@@ -724,7 +729,6 @@ const VerdictBlock = ({ verdict, t=UI.en }) => {
   );
 };
 
-// ── Loading ───────────────────────────────────────────────────
 const LoadingPulse = ({ label, speaker }) => (
   <div style={{ display:"flex",alignItems:"center",gap:"10px",padding:"10px 0",opacity:0.6 }}>
     {speaker && <Avatar char={speaker} size={26} active/>}
@@ -737,7 +741,6 @@ const LoadingPulse = ({ label, speaker }) => (
   </div>
 );
 
-// ── Question bubble ───────────────────────────────────────────
 const QuestionBubble = ({ text }) => (
   <div style={{ display:"flex",justifyContent:"flex-end",marginBottom:"22px" }}>
     <div style={{ background:"rgba(201,168,76,0.05)",border:"1px solid rgba(201,168,76,0.15)",borderRadius:"14px 14px 3px 14px",padding:"13px 18px",maxWidth:"80%" }}>
@@ -746,19 +749,7 @@ const QuestionBubble = ({ text }) => (
   </div>
 );
 
-
 // ── Landing Page ──────────────────────────────────────────────
-
-// Portrait images — replace these URLs with real character art
-// Recommended: generate with Midjourney using prompts below each character
-const PORTRAIT_URLS = {
-  dan:       "/characters/Dan.png",
-  surfer:    "/characters/Maui.png",
-  inspector: "/characters/Lamia.png",
-  artist:    "/characters/Severn.png",
-  monk:      "/characters/Hoyt.png",
-  general:   "/characters/Morpurgo.png",
-};
 
 const COUNCIL_DATA = [
   { id:"dan",      name:"Dan",      title:"The Judge",     color:"#c9a84c", lens:"Judgment & Clarity",    description:"Dan has presided over ten thousand decisions. He opens the debate, interrogates the council, and delivers the final verdict. Calm. Sharp. No agenda. His only goal is your clarity.", tagline:"I have presided over ten thousand decisions. Bring me yours." },
@@ -769,71 +760,117 @@ const COUNCIL_DATA = [
   { id:"general",   name:"Morpurgo", title:"The General",   color:"#facc15", lens:"Strategy & Consequences", description:"Thirty years in command where mistakes cost lives. Morpurgo sees everything as a campaign: objectives, terrain, failure modes, contingencies. Blunt. Zero tolerance for wishful thinking.",                          tagline:"Plans fail. Contingencies don't." },
 ];
 
-// Particle system for atmosphere
+const RUNES = ["ᚠ","ᚢ","ᚦ","ᚨ","ᚱ","ᚲ","ᚷ","ᚹ","ᚺ","ᚾ","ᛁ","ᛃ","ᛇ","ᛈ","ᛉ","ᛊ","ᛏ","ᛒ","ᛖ","ᛗ","ᛚ","ᛜ","ᛞ","ᛟ"];
+
 const Particles = () => {
-  const particles = Array.from({length:24}, (_,i) => ({
+  const particles = Array.from({length:28}, (_,i) => ({
     id:i,
-    x: Math.random()*100,
-    y: Math.random()*100,
-    size: Math.random()*2 + 0.5,
-    delay: Math.random()*8,
-    duration: Math.random()*6 + 6,
-    opacity: Math.random()*0.3 + 0.05,
+    x: (i*37+11)%100,
+    y: (i*53+7)%100,
+    size: (i%3)+0.8,
+    delay: (i*1.3)%10,
+    duration: 10+(i%7),
+    opacity: 0.06+(i%5)*0.025,
+    isRune: i%5===0,
+    rune: RUNES[i%RUNES.length],
   }));
+
+  const fogLayers = [
+    { y:"20%", dur:22, delay:0,   opacity:0.018 },
+    { y:"45%", dur:28, delay:6,   opacity:0.022 },
+    { y:"70%", dur:18, delay:12,  opacity:0.016 },
+  ];
 
   return (
     <div style={{ position:"fixed", inset:0, pointerEvents:"none", zIndex:1, overflow:"hidden" }}>
       <style>{`
         @keyframes floatUp {
-          0% { transform: translateY(0px) translateX(0px); opacity: 0; }
-          10% { opacity: 1; }
-          90% { opacity: 0.5; }
-          100% { transform: translateY(-120px) translateX(${Math.random()>0.5?'':'-'}20px); opacity: 0; }
+          0%   { transform: translateY(0) translateX(0); opacity: 0; }
+          12%  { opacity: 1; }
+          88%  { opacity: 0.6; }
+          100% { transform: translateY(-140px) translateX(15px); opacity: 0; }
         }
-        @keyframes shimmer {
-          0%, 100% { opacity: 0.05; transform: scaleX(1); }
-          50% { opacity: 0.15; transform: scaleX(1.05); }
+        @keyframes floatRune {
+          0%   { transform: translateY(0) rotate(0deg); opacity: 0; }
+          10%  { opacity: 1; }
+          90%  { opacity: 0.4; }
+          100% { transform: translateY(-180px) rotate(25deg); opacity: 0; }
         }
-        @keyframes scanline {
-          0% { transform: translateY(-100%); }
-          100% { transform: translateY(100vh); }
-        }
-        @keyframes breathe {
-          0%, 100% { opacity: 0.03; transform: scale(1); }
-          50% { opacity: 0.07; transform: scale(1.04); }
+        @keyframes fogDrift {
+          0%   { transform: translateX(-8%) scaleY(1); opacity: 0; }
+          15%  { opacity: 1; }
+          85%  { opacity: 1; }
+          100% { transform: translateX(8%) scaleY(1.04); opacity: 0; }
         }
         @keyframes revealChar {
-          0% { opacity: 0; transform: translateY(24px) scale(0.96); filter: blur(4px); }
+          0%   { opacity: 0; transform: translateY(24px) scale(0.96); filter: blur(4px); }
           100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
         }
         @keyframes titleReveal {
-          0% { opacity: 0; letter-spacing: 0.5em; filter: blur(8px); }
+          0%   { opacity: 0; letter-spacing: 0.5em; filter: blur(8px); }
           100% { opacity: 1; letter-spacing: 0.25em; filter: blur(0); }
         }
         @keyframes fadeUp {
-          0% { opacity: 0; transform: translateY(16px); }
+          0%   { opacity: 0; transform: translateY(16px); }
           100% { opacity: 1; transform: translateY(0); }
         }
         @keyframes glowPulse {
           0%, 100% { box-shadow: 0 0 20px rgba(201,168,76,0.1), inset 0 0 20px rgba(201,168,76,0.02); }
-          50% { box-shadow: 0 0 40px rgba(201,168,76,0.18), inset 0 0 30px rgba(201,168,76,0.05); }
+          50%       { box-shadow: 0 0 50px rgba(201,168,76,0.22), inset 0 0 30px rgba(201,168,76,0.06); }
         }
         @keyframes lineDraw {
-          0% { width: 0; opacity: 0; }
+          0%   { width: 0; opacity: 0; }
           100% { width: 80px; opacity: 1; }
         }
         @keyframes orb {
-          0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.04; }
-          50% { transform: translate(-50%, -50%) scale(1.08); opacity: 0.08; }
+          0%, 100% { transform: translate(-50%,-50%) scale(1);    opacity: 0.05; }
+          50%       { transform: translate(-50%,-50%) scale(1.12); opacity: 0.10; }
+        }
+        @keyframes orbPulse2 {
+          0%, 100% { transform: translate(-50%,-50%) scale(1);    opacity: 0.03; }
+          50%       { transform: translate(-50%,-50%) scale(0.88); opacity: 0.07; }
+        }
+        @keyframes spotlightReveal {
+          0%   { opacity: 0; transform: scale(0.85); filter: blur(12px); }
+          100% { opacity: 1; transform: scale(1);    filter: blur(0); }
+        }
+        @keyframes spotlightExit {
+          0%   { opacity: 1; }
+          100% { opacity: 0.12; filter: blur(2px); }
         }
       `}</style>
-      {particles.map(p => (
+
+      {/* Fog layers */}
+      {fogLayers.map((f,i) => (
+        <div key={"fog"+i} style={{
+          position:"absolute", left:"-10%", top:f.y,
+          width:"120%", height:"180px",
+          background:"radial-gradient(ellipse 80% 50% at 50% 50%, rgba(201,168,76,0.03) 0%, transparent 70%)",
+          animation:`fogDrift ${f.dur}s ease-in-out ${f.delay}s infinite alternate`,
+          opacity:f.opacity,
+        }}/>
+      ))}
+
+      {/* Particles + runes */}
+      {particles.map(p => p.isRune ? (
+        <div key={p.id} style={{
+          position:"absolute",
+          left:`${p.x}%`, top:`${p.y}%`,
+          fontSize:`${p.size*5+6}px`,
+          color:"rgba(201,168,76,0.5)",
+          fontFamily:"serif",
+          animation:`floatRune ${p.duration+4}s ease-in-out ${p.delay}s infinite`,
+          opacity:p.opacity*0.7,
+          userSelect:"none",
+        }}>{p.rune}</div>
+      ) : (
         <div key={p.id} style={{
           position:"absolute",
           left:`${p.x}%`, top:`${p.y}%`,
           width:`${p.size}px`, height:`${p.size}px`,
-          background:"rgba(201,168,76,0.6)",
+          background:`radial-gradient(circle, rgba(220,180,80,0.9) 0%, rgba(201,168,76,0.3) 100%)`,
           borderRadius:"50%",
+          boxShadow:`0 0 ${p.size*3}px rgba(201,168,76,0.4)`,
           animation:`floatUp ${p.duration}s ease-in-out ${p.delay}s infinite`,
           opacity:p.opacity,
         }}/>
@@ -848,14 +885,13 @@ const LandingPage = ({ onEnter }) => {
   const [charsRevealed, setCharsRevealed] = useState(false);
 
   useEffect(() => {
-    // Cinematic sequence
-    const t0 = setTimeout(() => setPhase(0), 100);   // particles + glow
-    const t1 = setTimeout(() => setPhase(1), 700);   // seal
-    const t2 = setTimeout(() => setPhase(2), 1800);  // title
-    const t3 = setTimeout(() => setPhase(3), 3000);  // divider + tagline
-    const t4 = setTimeout(() => setPhase(4), 4200);  // "The Council"
-    const t5 = setTimeout(() => { setPhase(5); setCharsRevealed(true); }, 5000); // characters
-    const t6 = setTimeout(() => setPhase(6), 5000 + COUNCIL_DATA.length * 180 + 600); // CTA
+    const t0 = setTimeout(() => setPhase(0), 100);
+    const t1 = setTimeout(() => setPhase(1), 700);
+    const t2 = setTimeout(() => setPhase(2), 1800);
+    const t3 = setTimeout(() => setPhase(3), 3000);
+    const t4 = setTimeout(() => setPhase(4), 4200);
+    const t5 = setTimeout(() => { setPhase(5); setCharsRevealed(true); }, 5000);
+    const t6 = setTimeout(() => setPhase(6), 5000 + COUNCIL_DATA.length * 180 + 600);
     return () => [t0,t1,t2,t3,t4,t5,t6].forEach(clearTimeout);
   }, []);
 
@@ -868,77 +904,29 @@ const LandingPage = ({ onEnter }) => {
       position:"relative", overflow:"hidden",
       display:"flex", flexDirection:"column", alignItems:"center",
     }}>
-
-      {/* ── Atmosphere ── */}
       <Particles />
-
-      {/* Deep vignette */}
       <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse at 50% 40%, transparent 20%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0.85) 100%)", pointerEvents:"none", zIndex:2 }}/>
-
-      {/* Breathing orb */}
-      <div style={{ position:"fixed", top:"38%", left:"50%", width:"min(800px,100vw)", height:"min(800px,100vw)", pointerEvents:"none", zIndex:1, animation:"orb 8s ease-in-out infinite", background:"radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 60%)", transform:"translate(-50%,-50%)" }}/>
-
-      {/* Scanline effect — very subtle */}
+      <div style={{ position:"fixed", top:"38%", left:"50%", width:"min(800px,100vw)", height:"min(800px,100vw)", pointerEvents:"none", zIndex:1, animation:"orb 8s ease-in-out infinite", background:"radial-gradient(circle, rgba(201,168,76,0.07) 0%, rgba(120,60,180,0.015) 40%, transparent 65%)", transform:"translate(-50%,-50%)" }}/>
+      <div style={{ position:"fixed", top:"55%", left:"30%", width:"min(500px,70vw)", height:"min(500px,70vw)", pointerEvents:"none", zIndex:1, animation:"orbPulse2 12s ease-in-out 3s infinite", background:"radial-gradient(circle, rgba(120,60,200,0.04) 0%, transparent 60%)", transform:"translate(-50%,-50%)" }}/>
+      <div style={{ position:"fixed", top:"25%", left:"70%", width:"min(400px,60vw)", height:"min(400px,60vw)", pointerEvents:"none", zIndex:1, animation:"orbPulse2 15s ease-in-out 7s infinite", background:"radial-gradient(circle, rgba(60,100,200,0.03) 0%, transparent 60%)", transform:"translate(-50%,-50%)" }}/>
       <div style={{ position:"fixed", inset:0, pointerEvents:"none", zIndex:2, background:"repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.015) 2px, rgba(0,0,0,0.015) 4px)" }}/>
-
-      {/* Horizontal accent lines */}
       <div style={{ position:"fixed", top:"12%", left:0, right:0, height:"1px", background:"linear-gradient(to right,transparent 0%,rgba(201,168,76,0.08) 30%,rgba(201,168,76,0.08) 70%,transparent 100%)", pointerEvents:"none", zIndex:3, opacity:phase>=2?1:0, transition:"opacity 2s ease" }}/>
       <div style={{ position:"fixed", bottom:"8%", left:0, right:0, height:"1px", background:"linear-gradient(to right,transparent 0%,rgba(201,168,76,0.08) 30%,rgba(201,168,76,0.08) 70%,transparent 100%)", pointerEvents:"none", zIndex:3, opacity:phase>=2?1:0, transition:"opacity 2s ease" }}/>
 
-      {/* ── Content ── */}
       <div style={{ position:"relative", zIndex:10, width:"100%", maxWidth:"1100px", padding:"clamp(40px,8vw,80px) clamp(16px,4vw,40px)", display:"flex", flexDirection:"column", alignItems:"center" }}>
 
-        {/* Seal */}
-        <div style={{
-          fontSize:"clamp(32px,5vw,52px)",
-          marginBottom:"clamp(16px,3vw,24px)",
-          opacity:phase>=1?0.65:0,
-          transform:phase>=1?"scale(1) translateY(0)":"scale(0.7) translateY(10px)",
-          transition:"all 1.6s cubic-bezier(0.16,1,0.3,1)",
-          filter:phase>=1?"drop-shadow(0 0 30px rgba(201,168,76,0.5))":"none",
-        }}>⚖️</div>
+        <div style={{ fontSize:"clamp(32px,5vw,52px)", marginBottom:"clamp(16px,3vw,24px)", opacity:phase>=1?0.65:0, transform:phase>=1?"scale(1) translateY(0)":"scale(0.7) translateY(10px)", transition:"all 1.6s cubic-bezier(0.16,1,0.3,1)", filter:phase>=1?"drop-shadow(0 0 30px rgba(201,168,76,0.5))":"none" }}>⚖️</div>
 
-        {/* Title */}
-        <h1 style={{
-          fontSize:"clamp(40px,9vw,100px)",
-          fontWeight:400,
-          color:"#c9a84c",
-          textTransform:"uppercase",
-          margin:"0 0 clamp(6px,1.5vw,12px)",
-          textShadow:"0 0 80px rgba(201,168,76,0.25), 0 2px 8px rgba(0,0,0,0.9)",
-          opacity:phase>=2?1:0,
-          animation:phase>=2?"titleReveal 1.4s cubic-bezier(0.16,1,0.3,1) forwards":"none",
-          letterSpacing:"0.25em",
-        }}>The Council</h1>
+        <h1 style={{ fontSize:"clamp(28px,5.5vw,64px)", fontWeight:400, color:"#c9a84c", textTransform:"uppercase", margin:"0 0 clamp(6px,1.5vw,12px)", textShadow:"0 0 80px rgba(201,168,76,0.25), 0 2px 8px rgba(0,0,0,0.9)", opacity:phase>=2?1:0, animation:phase>=2?"titleReveal 1.4s cubic-bezier(0.16,1,0.3,1) forwards":"none", letterSpacing:"0.25em" }}>The Council</h1>
 
-        {/* Animated divider */}
         {phase>=3 && (
-          <div style={{
-            height:"1px",
-            background:"linear-gradient(to right,transparent,rgba(201,168,76,0.7),transparent)",
-            margin:"clamp(10px,2vw,18px) auto",
-            animation:"lineDraw 1.2s ease forwards",
-            width:0,
-          }}/>
+          <div style={{ height:"1px", background:"linear-gradient(to right,transparent,rgba(201,168,76,0.7),transparent)", margin:"clamp(10px,2vw,18px) auto", animation:"lineDraw 1.2s ease forwards", width:0 }}/>
         )}
 
-        {/* Tagline */}
-        <p style={{
-          fontSize:"clamp(12px,2vw,18px)",
-          color:"rgba(201,168,76,0.38)",
-          fontStyle:"italic",
-          letterSpacing:"0.08em",
-          lineHeight:1.8,
-          maxWidth:"500px",
-          textAlign:"center",
-          opacity:phase>=3?1:0,
-          animation:phase>=3?"fadeUp 1s ease 0.3s forwards":"none",
-          marginBottom:"clamp(28px,5vw,52px)",
-        }}>
+        <p style={{ fontSize:"clamp(12px,2vw,18px)", color:"rgba(201,168,76,0.38)", fontStyle:"italic", letterSpacing:"0.08em", lineHeight:1.8, maxWidth:"500px", textAlign:"center", opacity:phase>=3?1:0, animation:phase>=3?"fadeUp 1s ease 0.3s forwards":"none", marginBottom:"clamp(28px,5vw,52px)" }}>
           Five minds. One question. No comfortable answers.
         </p>
 
-        {/* The Council section header */}
         {phase>=4 && (
           <div style={{ textAlign:"center", marginBottom:"clamp(20px,3.5vw,32px)", animation:"fadeUp 0.8s ease forwards", opacity:0 }}>
             <p style={{ fontSize:"clamp(8px,1.1vw,11px)", letterSpacing:"0.3em", color:"rgba(201,168,76,0.2)", textTransform:"uppercase" }}>
@@ -947,39 +935,18 @@ const LandingPage = ({ onEnter }) => {
           </div>
         )}
 
-        {/* Characters */}
         {phase>=5 && (
           <div style={{ width:"100%", display:"flex", flexDirection:"column", alignItems:"center", gap:"clamp(16px,3vw,28px)" }}>
 
-            {/* ── Dan — center top ── */}
             {(() => {
               const dan = COUNCIL_DATA.find(m => m.id==="dan");
               const danIdx = COUNCIL_DATA.indexOf(dan);
               const isDanActive = activeChar === danIdx;
               return dan ? (
                 <div style={{ display:"flex", flexDirection:"column", alignItems:"center", marginBottom:"clamp(16px,3vw,28px)" }}>
-                  <div
-                    onClick={() => setActiveChar(isDanActive ? null : danIdx)}
-                    style={{
-                      cursor:"pointer", display:"flex", flexDirection:"column", alignItems:"center", gap:"10px",
-                      animation:"revealChar 0.7s cubic-bezier(0.16,1,0.3,1) 0ms forwards", opacity:0,
-                    }}
-                  >
-                    <div style={{
-                      position:"relative",
-                      width:"clamp(130px,16vw,200px)",
-                      height:"clamp(240px,32vw,380px)",
-                      borderRadius:"4px", overflow:"hidden",
-                      border:`1px solid ${isDanActive ? dan.color+"99" : "rgba(201,168,76,0.4)"}`,
-                      background:"transparent",
-                      transition:"all 0.4s ease",
-                      boxShadow:isDanActive
-                        ? `0 0 0 1px ${dan.color}55, 0 0 60px ${dan.color}40, 0 12px 40px rgba(0,0,0,0.7)`
-                        : `0 0 0 1px rgba(201,168,76,0.15), 0 0 30px rgba(201,168,76,0.08), 0 8px 32px rgba(0,0,0,0.6)`,
-                      transform:isDanActive?"scale(1.05)":"scale(1)",
-                    }}>
-                      <img src={PORTRAIT_URLS["dan"]} alt="Dan" style={{ width:"100%", height:"100%", objectFit:"contain", objectPosition:"center bottom", filter:`brightness(${isDanActive?1:0.88}) drop-shadow(0 8px 20px rgba(0,0,0,0.5))`, transition:"all 0.5s ease" }} onError={e=>{e.target.style.display='none'}}/>
-                      {/* Subtle color glow at feet */}
+                  <div onClick={() => setActiveChar(isDanActive ? null : danIdx)} style={{ cursor:"pointer", display:"flex", flexDirection:"column", alignItems:"center", gap:"10px", animation:"revealChar 0.7s cubic-bezier(0.16,1,0.3,1) 0ms forwards", opacity:0 }}>
+                    <div style={{ position:"relative", width:"clamp(130px,16vw,200px)", height:"clamp(240px,32vw,380px)", borderRadius:"4px", overflow:"hidden", border:`1px solid ${isDanActive ? dan.color+"99" : "rgba(201,168,76,0.4)"}`, background:"transparent", transition:"all 0.4s ease", boxShadow:isDanActive ? `0 0 0 1px ${dan.color}55, 0 0 60px ${dan.color}40, 0 12px 40px rgba(0,0,0,0.7)` : `0 0 0 1px rgba(201,168,76,0.15), 0 0 30px rgba(201,168,76,0.08), 0 8px 32px rgba(0,0,0,0.6)`, transform:isDanActive?"scale(1.05)":"scale(1)" }}>
+                      <img src={PORTRAIT_URLS["dan"]} alt="Dan" style={{ width:"100%", height:"100%", objectFit:"contain", objectPosition:"center bottom", filter:`brightness(${isDanActive?1:0.88}) drop-shadow(0 8px 20px rgba(0,0,0,0.5))`, transition:"all 0.5s ease" }} onError={e=>{e.target.style.display="none"}}/>
                       <div style={{ position:"absolute", bottom:0, left:0, right:0, height:"30%", background:`linear-gradient(to top, ${dan.color}15 0%, transparent 100%)`, opacity:isDanActive?1:0.5, transition:"opacity 0.4s" }}/>
                     </div>
                     <div style={{ textAlign:"center" }}>
@@ -988,7 +955,6 @@ const LandingPage = ({ onEnter }) => {
                       <div style={{ fontSize:"8px", color:"rgba(201,168,76,0.4)", letterSpacing:"0.12em", textTransform:"uppercase", marginTop:"4px", fontStyle:"italic" }}>always present</div>
                     </div>
                   </div>
-                  {/* Separator to council */}
                   <div style={{ display:"flex", alignItems:"center", gap:"12px", marginTop:"clamp(14px,2.5vw,22px)", width:"clamp(200px,40vw,360px)" }}>
                     <div style={{ flex:1, height:"1px", background:"linear-gradient(to right,transparent,rgba(201,168,76,0.15))" }}/>
                     <span style={{ fontSize:"8px", color:"rgba(201,168,76,0.2)", letterSpacing:"0.2em", textTransform:"uppercase" }}>The Council</span>
@@ -998,117 +964,134 @@ const LandingPage = ({ onEnter }) => {
               ) : null;
             })()}
 
-            {/* ── Five council members below ── */}
-            <div style={{ display:"flex", justifyContent:"center", gap:"clamp(8px,1.8vw,20px)", flexWrap:"wrap" }}>
-              {COUNCIL_DATA.filter(m => m.id !== "dan").map((m, i) => {
-                const realIdx = COUNCIL_DATA.indexOf(m);
-                const isActive = activeChar === realIdx;
-                return (
-                  <div key={m.id}
-                    onClick={() => setActiveChar(isActive ? null : realIdx)}
-                    style={{
-                      cursor:"pointer", display:"flex", flexDirection:"column", alignItems:"center", gap:"10px",
-                      animation:`revealChar 0.7s cubic-bezier(0.16,1,0.3,1) ${(i+1)*180}ms forwards`, opacity:0,
-                    }}
-                  >
-                    <div style={{
-                      position:"relative",
-                      width:"clamp(100px,11vw,150px)",
-                      height:"clamp(200px,24vw,320px)",
-                      borderRadius:"4px", overflow:"hidden",
-                      border:"none",
-                      background:"transparent",
-                      transition:"all 0.4s ease",
-                      boxShadow:isActive ? `0 0 40px ${m.color}25, 0 0 80px ${m.color}10` : "none",
-                      transform:isActive?"scale(1.06)":"scale(1)",
-                    }}>
-                      <img src={PORTRAIT_URLS[m.id]} alt={m.name} style={{ width:"100%", height:"100%", objectFit:"contain", objectPosition:"center bottom", filter:`brightness(${isActive?1:0.85}) drop-shadow(0 8px 16px rgba(0,0,0,0.4))`, transition:"all 0.5s ease" }} onError={e=>{e.target.style.display='none'}}/>
-                      {/* Color glow at feet on hover */}
-                      <div style={{ position:"absolute", bottom:0, left:0, right:0, height:"25%", background:`linear-gradient(to top, ${m.color}18 0%, transparent 100%)`, opacity:isActive?1:0.4, transition:"opacity 0.4s" }}/>
-                    </div>
-                    <div style={{ textAlign:"center" }}>
-                      <div style={{ fontSize:"clamp(10px,1.2vw,13px)", fontWeight:700, color:isActive?m.color:"rgba(201,168,76,0.6)", letterSpacing:"0.1em", textTransform:"uppercase", transition:"color 0.3s", textShadow:isActive?`0 0 20px ${m.color}60`:"none" }}>{m.name}</div>
-                      <div style={{ fontSize:"clamp(7px,0.9vw,9px)", color:"rgba(201,168,76,0.22)", letterSpacing:"0.12em", textTransform:"uppercase", marginTop:"2px" }}>{m.title}</div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            {/* ── Five council members + spotlight overlay ── */}
+            <div style={{ position:"relative", width:"100%", display:"flex", flexDirection:"column", alignItems:"center" }}>
 
-            {/* Character detail panel */}
-            <div style={{
-              width:"100%", maxWidth:"640px",
-              maxHeight:active?"400px":"0",
-              overflow:"hidden",
-              transition:"max-height 0.7s cubic-bezier(0.16,1,0.3,1), opacity 0.4s ease",
-              opacity:active?1:0,
-            }}>
-              {active && (
-                <div style={{
-                  padding:"clamp(16px,3vw,28px)",
-                  border:`1px solid ${active.color}20`,
-                  borderRadius:"6px",
-                  background:`linear-gradient(135deg, rgba(${active.color.slice(1).match(/../g).map(h=>parseInt(h,16)).join(",")},0.04) 0%, rgba(2,2,0,0.6) 100%)`,
-                  backdropFilter:"blur(8px)",
-                  textAlign:"center",
-                }}>
-                  <div style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:"12px", marginBottom:"14px" }}>
-                    <div style={{ flex:1, height:"1px", background:`linear-gradient(to right,transparent,${active.color}30)` }}/>
-                    <span style={{ fontSize:"clamp(8px,1vw,10px)", letterSpacing:"0.2em", color:active.color, opacity:0.7, textTransform:"uppercase" }}>{active.lens}</span>
-                    <div style={{ flex:1, height:"1px", background:`linear-gradient(to left,transparent,${active.color}30)` }}/>
+              {/* Background row — dims/blurs when one is active */}
+              <div style={{ display:"flex", justifyContent:"center", gap:"clamp(8px,1.8vw,20px)", flexWrap:"wrap", transition:"all 0.5s ease" }}>
+                {COUNCIL_DATA.filter(m => m.id !== "dan").map((m, i) => {
+                  const realIdx = COUNCIL_DATA.indexOf(m);
+                  const isActive = activeChar === realIdx;
+                  const anyActive = activeChar !== null;
+                  return (
+                    <div key={m.id} onClick={() => setActiveChar(isActive ? null : realIdx)}
+                      style={{ cursor:"pointer", display:"flex", flexDirection:"column", alignItems:"center", gap:"8px",
+                        animation:`revealChar 0.7s cubic-bezier(0.16,1,0.3,1) ${(i+1)*180}ms forwards`, opacity:0,
+                        transition:"all 0.55s cubic-bezier(0.16,1,0.3,1)",
+                        transform: anyActive && !isActive ? "scale(0.82) translateY(8px)" : "scale(1)",
+                        filter: anyActive && !isActive ? "blur(2px) brightness(0.35)" : "none",
+                        pointerEvents: anyActive && !isActive ? "none" : "auto",
+                      }}>
+                      <div style={{ position:"relative", width:"clamp(90px,10vw,140px)", height:"clamp(180px,22vw,300px)",
+                        borderRadius:"4px", overflow:"hidden", background:"transparent",
+                        transition:"all 0.5s ease",
+                        boxShadow: isActive ? `0 0 60px ${m.color}35, 0 0 120px ${m.color}12` : "none",
+                        transform: isActive ? "scale(1.08)" : "scale(1)",
+                      }}>
+                        <img src={PORTRAIT_URLS[m.id]} alt={m.name}
+                          style={{ width:"100%", height:"100%", objectFit:"contain", objectPosition:"center bottom",
+                            filter:`brightness(${isActive?1:anyActive?0.5:0.85})`,
+                            transition:"all 0.5s ease" }}
+                          onError={e=>{e.target.style.display="none"}}/>
+                        <div style={{ position:"absolute", bottom:0, left:0, right:0, height:"35%",
+                          background:`linear-gradient(to top, ${m.color}22 0%, transparent 100%)`,
+                          opacity:isActive?1:0.3, transition:"opacity 0.5s" }}/>
+                      </div>
+                      <div style={{ textAlign:"center", transition:"all 0.4s" }}>
+                        <div style={{ fontSize:"clamp(9px,1.1vw,12px)", fontWeight:700,
+                          color: isActive ? m.color : anyActive ? "rgba(201,168,76,0.2)" : "rgba(201,168,76,0.6)",
+                          letterSpacing:"0.1em", textTransform:"uppercase", transition:"all 0.4s",
+                          textShadow: isActive ? `0 0 20px ${m.color}80` : "none" }}>{m.name}</div>
+                        <div style={{ fontSize:"clamp(6px,0.8vw,8px)", color:"rgba(201,168,76,0.18)", letterSpacing:"0.12em", textTransform:"uppercase", marginTop:"2px" }}>{m.title}</div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* ── SPOTLIGHT OVERLAY ── */}
+              {active && active.id !== "dan" && (
+                <div style={{ position:"fixed", inset:0, zIndex:50, display:"flex", alignItems:"center", justifyContent:"center",
+                  background:"rgba(2,2,0,0.75)", backdropFilter:"blur(6px)",
+                  animation:"fadeUp 0.3s ease forwards",
+                }}
+                  onClick={() => setActiveChar(null)}
+                >
+                  {/* Spotlight glow behind character */}
+                  <div style={{ position:"absolute", width:"500px", height:"500px",
+                    background:`radial-gradient(circle, ${active.color}18 0%, ${active.color}06 40%, transparent 70%)`,
+                    borderRadius:"50%", pointerEvents:"none",
+                    animation:"orb 5s ease-in-out infinite",
+                    top:"50%", left:"50%", transform:"translate(-50%,-50%)",
+                  }}/>
+
+                  <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:"28px", maxWidth:"520px", width:"90%", zIndex:1 }}
+                    onClick={e => e.stopPropagation()}
+                  >
+                    {/* Portrait — large */}
+                    <div style={{ position:"relative", width:"clamp(160px,22vw,260px)", height:"clamp(300px,44vw,500px)",
+                      borderRadius:"6px", overflow:"hidden", background:"transparent",
+                      boxShadow:`0 0 0 1px ${active.color}40, 0 0 80px ${active.color}30, 0 20px 60px rgba(0,0,0,0.8)`,
+                      animation:"spotlightReveal 0.45s cubic-bezier(0.16,1,0.3,1) forwards",
+                    }}>
+                      <img src={PORTRAIT_URLS[active.id]} alt={active.name}
+                        style={{ width:"100%", height:"100%", objectFit:"contain", objectPosition:"center bottom" }}
+                        onError={e=>{e.target.style.display="none"}}/>
+                      <div style={{ position:"absolute", bottom:0, left:0, right:0, height:"40%",
+                        background:`linear-gradient(to top, ${active.color}25 0%, transparent 100%)` }}/>
+                      {/* Name badge on portrait */}
+                      <div style={{ position:"absolute", bottom:"14px", left:0, right:0, textAlign:"center" }}>
+                        <span style={{ fontSize:"clamp(11px,1.4vw,14px)", fontWeight:800, color:active.color,
+                          letterSpacing:"0.18em", textTransform:"uppercase",
+                          textShadow:`0 0 20px ${active.color}, 0 2px 8px rgba(0,0,0,0.9)`,
+                          fontFamily:"'Palatino Linotype',serif" }}>{active.name}</span>
+                      </div>
+                    </div>
+
+                    {/* Info card */}
+                    <div style={{ width:"100%", padding:"22px 26px",
+                      border:`1px solid ${active.color}28`,
+                      borderRadius:"8px",
+                      background:`linear-gradient(160deg, rgba(${active.color.slice(1).match(/../g).map(h=>parseInt(h,16)).join(",")},0.06) 0%, rgba(2,2,0,0.92) 100%)`,
+                      backdropFilter:"blur(12px)",
+                      boxShadow:`0 0 40px rgba(0,0,0,0.6), inset 0 1px 0 ${active.color}20`,
+                      textAlign:"center",
+                      animation:"spotlightReveal 0.5s cubic-bezier(0.16,1,0.3,1) 0.1s both",
+                    }}>
+                      <div style={{ display:"flex", alignItems:"center", gap:"10px", marginBottom:"14px" }}>
+                        <div style={{ flex:1, height:"1px", background:`linear-gradient(to right,transparent,${active.color}35)` }}/>
+                        <span style={{ fontSize:"9px", letterSpacing:"0.22em", color:active.color, opacity:0.75, textTransform:"uppercase", fontFamily:"serif" }}>{active.lens}</span>
+                        <div style={{ flex:1, height:"1px", background:`linear-gradient(to left,transparent,${active.color}35)` }}/>
+                      </div>
+                      <p style={{ fontSize:"clamp(12px,1.5vw,14px)", color:"rgba(201,168,76,0.6)", lineHeight:1.85, fontStyle:"italic", marginBottom:"18px", fontFamily:"'Palatino Linotype',serif" }}>
+                        {active.description}
+                      </p>
+                      <p style={{ fontSize:"clamp(11px,1.3vw,13px)", color:active.color, opacity:0.7, fontStyle:"italic", letterSpacing:"0.04em", fontFamily:"'Palatino Linotype',serif" }}>
+                        "{active.tagline}"
+                      </p>
+                    </div>
+
+                    {/* Dismiss hint */}
+                    <p style={{ fontSize:"9px", color:"rgba(201,168,76,0.2)", letterSpacing:"0.15em", textTransform:"uppercase" }}>
+                      tap anywhere to dismiss
+                    </p>
                   </div>
-                  <p style={{ fontSize:"clamp(12px,1.5vw,15px)", color:"rgba(201,168,76,0.55)", lineHeight:1.8, fontStyle:"italic", marginBottom:"16px" }}>
-                    {active.description}
-                  </p>
-                  <p style={{ fontSize:"clamp(11px,1.3vw,13px)", color:active.color, opacity:0.65, fontStyle:"italic", letterSpacing:"0.05em" }}>
-                    "{active.tagline}"
-                  </p>
                 </div>
               )}
             </div>
 
             {!active && phase>=5 && (
-              <p style={{ fontSize:"clamp(8px,1vw,10px)", color:"rgba(201,168,76,0.15)", fontStyle:"italic", letterSpacing:"0.1em", marginTop:"-8px" }}>
+              <p style={{ fontSize:"clamp(8px,1vw,10px)", color:"rgba(201,168,76,0.15)", fontStyle:"italic", letterSpacing:"0.1em", marginTop:"4px" }}>
                 touch a member to know them
               </p>
             )}
           </div>
         )}
 
-        {/* CTA */}
-        <div style={{
-          marginTop:"clamp(28px,5vw,52px)",
-          textAlign:"center",
-          opacity:phase>=6?1:0,
-          animation:phase>=6?"fadeUp 1s ease forwards":"none",
-        }}>
-          <button onClick={onEnter} style={{
-            position:"relative",
-            background:"transparent",
-            color:"#c9a84c",
-            border:"1px solid rgba(201,168,76,0.4)",
-            borderRadius:"3px",
-            padding:"clamp(13px,2vw,18px) clamp(32px,5vw,60px)",
-            fontSize:"clamp(10px,1.3vw,13px)",
-            fontWeight:700, cursor:"pointer",
-            letterSpacing:"0.22em", textTransform:"uppercase",
-            fontFamily:"'Palatino Linotype',serif",
-            transition:"all 0.4s ease",
-            overflow:"hidden",
-            animation:"glowPulse 4s ease-in-out infinite",
-          }}
-            onMouseEnter={e=>{
-              e.currentTarget.style.background="rgba(201,168,76,0.08)";
-              e.currentTarget.style.borderColor="rgba(201,168,76,0.7)";
-              e.currentTarget.style.boxShadow="0 0 50px rgba(201,168,76,0.15), 0 0 0 1px rgba(201,168,76,0.3)";
-              e.currentTarget.style.letterSpacing="0.28em";
-            }}
-            onMouseLeave={e=>{
-              e.currentTarget.style.background="transparent";
-              e.currentTarget.style.borderColor="rgba(201,168,76,0.4)";
-              e.currentTarget.style.boxShadow="";
-              e.currentTarget.style.letterSpacing="0.22em";
-            }}
+        <div style={{ marginTop:"clamp(28px,5vw,52px)", textAlign:"center", opacity:phase>=6?1:0, animation:phase>=6?"fadeUp 1s ease forwards":"none" }}>
+          <button onClick={onEnter} style={{ position:"relative", background:"transparent", color:"#c9a84c", border:"1px solid rgba(201,168,76,0.4)", borderRadius:"3px", padding:"clamp(13px,2vw,18px) clamp(32px,5vw,60px)", fontSize:"clamp(10px,1.3vw,13px)", fontWeight:700, cursor:"pointer", letterSpacing:"0.22em", textTransform:"uppercase", fontFamily:"'Palatino Linotype',serif", transition:"all 0.4s ease", overflow:"hidden", animation:"glowPulse 4s ease-in-out infinite" }}
+            onMouseEnter={e=>{ e.currentTarget.style.background="rgba(201,168,76,0.08)"; e.currentTarget.style.borderColor="rgba(201,168,76,0.7)"; e.currentTarget.style.boxShadow="0 0 50px rgba(201,168,76,0.15)"; e.currentTarget.style.letterSpacing="0.28em"; }}
+            onMouseLeave={e=>{ e.currentTarget.style.background="transparent"; e.currentTarget.style.borderColor="rgba(201,168,76,0.4)"; e.currentTarget.style.boxShadow=""; e.currentTarget.style.letterSpacing="0.22em"; }}
           >
             Consult the Council
           </button>
@@ -1129,32 +1112,20 @@ const LanguageScreen = ({ onSelect, lang }) => {
   const [vis, setVis] = useState(false);
   const [hovered, setHovered] = useState(null);
   useEffect(() => { const timer = setTimeout(() => setVis(true), 100); return () => clearTimeout(timer); }, []);
-
   return (
     <div style={{ minHeight:"100vh", background:"#020200", display:"flex", alignItems:"center", justifyContent:"center", flexDirection:"column", position:"relative", overflow:"hidden" }}>
       <div style={{ position:"absolute", top:"30%", left:"50%", transform:"translate(-50%,-50%)", width:"500px", height:"500px", background:"radial-gradient(circle, rgba(201,168,76,0.04) 0%, transparent 70%)", pointerEvents:"none" }}/>
-
       <div style={{ textAlign:"center", marginBottom:"clamp(28px,5vw,44px)", opacity:vis?1:0, transform:vis?"translateY(0)":"translateY(16px)", transition:"all 0.8s cubic-bezier(0.16,1,0.3,1)" }}>
         <div style={{ fontSize:"36px", marginBottom:"16px", opacity:0.5 }}>⚖️</div>
         <h1 style={{ fontFamily:"'Palatino Linotype','Palatino','Book Antiqua',serif", fontSize:"clamp(28px,5vw,42px)", fontWeight:400, letterSpacing:"0.2em", color:"#c9a84c", textTransform:"uppercase", marginBottom:"8px" }}>{t.title}</h1>
         <div style={{ width:"40px", height:"1px", background:"rgba(201,168,76,0.3)", margin:"12px auto" }}/>
         <p style={{ color:"rgba(201,168,76,0.3)", fontSize:"11px", letterSpacing:"0.14em", fontStyle:"italic", fontFamily:"'Palatino Linotype',serif" }}>{t.chooseLanguage}</p>
       </div>
-
       <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(130px,1fr))", gap:"8px", maxWidth:"580px", width:"90%", opacity:vis?1:0, transition:"opacity 0.8s ease 0.2s" }}>
         {LANGUAGES.map((lang, i) => (
           <button key={lang.code} onClick={() => onSelect(lang.code)}
-            style={{
-              display:"flex", alignItems:"center", gap:"9px",
-              background: hovered===lang.code ? "rgba(201,168,76,0.08)" : "rgba(201,168,76,0.02)",
-              border:`1px solid ${hovered===lang.code ? "rgba(201,168,76,0.4)" : "rgba(201,168,76,0.12)"}`,
-              borderRadius:"8px", padding:"10px 14px", cursor:"pointer",
-              transition:"all 0.18s", color:"#c8b99a",
-              fontFamily:"'Palatino Linotype',serif",
-              animation:`fadeSlideIn 0.4s ease ${i*0.04}s both`,
-            }}
-            onMouseEnter={() => setHovered(lang.code)}
-            onMouseLeave={() => setHovered(null)}
+            style={{ display:"flex", alignItems:"center", gap:"9px", background: hovered===lang.code ? "rgba(201,168,76,0.08)" : "rgba(201,168,76,0.02)", border:`1px solid ${hovered===lang.code ? "rgba(201,168,76,0.4)" : "rgba(201,168,76,0.12)"}`, borderRadius:"8px", padding:"10px 14px", cursor:"pointer", transition:"all 0.18s", color:"#c8b99a", fontFamily:"'Palatino Linotype',serif", animation:`fadeSlideIn 0.4s ease ${i*0.04}s both` }}
+            onMouseEnter={() => setHovered(lang.code)} onMouseLeave={() => setHovered(null)}
           >
             <span style={{ fontSize:"18px" }}>{lang.flag}</span>
             <span style={{ fontSize:"13px", fontWeight: hovered===lang.code ? 700 : 400, letterSpacing:"0.04em", color: hovered===lang.code ? "#c9a84c" : "#8a7a5a" }}>{lang.label}</span>
@@ -1165,22 +1136,13 @@ const LanguageScreen = ({ onSelect, lang }) => {
   );
 };
 
-// ══════════════════════════════════════════════════════════════
-// SETUP SCREEN — Mythological oracle opening
-// ══════════════════════════════════════════════════════════════
 const SetupScreen = ({ onStart, lang, onChangeLang }) => {
   const t = UI[lang] || UI.en;
-  const [stage, setStage] = useState("intro");   // intro | assembling | ready
+  const [stage, setStage] = useState("intro");
   const [selected, setSelected] = useState([]);
-  const [introStep, setIntroStep] = useState(0); // 0=fade in title, 1=show tagline, 2=show enter
-  const [charReveal, setCharReveal] = useState(-1); // which char index revealed so far
-  const introTexts = [
-    "There are decisions that define you.",
-    "Not every advisor will tell you the truth.",
-    "The Council will."
-  ];
+  const [introStep, setIntroStep] = useState(0);
+  const [charReveal, setCharReveal] = useState(-1);
 
-  // Intro sequence
   useEffect(() => {
     if(stage !== "intro") return;
     const timers = [
@@ -1191,7 +1153,6 @@ const SetupScreen = ({ onStart, lang, onChangeLang }) => {
     return () => timers.forEach(clearTimeout);
   }, [stage]);
 
-  // Character card reveal sequence
   useEffect(() => {
     if(stage !== "assembling") return;
     const chars = Object.values(CHARACTERS);
@@ -1210,63 +1171,28 @@ const SetupScreen = ({ onStart, lang, onChangeLang }) => {
   const canStart = selected.length >= 2;
   const chars = Object.values(CHARACTERS);
 
-  // ── Intro screen ──
   if(stage === "intro") return (
-    <div style={{ minHeight:"100vh", background:"#020200", display:"flex", alignItems:"center", justifyContent:"center", flexDirection:"column", gap:"0", cursor:"default", position:"relative", overflow:"hidden" }}>
-      {/* Ambient glow */}
+    <div style={{ minHeight:"100vh", background:"#020200", display:"flex", alignItems:"center", justifyContent:"center", flexDirection:"column", position:"relative", overflow:"hidden" }}>
       <div style={{ position:"absolute", top:"30%", left:"50%", transform:"translate(-50%,-50%)", width:"600px", height:"600px", background:"radial-gradient(circle, rgba(201,168,76,0.04) 0%, transparent 70%)", pointerEvents:"none" }}/>
-
       <div style={{ textAlign:"center", padding:"0 24px", maxWidth:"500px" }}>
-        {/* Seal */}
         <div style={{ fontSize:"52px", marginBottom:"28px", opacity:introStep>=1?0.7:0, transition:"opacity 1.2s ease", filter:"sepia(0.3)" }}>⚖️</div>
-
-        {/* Title */}
-        <h1 style={{
-          fontFamily:"'Palatino Linotype','Palatino','Book Antiqua',serif",
-          fontSize:"clamp(42px,8vw,72px)", fontWeight:400, letterSpacing:"0.18em",
-          color:"#c9a84c", marginBottom:"6px",
-          opacity:introStep>=1?1:0, transform:introStep>=1?"translateY(0)":"translateY(20px)",
-          transition:"all 1.4s cubic-bezier(0.16,1,0.3,1)",
-          textShadow:"0 0 40px rgba(201,168,76,0.2)",
-        }}>{t.title}</h1>
-
-        <div style={{ width:"60px", height:"1px", background:"linear-gradient(to right,transparent,rgba(201,168,76,0.5),transparent)", margin:"16px auto 20px",
-          opacity:introStep>=1?1:0, transition:"opacity 1.4s ease 0.3s" }}/>
-
-        {/* Tagline */}
-        <p style={{ fontFamily:"'Palatino Linotype',serif", fontSize:"clamp(13px,2vw,16px)", color:"rgba(201,168,76,0.4)", letterSpacing:"0.12em", lineHeight:"1.8", fontStyle:"italic",
-          opacity:introStep>=2?1:0, transform:introStep>=2?"translateY(0)":"translateY(10px)",
-          transition:"all 1s ease 0.2s", marginBottom:"40px" }}>
+        <h1 style={{ fontFamily:"'Palatino Linotype','Palatino','Book Antiqua',serif", fontSize:"clamp(42px,8vw,72px)", fontWeight:400, letterSpacing:"0.18em", color:"#c9a84c", marginBottom:"6px", opacity:introStep>=1?1:0, transform:introStep>=1?"translateY(0)":"translateY(20px)", transition:"all 1.4s cubic-bezier(0.16,1,0.3,1)", textShadow:"0 0 40px rgba(201,168,76,0.2)" }}>{t.title}</h1>
+        <div style={{ width:"60px", height:"1px", background:"linear-gradient(to right,transparent,rgba(201,168,76,0.5),transparent)", margin:"16px auto 20px", opacity:introStep>=1?1:0, transition:"opacity 1.4s ease 0.3s" }}/>
+        <p style={{ fontFamily:"'Palatino Linotype',serif", fontSize:"clamp(13px,2vw,16px)", color:"rgba(201,168,76,0.4)", letterSpacing:"0.12em", lineHeight:"1.8", fontStyle:"italic", opacity:introStep>=2?1:0, transform:introStep>=2?"translateY(0)":"translateY(10px)", transition:"all 1s ease 0.2s", marginBottom:"40px" }}>
           {getCharFields("dan",lang).description || t.danDesc}
         </p>
-
-        {/* Enter button */}
-        <button onClick={() => setStage("assembling")} style={{
-          opacity:introStep>=3?1:0, transform:introStep>=3?"translateY(0)":"translateY(10px)",
-          transition:"all 0.8s ease",
-          background:"transparent", color:"rgba(201,168,76,0.6)", border:"1px solid rgba(201,168,76,0.25)",
-          borderRadius:"4px", padding:"12px 36px", fontSize:"11px", fontWeight:700,
-          letterSpacing:"0.2em", textTransform:"uppercase", cursor:"pointer",
-          fontFamily:"'Palatino Linotype',serif",
-        }}
+        <button onClick={() => setStage("assembling")} style={{ opacity:introStep>=3?1:0, transform:introStep>=3?"translateY(0)":"translateY(10px)", transition:"all 0.8s ease", background:"transparent", color:"rgba(201,168,76,0.6)", border:"1px solid rgba(201,168,76,0.25)", borderRadius:"4px", padding:"12px 36px", fontSize:"11px", fontWeight:700, letterSpacing:"0.2em", textTransform:"uppercase", cursor:"pointer", fontFamily:"'Palatino Linotype',serif" }}
           onMouseEnter={e=>{ e.currentTarget.style.color="#c9a84c"; e.currentTarget.style.borderColor="rgba(201,168,76,0.5)"; e.currentTarget.style.background="rgba(201,168,76,0.05)"; }}
           onMouseLeave={e=>{ e.currentTarget.style.color="rgba(201,168,76,0.6)"; e.currentTarget.style.borderColor="rgba(201,168,76,0.25)"; e.currentTarget.style.background="transparent"; }}
-        >
-          {t.enterChamber}
-        </button>
+        >{t.enterChamber}</button>
       </div>
     </div>
   );
 
-  // ── Assembling / ready screen ──
   return (
     <div style={{ minHeight:"100vh", background:"#020200", color:"#c8b99a", fontFamily:"'Palatino Linotype','Palatino','Book Antiqua',serif", position:"relative", overflow:"hidden" }}>
-      {/* Background texture */}
       <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.04) 0%, transparent 60%)", pointerEvents:"none" }}/>
-
       <div style={{ maxWidth:"800px", margin:"0 auto", padding:"clamp(24px,6vw,60px) clamp(16px,4vw,24px)" }}>
-
-        {/* Header */}
         <div style={{ textAlign:"center", marginBottom:"clamp(28px,5vw,48px)", opacity:stage==="ready"?1:0.7, transition:"opacity 0.8s" }}>
           <div style={{ fontSize:"24px", marginBottom:"10px", opacity:0.5 }}>⚖️</div>
           <h1 style={{ fontSize:"clamp(20px,4vw,28px)", fontWeight:400, letterSpacing:"0.2em", color:"#c9a84c", marginBottom:"6px", textTransform:"uppercase" }}>{t.title}</h1>
@@ -1275,14 +1201,10 @@ const SetupScreen = ({ onStart, lang, onChangeLang }) => {
           <button onClick={onChangeLang} style={{ marginTop:"12px", background:"transparent", border:"1px solid rgba(201,168,76,0.15)", borderRadius:"16px", padding:"4px 14px", color:"rgba(201,168,76,0.4)", fontSize:"11px", cursor:"pointer", letterSpacing:"0.08em", fontFamily:"'Palatino Linotype',serif" }}
             onMouseEnter={e=>{ e.currentTarget.style.borderColor="rgba(201,168,76,0.4)"; e.currentTarget.style.color="rgba(201,168,76,0.7)"; }}
             onMouseLeave={e=>{ e.currentTarget.style.borderColor="rgba(201,168,76,0.15)"; e.currentTarget.style.color="rgba(201,168,76,0.4)"; }}
-          >
-            {LANGUAGES.find(l=>l.code===lang)?.flag} {LANGUAGES.find(l=>l.code===lang)?.label} ↩
-          </button>
+          >{LANGUAGES.find(l=>l.code===lang)?.flag} {LANGUAGES.find(l=>l.code===lang)?.label} ↩</button>
         </div>
 
-        {/* Dan card */}
-        <div style={{ background:"linear-gradient(135deg,rgba(13,10,2,0.9),rgba(8,6,0,0.95))", border:"1px solid rgba(201,168,76,0.25)", borderRadius:"14px", padding:"18px 20px", marginBottom:"28px", display:"flex", alignItems:"center", gap:"16px",
-          opacity:stage==="ready"?1:charReveal>=0?1:0, transition:"opacity 0.6s" }}>
+        <div style={{ background:"linear-gradient(135deg,rgba(13,10,2,0.9),rgba(8,6,0,0.95))", border:"1px solid rgba(201,168,76,0.25)", borderRadius:"14px", padding:"18px 20px", marginBottom:"28px", display:"flex", alignItems:"center", gap:"16px", opacity:stage==="ready"?1:charReveal>=0?1:0, transition:"opacity 0.6s" }}>
           <Avatar char={DAN} size={54} active glow />
           <div>
             <div style={{ display:"flex", alignItems:"center", gap:"10px", marginBottom:"5px" }}>
@@ -1293,30 +1215,36 @@ const SetupScreen = ({ onStart, lang, onChangeLang }) => {
           </div>
         </div>
 
-        {/* Council label */}
         <div style={{ fontSize:"9px", fontWeight:800, letterSpacing:"0.16em", textTransform:"uppercase", color:"rgba(201,168,76,0.25)", marginBottom:"14px", display:"flex", alignItems:"center", gap:"10px" }}>
           <span>{t.selectMembers}</span>
           <span style={{ color:selected.length>=2?"rgba(74,222,128,0.6)":"rgba(201,168,76,0.2)" }}>({selected.length} / 4)</span>
         </div>
 
-        {/* Character cards — animate in one by one */}
         <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(min(100%,220px),1fr))", gap:"10px", marginBottom:"32px" }}>
           {chars.map((c, idx) => {
             const sel = selected.includes(c.id);
             const revealed = charReveal > idx || stage === "ready";
             return (
-              <div key={c.id} onClick={() => revealed && toggle(c.id)}
-                style={{
-                  background:sel?hex2rgba(c.color,0.07):"rgba(201,168,76,0.02)",
-                  border:`1px solid ${sel?hex2rgba(c.color,0.5):hex2rgba(c.color,0.12)}`,
-                  borderRadius:"14px", padding:"18px", cursor:revealed?"pointer":"default",
-                  transition:"all 0.25s",
-                  opacity:revealed?1:0, transform:revealed?"translateY(0)":"translateY(16px)",
-                  position:"relative",
+              <div key={c.id} onClick={() => revealed && toggle(c.id)} style={{ background:sel?hex2rgba(c.color,0.07):"rgba(201,168,76,0.02)", border:`1px solid ${sel?hex2rgba(c.color,0.5):hex2rgba(c.color,0.12)}`, borderRadius:"14px", padding:"18px", cursor:revealed?"pointer":"default", transition:"all 0.25s", opacity:revealed?1:0, transform:revealed?"translateY(0)":"translateY(16px)", position:"relative" }}>
+
+                <div style={{ position:"relative", width:"100%", height:"clamp(160px,20vw,220px)", borderRadius:"8px", overflow:"hidden", marginBottom:"2px",
+                  border:`1px solid ${sel ? hex2rgba(c.color,0.5) : hex2rgba(c.color,0.12)}`,
+                  background:"#020200",
+                  boxShadow: sel ? `0 0 24px ${hex2rgba(c.color,0.3)}, inset 0 0 20px ${hex2rgba(c.color,0.05)}` : "none",
+                  transition:"all 0.3s ease",
                 }}>
-                {sel && <div style={{ position:"absolute", top:"12px", right:"14px", color:c.color, fontSize:"12px" }}>✓</div>}
-                <Avatar char={c} size={46} active={sel} glow={sel} />
-                <div style={{ marginTop:"12px", fontWeight:700, fontSize:"16px", color:sel?c.color:"#c8b99a", marginBottom:"3px" }}>{c.name}</div>
+                  <img src={PORTRAIT_URLS[c.id]} alt={c.name}
+                    style={{ width:"100%", height:"100%", objectFit:"contain", objectPosition:"center bottom",
+                      filter:`brightness(${sel?1:0.75})`, transition:"all 0.3s ease" }}
+                    onError={e=>{ e.target.style.display="none"; }}/>
+                  <div style={{ position:"absolute", bottom:0, left:0, right:0, height:"45%",
+                    background:`linear-gradient(to top, rgba(2,2,0,0.85) 0%, transparent 100%)` }}/>
+                  {sel && <div style={{ position:"absolute", top:"10px", right:"10px",
+                    width:"20px", height:"20px", borderRadius:"50%",
+                    background:c.color, display:"flex", alignItems:"center", justifyContent:"center",
+                    fontSize:"11px", fontWeight:900, color:"#020200", boxShadow:`0 0 10px ${c.color}` }}>✓</div>}
+                </div>
+                <div style={{ marginTop:"10px", fontWeight:700, fontSize:"16px", color:sel?c.color:"#c8b99a", marginBottom:"3px" }}>{c.name}</div>
                 <div style={{ fontSize:"11px", color:hex2rgba(c.color,0.5), marginBottom:"8px", fontStyle:"italic" }}>{getCharFields(c.id,lang).title || c.title}</div>
                 <p style={{ fontSize:"11px", color:"rgba(201,168,76,0.25)", lineHeight:"1.5", marginBottom:"10px", fontStyle:"italic" }}>"{getCharFields(c.id,lang).tagline || c.tagline}"</p>
                 <div style={{ fontSize:"9px", background:hex2rgba(c.color,0.08), color:hex2rgba(c.color,0.6), borderRadius:"4px", padding:"3px 8px", display:"inline-block", fontWeight:700, letterSpacing:"0.08em", border:`1px solid ${hex2rgba(c.color,0.15)}`, textTransform:"uppercase" }}>{getCharFields(c.id,lang).lens || c.lens}</div>
@@ -1325,28 +1253,15 @@ const SetupScreen = ({ onStart, lang, onChangeLang }) => {
           })}
         </div>
 
-        <button onClick={() => canStart && onStart(selected.map(id=>CHARACTERS[id]))} disabled={!canStart} style={{
-          width:"100%", padding:"16px",
-          background:canStart?"rgba(201,168,76,0.1)":"transparent",
-          color:canStart?"#c9a84c":"rgba(201,168,76,0.2)",
-          border:`1px solid ${canStart?"rgba(201,168,76,0.35)":"rgba(201,168,76,0.06)"}`,
-          borderRadius:"10px", fontSize:"13px", fontWeight:700,
-          cursor:canStart?"pointer":"not-allowed", letterSpacing:"0.14em", textTransform:"uppercase",
-          transition:"all 0.2s",
-        }}
+        <button onClick={() => canStart && onStart(selected.map(id=>CHARACTERS[id]))} disabled={!canStart} style={{ width:"100%", padding:"16px", background:canStart?"rgba(201,168,76,0.1)":"transparent", color:canStart?"#c9a84c":"rgba(201,168,76,0.2)", border:`1px solid ${canStart?"rgba(201,168,76,0.35)":"rgba(201,168,76,0.06)"}`, borderRadius:"10px", fontSize:"13px", fontWeight:700, cursor:canStart?"pointer":"not-allowed", letterSpacing:"0.14em", textTransform:"uppercase", transition:"all 0.2s" }}
           onMouseEnter={e=>{ if(canStart){ e.currentTarget.style.background="rgba(201,168,76,0.18)"; }}}
           onMouseLeave={e=>{ if(canStart){ e.currentTarget.style.background="rgba(201,168,76,0.1)"; }}}
-        >
-          {canStart ? t.convene : t.selectAtLeast}
-        </button>
+        >{canStart ? t.convene : t.selectAtLeast}</button>
       </div>
     </div>
   );
 };
 
-// ══════════════════════════════════════════════════════════════
-// DEBATE SCREEN
-// ══════════════════════════════════════════════════════════════
 const DebateScreen = ({ characters, onClose, lang }) => {
   const t = UI[lang] || UI.en;
   const [phase, setPhase] = useState("question");
@@ -1366,7 +1281,7 @@ const DebateScreen = ({ characters, onClose, lang }) => {
   const [pitches, setPitches] = useState([]);
   const [entered, setEntered] = useState(false);
   const [pendingVerdictHistory, setPendingVerdictHistory] = useState(null);
-  const [fewshotExamples, setFewshotExamples] = useState({});  // charId -> example text
+  const [fewshotExamples, setFewshotExamples] = useState({});
   const [apiError, setApiError] = useState(null);
   const bottomRef = useRef(null);
 
@@ -1393,7 +1308,6 @@ const DebateScreen = ({ characters, onClose, lang }) => {
   };
 
   const charConfigs = characters.map(c => ({ id:c.id, name:c.name, title:c.title, emoji:c.emoji, color:c.color, prompt:"" }));
-  const langHeader = { language: lang };
 
   const handleQuestion = async () => {
     if(!question.trim()) return;
@@ -1417,10 +1331,7 @@ const DebateScreen = ({ characters, onClose, lang }) => {
   };
 
   const startDebateFromContext = async (ctxMap, ctxHistory, currentQuestion=question) => {
-    setContext(ctxMap);
-    setHistory(ctxHistory);
-    setCurrentRound(1);
-    // Fetch Dan's opening AND few-shot examples for all characters in parallel
+    setContext(ctxMap); setHistory(ctxHistory); setCurrentRound(1);
     setLoading(true); setLoadingLabel("…"); setLoadingSpeaker(DAN); setActiveSpeaker("dan");
     let openingText = null;
     const [openingResult, ...fewshotResults] = await Promise.allSettled([
@@ -1429,14 +1340,9 @@ const DebateScreen = ({ characters, onClose, lang }) => {
     ]);
     if(openingResult.status === "fulfilled") openingText = openingResult.value?.opening;
     const examples = {};
-    fewshotResults.forEach((r, i) => {
-      if(r.status === "fulfilled" && r.value?.example) {
-        examples[characters[i].id] = r.value.example;
-      }
-    });
+    fewshotResults.forEach((r, i) => { if(r.status === "fulfilled" && r.value?.example) examples[characters[i].id] = r.value.example; });
     setFewshotExamples(examples);
     setLoading(false); setLoadingSpeaker(null); setActiveSpeaker(null);
-    // Add opening to feed once, then start round picking
     if(openingText) setFeed(p => [...p, { type:"opening", text:openingText }]);
     await startRoundPicking(1, ctxMap, ctxHistory, currentQuestion);
   };
@@ -1454,25 +1360,16 @@ const DebateScreen = ({ characters, onClose, lang }) => {
     setFeed(p => [...p, { type:"round_header", label:`Round ${roundNum}` }]);
     setPhase("picking");
     setLoading(true); setLoadingLabel(t.councilPrepares); setLoadingSpeaker(null); setActiveSpeaker(null);
-
     const fetchedPitches = [];
-    // Fetch all pitches in parallel for speed, with individual error handling
     const pitchResults = await Promise.allSettled(
       characters.map(c => post("/debate/single_sentence", { question:currentQuestion, character_id:c.id, characters:charConfigs, round:roundNum, context:ctx, history:hist, language:lang }))
     );
     pitchResults.forEach((result, i) => {
       const c = characters[i];
-      if(result.status === "fulfilled" && result.value?.pitch) {
-        fetchedPitches.push({ character_id:c.id, pitch:result.value.pitch, char:c });
-      } else {
-        console.error("pitch failed for", c.name, result.reason?.message);
-        fetchedPitches.push({ character_id:c.id, pitch:"...", char:c });
-      }
+      if(result.status === "fulfilled" && result.value?.pitch) fetchedPitches.push({ character_id:c.id, pitch:result.value.pitch, char:c });
+      else { console.error("pitch failed for", c.name, result.reason?.message); fetchedPitches.push({ character_id:c.id, pitch:"...", char:c }); }
     });
-    // Fallback: if all API calls failed, use placeholder pitches so UI doesn't freeze
-    if(fetchedPitches.length === 0) {
-      characters.forEach(c => fetchedPitches.push({ character_id:c.id, pitch:"...", char:c }));
-    }
+    if(fetchedPitches.length === 0) characters.forEach(c => fetchedPitches.push({ character_id:c.id, pitch:"...", char:c }));
     setPitches(fetchedPitches);
     setRemainingPickers(characters.map(c => c.id));
     setLoading(false);
@@ -1484,7 +1381,6 @@ const DebateScreen = ({ characters, onClose, lang }) => {
     const char = characters.find(c => c.id===characterId);
     setActiveSpeaker(characterId);
     setLoading(true); setLoadingLabel(`${char.name} speaks…`); setLoadingSpeaker(char);
-
     try {
       const pickerItem = feed.filter(f=>f.type==="picker").at(-1);
       const activeQuestion = pickerItem?.currentQuestion || question;
@@ -1495,31 +1391,24 @@ const DebateScreen = ({ characters, onClose, lang }) => {
       const roundTurns = newHistory.filter(h => h.round===currentRound && h.type==="agent");
       const idx = roundTurns.length - 1;
       setFeed(p => [...p, { type:"agent", ...turn, slideDir:idx%2===0?"left":"right" }]);
-
       const newRemaining = remainingPickers.filter(id => id!==characterId);
       setRemainingPickers(newRemaining);
-
       if(newRemaining.length > 0) {
         const newPitches = pitches.filter(p => newRemaining.includes(p.character_id));
         setFeed(p => [...p, { type:"picker", roundNum:currentRound, pitches:newPitches }]);
         setPhase("picking");
       } else {
-        setActiveSpeaker("dan");
-        setLoadingLabel(t.danDeliberates); setLoadingSpeaker(DAN);
+        setActiveSpeaker("dan"); setLoadingLabel(t.danDeliberates); setLoadingSpeaker(DAN);
         await runCheckin(currentRound, newHistory, activeQuestion);
       }
-    } catch(e) {
-      console.error("handlePickSpeaker error:", e.message);
-    } finally {
-      setLoading(false); setLoadingSpeaker(null); setActiveSpeaker(null);
-    }
+    } catch(e) { console.error("handlePickSpeaker error:", e.message); }
+    finally { setLoading(false); setLoadingSpeaker(null); setActiveSpeaker(null); }
   };
 
   const runCheckin = async (roundNum, hist=history, currentQuestion=question) => {
     try {
       const data = await post("/debate/checkin", { question:currentQuestion, characters:charConfigs, history:hist, context, round:roundNum, language:lang });
       if(roundNum >= 3){ data.needs_more_round=false; data.question=null; }
-
       let councilResponseTurn = null;
       if(data.council_question?.to) {
         const targetChar = characters.find(c => c.name===data.council_question.to);
@@ -1527,32 +1416,18 @@ const DebateScreen = ({ characters, onClose, lang }) => {
           setActiveSpeaker(targetChar.id); setLoadingLabel(`${targetChar.name} ${t.respondsToDan}…`); setLoadingSpeaker(targetChar);
           try {
             const resp = await post("/debate/council_response", { question, character_id:targetChar.id, characters:charConfigs, round:roundNum, context, checkin_answer:data.council_question.question, history:hist, language:lang });
-            councilResponseTurn = resp.turn;
-            hist = [...hist, councilResponseTurn];
-            setHistory(hist);
+            councilResponseTurn = resp.turn; hist = [...hist, councilResponseTurn]; setHistory(hist);
           } catch(e) { console.error(e); }
           setActiveSpeaker(null); setLoadingSpeaker(null);
         }
       }
-
-      setFeed(p => [
-        ...p,
+      setFeed(p => [...p,
         { type:"dan_checkin", summary:data.summary, question:data.question, userPrompt:data.user_prompt, councilQuestion:data.council_question, answered:false, needsMoreRound:data.needs_more_round, roundNum, revealed:false },
         ...(councilResponseTurn ? [{ type:"agent", ...councilResponseTurn, slideDir:"right", respondingToDan:true }] : []),
       ]);
-
-      if(!data.needs_more_round) {
-        // Store the history for verdict and mark checkin as going-to-verdict
-        // Verdict will be fetched after user clicks "Dan speaks" to reveal the summary
-        setPendingVerdictHistory(hist);
-        setPhase("checkin");
-      } else {
-        setPhase("checkin");
-      }
-    } catch(e) {
-      console.error("runCheckin error:", e);
-      setLoading(false); setLoadingSpeaker(null); setActiveSpeaker(null);
-    }
+      if(!data.needs_more_round) { setPendingVerdictHistory(hist); setPhase("checkin"); }
+      else setPhase("checkin");
+    } catch(e) { console.error("runCheckin error:", e); setLoading(false); setLoadingSpeaker(null); setActiveSpeaker(null); }
   };
 
   const handleCheckinAnswer = async (answer, roundNum) => {
@@ -1564,18 +1439,14 @@ const DebateScreen = ({ characters, onClose, lang }) => {
   };
 
   const runVerdict = async (hist=history, currentQuestion=question) => {
-    // Filter out skip markers from history before sending
     const cleanHist = hist.filter(h => !(h.type==="user_answer" && h.text==="—"));
     setLoading(true); setActiveSpeaker("dan"); setLoadingLabel(t.danWrites); setLoadingSpeaker(DAN);
     try {
       const data = await post("/debate/verdict", { question:currentQuestion, history:cleanHist, context, checkin_answer:checkinAnswer, language:lang });
       setFeed(p => [...p, { type:"verdict", data }]);
       setPhase("done");
-    } catch(e) {
-      console.error("runVerdict error:", e);
-    } finally {
-      setLoading(false); setLoadingSpeaker(null); setActiveSpeaker(null);
-    }
+    } catch(e) { console.error("runVerdict error:", e); }
+    finally { setLoading(false); setLoadingSpeaker(null); setActiveSpeaker(null); }
   };
 
   const handleFollowUp = async () => {
@@ -1591,8 +1462,7 @@ const DebateScreen = ({ characters, onClose, lang }) => {
       const data = await post("/debate/context", { question:q, characters:charConfigs, language:lang });
       if(data.questions && data.questions.length > 0) {
         setFeed(p => [...p, { type:"context_block", questions:data.questions }]);
-        setPhase("context");
-        setLoading(false); setLoadingSpeaker(null); setActiveSpeaker(null);
+        setPhase("context"); setLoading(false); setLoadingSpeaker(null); setActiveSpeaker(null);
       } else {
         setLoading(false); setLoadingSpeaker(null); setActiveSpeaker(null);
         await startDebateFromContext({}, [], q);
@@ -1602,29 +1472,21 @@ const DebateScreen = ({ characters, onClose, lang }) => {
   };
 
   return (
-    <div style={{ height:"100vh", width:"100%", background:"#020200", color:"#c8b99a", fontFamily:"'Palatino Linotype','Palatino','Book Antiqua',serif",
-      display:"flex", flexDirection:"column", overflow:"hidden",
-      opacity:entered?1:0, transform:entered?"translateY(0)":"translateY(20px)", transition:"all 0.6s cubic-bezier(0.16,1,0.3,1)" }}>
-
-      {/* Header */}
+    <div style={{ height:"100vh", width:"100%", background:"#020200", color:"#c8b99a", fontFamily:"'Palatino Linotype','Palatino','Book Antiqua',serif", display:"flex", flexDirection:"column", overflow:"hidden", opacity:entered?1:0, transform:entered?"translateY(0)":"translateY(20px)", transition:"all 0.6s cubic-bezier(0.16,1,0.3,1)" }}>
       <div style={{ borderBottom:"1px solid rgba(201,168,76,0.08)", padding:"8px clamp(12px,4vw,20px)", flexShrink:0, background:"rgba(2,2,0,0.97)" }}>
         <div style={{ display:"flex", alignItems:"center", gap:"8px" }}>
           <button onClick={onClose} style={{ background:"transparent", border:"none", color:"rgba(201,168,76,0.3)", fontSize:"16px", cursor:"pointer", padding:"4px 8px 4px 0", flexShrink:0 }}>←</button>
           <CouncilSeats characters={characters} activeSpeaker={activeSpeaker} />
         </div>
       </div>
-
-      {/* Feed */}
       <div style={{ flex:1, overflowY:"auto", padding:"20px clamp(12px,4vw,24px)", background:"#020200" }}>
         <div style={{ maxWidth:"700px", margin:"0 auto", width:"100%" }}>
-
           {phase === "question" && (
             <div style={{ textAlign:"center", padding:"clamp(40px,10vw,90px) 0 24px" }}>
               <div style={{ fontSize:"40px", marginBottom:"16px", opacity:0.4 }}>⚖️</div>
               <p style={{ color:"rgba(201,168,76,0.25)", fontSize:"15px", fontStyle:"italic", letterSpacing:"0.05em" }}>{t.councilAwaits}</p>
             </div>
           )}
-
           {feed.map((item, i) => {
             if(item.type==="question_bubble") return <QuestionBubble key={i} text={item.text}/>;
             if(item.type==="context_block") return <ContextBlock key={i} questions={item.questions} onSubmit={handleContextSubmit} t={t}/>;
@@ -1634,32 +1496,13 @@ const DebateScreen = ({ characters, onClose, lang }) => {
             if(item.type==="picker") {
               const isLatest = feed.filter(f=>f.type==="picker").at(-1)===item;
               if(!isLatest||phase!=="picking") return null;
-              // Show picker even while loading so user can see options, just disable interaction
-              return <SpeakerPicker key={i} pitches={item.pitches.filter(p=>p.pitch!=="..."||true)} onChoose={handlePickSpeaker} loading={loading} t={t}/>;
+              return <SpeakerPicker key={i} pitches={item.pitches} onChoose={handlePickSpeaker} loading={loading} t={t}/>;
             }
             if(item.type==="dan_checkin") return (
-              <DanBlock key={i} summary={item.summary} question={item.question}
-                userPrompt={item.userPrompt} councilQuestion={item.councilQuestion}
-                needsMoreRound={item.needsMoreRound} answered={item.answered} userAnswer={item.userAnswer}
-                revealed={item.revealed} t={t}
-                onReveal={()=>{
-                  setFeed(p=>p.map((f,j)=>j===i?{...f,revealed:true}:f));
-                  if(pendingVerdictHistory) {
-                    const h = pendingVerdictHistory;
-                    setPendingVerdictHistory(null);
-                    runVerdict(h);
-                  }
-                }}
+              <DanBlock key={i} summary={item.summary} question={item.question} userPrompt={item.userPrompt} councilQuestion={item.councilQuestion} needsMoreRound={item.needsMoreRound} answered={item.answered} userAnswer={item.userAnswer} revealed={item.revealed} t={t}
+                onReveal={()=>{ setFeed(p=>p.map((f,j)=>j===i?{...f,revealed:true}:f)); if(pendingVerdictHistory){ const h=pendingVerdictHistory; setPendingVerdictHistory(null); runVerdict(h); } }}
                 onAnswer={ans=>handleCheckinAnswer(ans,item.roundNum)}
-                onUserPromptAnswer={ans=>{
-                  // Mark answered, store answer, then trigger verdict with extra context
-                  setFeed(p=>p.map((f,j)=>j===i?{...f,answered:true,userAnswer:ans}:f));
-                  if(pendingVerdictHistory) {
-                    const h = [...pendingVerdictHistory, {type:"user_answer",text:ans}];
-                    setPendingVerdictHistory(null);
-                    runVerdict(h);
-                  }
-                }}
+                onUserPromptAnswer={ans=>{ setFeed(p=>p.map((f,j)=>j===i?{...f,answered:true,userAnswer:ans}:f)); if(pendingVerdictHistory){ const h=[...pendingVerdictHistory,{type:"user_answer",text:ans}]; setPendingVerdictHistory(null); runVerdict(h); } }}
               />
             );
             if(item.type==="verdict") return (
@@ -1670,7 +1513,6 @@ const DebateScreen = ({ characters, onClose, lang }) => {
             );
             return null;
           })}
-
           {loading && <LoadingPulse label={loadingLabel} speaker={loadingSpeaker}/>}
           {apiError && !loading && (
             <div style={{ background:"rgba(251,100,60,0.08)", border:"1px solid rgba(251,100,60,0.2)", borderRadius:"10px", padding:"12px 16px", margin:"12px 0", fontSize:"12px", color:"rgba(251,100,60,0.7)", fontFamily:"monospace" }}>
@@ -1678,14 +1520,11 @@ const DebateScreen = ({ characters, onClose, lang }) => {
               <button onClick={()=>setApiError(null)} style={{ marginLeft:"12px", background:"transparent", border:"none", color:"rgba(251,100,60,0.5)", cursor:"pointer", fontSize:"11px" }}>✕</button>
             </div>
           )}
-
           {phase==="done" && !loading && verdictRevealed && (
             <div style={{ marginTop:"28px", borderTop:"1px solid rgba(201,168,76,0.06)", paddingTop:"22px" }}>
               <p style={{ color:"rgba(201,168,76,0.2)", fontSize:"12px", marginBottom:"12px", fontStyle:"italic", letterSpacing:"0.06em" }}>{t.anotherQuestion}</p>
               <div style={{ display:"flex", gap:"8px", flexWrap:"wrap" }}>
-                <input value={followUpQ} onChange={e=>setFollowUpQ(e.target.value)}
-                  onKeyDown={e=>{if(e.key==="Enter")handleFollowUp();}}
-                  placeholder={t.followUpPlaceholder}
+                <input value={followUpQ} onChange={e=>setFollowUpQ(e.target.value)} onKeyDown={e=>{if(e.key==="Enter")handleFollowUp();}} placeholder={t.followUpPlaceholder}
                   style={{ flex:"1 1 200px", minWidth:0, background:"rgba(201,168,76,0.03)", border:"1px solid rgba(201,168,76,0.12)", borderRadius:"6px", color:"#d4c4a0", fontSize:"14px", padding:"10px 14px", outline:"none", fontFamily:"'Palatino Linotype',serif" }}
                   onFocus={e=>e.target.style.borderColor="rgba(201,168,76,0.35)"} onBlur={e=>e.target.style.borderColor="rgba(201,168,76,0.12)"}
                 />
@@ -1697,25 +1536,14 @@ const DebateScreen = ({ characters, onClose, lang }) => {
           <div ref={bottomRef}/>
         </div>
       </div>
-
-      {/* Question input */}
       {phase==="question" && (
         <div style={{ borderTop:"1px solid rgba(201,168,76,0.06)", padding:"14px clamp(12px,4vw,20px)", background:"rgba(2,2,0,0.97)", flexShrink:0 }}>
           <div style={{ maxWidth:"700px", margin:"0 auto", display:"flex", gap:"10px" }}>
-            <input value={question} onChange={e=>setQuestion(e.target.value)}
-              onKeyDown={e=>{if(e.key==="Enter")handleQuestion();}}
-              placeholder={t.questionPlaceholder}
+            <input value={question} onChange={e=>setQuestion(e.target.value)} onKeyDown={e=>{if(e.key==="Enter")handleQuestion();}} placeholder={t.questionPlaceholder}
               style={{ flex:1, minWidth:0, background:"rgba(201,168,76,0.03)", border:"1px solid rgba(201,168,76,0.15)", borderRadius:"8px", color:"#d4c4a0", fontSize:"16px", padding:"13px 16px", outline:"none", fontFamily:"'Palatino Linotype',serif" }}
-              onFocus={e=>e.target.style.borderColor="rgba(201,168,76,0.4)"} onBlur={e=>e.target.style.borderColor="rgba(201,168,76,0.15)"}
-              autoFocus
+              onFocus={e=>e.target.style.borderColor="rgba(201,168,76,0.4)"} onBlur={e=>e.target.style.borderColor="rgba(201,168,76,0.15)"} autoFocus
             />
-            <button onClick={handleQuestion} disabled={!question.trim()} style={{
-              background:question.trim()?"rgba(201,168,76,0.1)":"transparent",
-              color:question.trim()?"#c9a84c":"rgba(201,168,76,0.2)",
-              border:`1px solid ${question.trim()?"rgba(201,168,76,0.35)":"rgba(201,168,76,0.06)"}`,
-              borderRadius:"8px", width:"48px", fontSize:"18px",
-              cursor:question.trim()?"pointer":"not-allowed", flexShrink:0,
-            }}>↑</button>
+            <button onClick={handleQuestion} disabled={!question.trim()} style={{ background:question.trim()?"rgba(201,168,76,0.1)":"transparent", color:question.trim()?"#c9a84c":"rgba(201,168,76,0.2)", border:`1px solid ${question.trim()?"rgba(201,168,76,0.35)":"rgba(201,168,76,0.06)"}`, borderRadius:"8px", width:"48px", fontSize:"18px", cursor:question.trim()?"pointer":"not-allowed", flexShrink:0 }}>↑</button>
           </div>
         </div>
       )}
@@ -1723,18 +1551,13 @@ const DebateScreen = ({ characters, onClose, lang }) => {
   );
 };
 
-// ══════════════════════════════════════════════════════════════
-// ROOT
-// ══════════════════════════════════════════════════════════════
 export default function App() {
-  const [screen, setScreen] = useState("landing"); // landing | language | setup | debate
+  const [screen, setScreen] = useState("landing");
   const [lang, setLang] = useState("en");
   const [characters, setCharacters] = useState([]);
-
   const handleSelectLang = (code) => { setLang(code); setScreen("setup"); };
   const handleStartDebate = (chars) => { setCharacters(chars); setScreen("debate"); };
-  const handleCloseDebate = () => { setScreen("landing"); setCharacters([]); }; // back to landing after verdict
-
+  const handleCloseDebate = () => { setScreen("landing"); setCharacters([]); };
   return (
     <div style={{ width:"100%", minHeight:"100vh", background:"#020200" }}>
       <style>{`
