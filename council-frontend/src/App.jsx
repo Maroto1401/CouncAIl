@@ -456,12 +456,7 @@ const DanBlock = ({ summary, question, userPrompt, councilQuestion, needsMoreRou
             <p style={{ color:"#b8a882", fontSize:"13px", lineHeight:"1.55", margin:"5px 0 0", fontFamily:"'Palatino Linotype',serif" }}>{councilQuestion.question}</p>
           </div>
         )}
-        {userPrompt && !needsMoreRound && !answered && (
-          <div style={{ borderTop:"1px solid rgba(201,168,76,0.08)", paddingTop:"12px", marginTop:"4px" }}>
-            <p style={{ color:"#c9a84c", fontSize:"13px", lineHeight:"1.55", marginBottom:"10px", fontFamily:"'Palatino Linotype',serif", opacity:0.8 }}>{userPrompt}</p>
-            <UserPromptInput onSubmit={onUserPromptAnswer} t={t} />
-          </div>
-        )}
+        {/* userPrompt removed — verdict fires immediately after checkin reveal */}
         {showQ && (
           <div style={{ borderTop:"1px solid rgba(201,168,76,0.08)", paddingTop:"14px" }}>
             <p style={{ color:"#d4c4a0", fontSize:"14px", marginBottom:"12px", lineHeight:"1.55", fontFamily:"'Palatino Linotype',serif" }}>{question}</p>
@@ -604,6 +599,45 @@ const AgentTurn = ({ turn, slideDir="left", respondingToDan=false, t=UI.en }) =>
           </div>
           <ParsedText text={displayText} fontSize="15px" color="#c8b99a" />
         </div>
+      </div>
+    </div>
+  );
+};
+
+// ── Character question bubble — surfaced after a turn ──────────────────
+const CharQuestionBlock = ({ question, charName, charColor, onAnswer, answered, userAnswer, t=UI.en }) => {
+  const [ans, setAns] = useState("");
+  const [vis, setVis] = useState(false);
+  useEffect(() => { const timer = setTimeout(() => setVis(true), 300); return () => clearTimeout(timer); }, []);
+  if(answered) return (
+    <div style={{ opacity:0.4, fontSize:"11px", color:"#4a4030", padding:"4px 0 8px 52px", fontStyle:"italic" }}>
+      ↩ {userAnswer}
+    </div>
+  );
+  return (
+    <div style={{ opacity:vis?1:0, transform:vis?"translateY(0)":"translateY(8px)", transition:"all 0.4s ease",
+      margin:"6px 0 14px 52px", padding:"12px 16px",
+      background:`linear-gradient(135deg, rgba(${parseInt(charColor.slice(1,3),16)},${parseInt(charColor.slice(3,5),16)},${parseInt(charColor.slice(5,7),16)},0.06) 0%, rgba(2,2,0,0.5) 100%)`,
+      border:`1px solid ${charColor}22`,
+      borderRadius:"0 10px 10px 10px",
+      borderLeft:`2px solid ${charColor}60`,
+    }}>
+      <div style={{ fontSize:"9px", color:`${charColor}80`, fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase", marginBottom:"7px", fontFamily:"'Palatino Linotype',serif" }}>
+        {charName} asks you
+      </div>
+      <p style={{ fontSize:"13px", color:"#c8b99a", lineHeight:1.6, marginBottom:"10px", fontFamily:"'Palatino Linotype',serif", fontStyle:"italic" }}>{question}</p>
+      <div style={{ display:"flex", gap:"7px" }}>
+        <input value={ans} onChange={e=>setAns(e.target.value)}
+          onKeyDown={e=>{ if(e.key==="Enter"&&ans.trim()){ onAnswer(ans); setAns(""); }}}
+          placeholder={t.speakTruth}
+          style={{ flex:1, minWidth:0, background:"rgba(201,168,76,0.04)", border:"1px solid rgba(201,168,76,0.15)", borderRadius:"5px", color:"#d4c4a0", fontSize:"13px", padding:"7px 10px", outline:"none", fontFamily:"'Palatino Linotype',serif" }}
+          onFocus={e=>e.target.style.borderColor="rgba(201,168,76,0.4)"} onBlur={e=>e.target.style.borderColor="rgba(201,168,76,0.15)"}
+          autoFocus
+        />
+        <button onClick={()=>{ if(ans.trim()){ onAnswer(ans); setAns(""); }}}
+          style={{ background:`${charColor}22`, color:charColor, border:`1px solid ${charColor}40`, borderRadius:"5px", padding:"7px 12px", fontWeight:700, cursor:"pointer", fontSize:"12px" }}>→</button>
+        <button onClick={()=>onAnswer("—")}
+          style={{ background:"transparent", color:"rgba(201,168,76,0.25)", border:"1px solid rgba(201,168,76,0.08)", borderRadius:"5px", padding:"7px 10px", cursor:"pointer", fontSize:"11px" }}>Skip</button>
       </div>
     </div>
   );
@@ -1006,7 +1040,7 @@ const LandingPage = ({ onEnter, lang="en" }) => {
                         filter: anyActive && !isActive ? "blur(2px) brightness(0.35)" : "none",
                         pointerEvents: anyActive && !isActive ? "none" : "auto",
                       }}>
-                      <div style={{ position:"relative", width:"clamp(90px,10vw,140px)", height:"clamp(180px,22vw,300px)",
+                      <div style={{ position:"relative", width:"clamp(110px,12vw,160px)", height:"clamp(220px,28vw,360px)",
                         borderRadius:"4px", overflow:"hidden", background:"transparent",
                         transition:"all 0.5s ease",
                         boxShadow: isActive ? `0 0 60px ${m.color}35, 0 0 120px ${m.color}12` : "none",
@@ -1014,10 +1048,12 @@ const LandingPage = ({ onEnter, lang="en" }) => {
                       }}>
                         <img src={PORTRAIT_URLS[m.id]} alt={m.name}
                           style={{ width:"100%", height:"100%",
-                            objectFit: m.id==="surfer" ? "cover" : "contain",
-                            objectPosition: m.id==="surfer" ? "center 15%" : "center bottom",
+                            objectFit:"contain",
+                            objectPosition:"center bottom",
                             filter:`brightness(${isActive?1:anyActive?0.5:0.85})`,
                             transition:"all 0.5s ease",
+                            transform: m.id==="surfer" ? "scale(1.55) translateY(-8%)" : "scale(1.04) translateY(-1%)",
+                            transformOrigin:"center bottom",
                           }}
                           onError={e=>{e.target.style.display="none"}}/>
                         <div style={{ position:"absolute", bottom:0, left:0, right:0, height:"35%",
@@ -1026,10 +1062,10 @@ const LandingPage = ({ onEnter, lang="en" }) => {
                       </div>
                       <div style={{ textAlign:"center", transition:"all 0.4s" }}>
                         <div style={{ fontSize:"clamp(13px,1.5vw,17px)", fontWeight:700,
-                          color: isActive ? m.color : anyActive ? "rgba(201,168,76,0.3)" : "#d4b86a",
+                          color: isActive ? m.color : anyActive ? "rgba(201,168,76,0.45)" : "#f0d988",
                           letterSpacing:"0.12em", textTransform:"uppercase", transition:"all 0.4s",
-                          textShadow: isActive ? `0 0 24px ${m.color}, 0 0 8px ${m.color}80` : "0 0 10px rgba(201,168,76,0.15)" }}>{m.name}</div>
-                        <div style={{ fontSize:"clamp(8px,0.9vw,10px)", color:"rgba(201,168,76,0.42)", letterSpacing:"0.1em", textTransform:"uppercase", marginTop:"3px", fontStyle:"italic" }}>{m.title}</div>
+                          textShadow: isActive ? `0 0 24px ${m.color}, 0 0 8px ${m.color}80` : "0 0 14px rgba(201,168,76,0.25)" }}>{m.name}</div>
+                        <div style={{ fontSize:"clamp(9px,1vw,11px)", color:"#c4a55a", letterSpacing:"0.08em", textTransform:"uppercase", marginTop:"3px", fontWeight:600, fontSize:"clamp(9px,1vw,11px)" }}>{m.title}</div>
                       </div>
                     </div>
                   );
@@ -1232,7 +1268,19 @@ const SetupScreen = ({ onStart, lang, onChangeLang }) => {
         </div>
 
         <div style={{ background:"linear-gradient(135deg,rgba(13,10,2,0.9),rgba(8,6,0,0.95))", border:"1px solid rgba(201,168,76,0.25)", borderRadius:"14px", padding:"18px 20px", marginBottom:"28px", display:"flex", alignItems:"center", gap:"16px", opacity:stage==="ready"?1:charReveal>=0?1:0, transition:"opacity 0.6s" }}>
-          <Avatar char={DAN} size={54} active glow />
+          <div style={{ flexShrink:0, width:"72px", height:"120px", borderRadius:"6px", overflow:"hidden",
+            border:"1px solid rgba(201,168,76,0.4)", background:"#020200",
+            boxShadow:"0 0 20px rgba(201,168,76,0.2)", position:"relative" }}>
+            <img src={PORTRAIT_URLS["dan"]} alt="Dan"
+              style={{ width:"100%", height:"100%", objectFit:"contain", objectPosition:"center bottom",
+                transform:"scale(1.05) translateY(-2%)", transformOrigin:"center bottom" }}
+              onError={e=>{
+                e.target.style.display="none";
+                e.target.nextSibling.style.display="flex";
+              }}/>
+            <div style={{ display:"none", position:"absolute", inset:0, alignItems:"center", justifyContent:"center",
+              fontSize:"28px", background:"rgba(201,168,76,0.05)" }}>⚖️</div>
+          </div>
           <div>
             <div style={{ display:"flex", alignItems:"center", gap:"10px", marginBottom:"5px" }}>
               <span style={{ fontWeight:700, color:"#c9a84c", fontSize:"17px" }}>Dan</span>
@@ -1254,7 +1302,7 @@ const SetupScreen = ({ onStart, lang, onChangeLang }) => {
             return (
               <div key={c.id} onClick={() => revealed && toggle(c.id)} style={{ background:sel?hex2rgba(c.color,0.07):"rgba(201,168,76,0.02)", border:`1px solid ${sel?hex2rgba(c.color,0.5):hex2rgba(c.color,0.12)}`, borderRadius:"14px", padding:"18px", cursor:revealed?"pointer":"default", transition:"all 0.25s", opacity:revealed?1:0, transform:revealed?"translateY(0)":"translateY(16px)", position:"relative" }}>
 
-                <div style={{ position:"relative", width:"100%", height:"clamp(160px,20vw,220px)", borderRadius:"8px", overflow:"hidden", marginBottom:"2px",
+                <div style={{ position:"relative", width:"100%", height:"clamp(240px,28vw,340px)", borderRadius:"8px", overflow:"hidden", marginBottom:"2px",
                   border:`1px solid ${sel ? hex2rgba(c.color,0.5) : hex2rgba(c.color,0.12)}`,
                   background:"#020200",
                   boxShadow: sel ? `0 0 24px ${hex2rgba(c.color,0.3)}, inset 0 0 20px ${hex2rgba(c.color,0.05)}` : "none",
@@ -1262,7 +1310,10 @@ const SetupScreen = ({ onStart, lang, onChangeLang }) => {
                 }}>
                   <img src={PORTRAIT_URLS[c.id]} alt={c.name}
                     style={{ width:"100%", height:"100%", objectFit:"contain", objectPosition:"center bottom",
-                      filter:`brightness(${sel?1:0.75})`, transition:"all 0.3s ease" }}
+                      filter:`brightness(${sel?1:0.75})`, transition:"all 0.3s ease",
+                      transform: c.id==="surfer" ? "scale(1.5) translateY(-8%)" : "scale(1.05) translateY(-2%)",
+                      transformOrigin:"center bottom",
+                    }}
                     onError={e=>{ e.target.style.display="none"; }}/>
                   <div style={{ position:"absolute", bottom:0, left:0, right:0, height:"45%",
                     background:`linear-gradient(to top, rgba(2,2,0,0.85) 0%, transparent 100%)` }}/>
@@ -1272,8 +1323,8 @@ const SetupScreen = ({ onStart, lang, onChangeLang }) => {
                     fontSize:"11px", fontWeight:900, color:"#020200", boxShadow:`0 0 10px ${c.color}` }}>✓</div>}
                 </div>
                 <div style={{ marginTop:"10px", fontWeight:700, fontSize:"16px", color:sel?c.color:"#c8b99a", marginBottom:"3px" }}>{c.name}</div>
-                <div style={{ fontSize:"11px", color:hex2rgba(c.color,0.5), marginBottom:"8px", fontStyle:"italic" }}>{getCharFields(c.id,lang).title || c.title}</div>
-                <p style={{ fontSize:"11px", color:"rgba(201,168,76,0.25)", lineHeight:"1.5", marginBottom:"10px", fontStyle:"italic" }}>"{getCharFields(c.id,lang).tagline || c.tagline}"</p>
+                <div style={{ fontSize:"11px", color:hex2rgba(c.color,0.85), marginBottom:"8px", fontWeight:700, fontSize:"12px", letterSpacing:"0.06em" }}>{getCharFields(c.id,lang).title || c.title}</div>
+                <p style={{ fontSize:"12px", color:"rgba(201,168,76,0.6)", lineHeight:"1.5", marginBottom:"10px", fontStyle:"italic" }}>"{getCharFields(c.id,lang).tagline || c.tagline}"</p>
                 <div style={{ fontSize:"9px", background:hex2rgba(c.color,0.08), color:hex2rgba(c.color,0.6), borderRadius:"4px", padding:"3px 8px", display:"inline-block", fontWeight:700, letterSpacing:"0.08em", border:`1px solid ${hex2rgba(c.color,0.15)}`, textTransform:"uppercase" }}>{getCharFields(c.id,lang).lens || c.lens}</div>
               </div>
             );
@@ -1424,6 +1475,28 @@ const DebateScreen = ({ characters, onClose, lang }) => {
       const roundTurns = newHistory.filter(h => h.round===currentRound && h.type==="agent");
       const idx = roundTurns.length - 1;
       setFeed(p => [...p, { type:"agent", ...turn, slideDir:idx%2===0?"left":"right" }]);
+
+      // Fire char_questions extraction in background — non-blocking
+      post("/debate/char_questions", {
+        turn_text: turn.text,
+        character_name: turn.name,
+        character_id: characterId,
+        question: activeQuestion,
+        language: lang,
+      }, 15000).then(cqData => {
+        if(cqData?.question) {
+          setFeed(p => [...p, {
+            type:"char_question",
+            charQuestion: cqData.question,
+            charName: turn.name,
+            charColor: turn.color,
+            charId: characterId,
+            answered: false,
+            userAnswer: null,
+          }]);
+        }
+      }).catch(() => {});
+
       const newRemaining = remainingPickers.filter(id => id!==characterId);
       setRemainingPickers(newRemaining);
       if(newRemaining.length > 0) {
@@ -1526,6 +1599,27 @@ const DebateScreen = ({ characters, onClose, lang }) => {
             if(item.type==="opening") return <OpeningBlock key={i} text={item.text} t={t}/>;
             if(item.type==="round_header") return <RoundHeader key={i} label={item.label}/>;
             if(item.type==="agent") return <AgentTurn key={i} turn={item} slideDir={item.slideDir||"left"} respondingToDan={item.respondingToDan} t={t}/>;
+            if(item.type==="char_question") {
+              return <CharQuestionBlock key={i}
+                question={item.charQuestion}
+                charName={item.charName}
+                charColor={item.charColor}
+                answered={item.answered}
+                userAnswer={item.userAnswer}
+                t={t}
+                onAnswer={ans => {
+                  // Mark answered in feed, then inject the answer into history as context
+                  setFeed(p => p.map((f,j) => j===i ? {...f, answered:true, userAnswer:ans} : f));
+                  if(ans !== "—") {
+                    setHistory(h => [...h, {
+                      type:"user_context",
+                      text:`${item.charName} preguntó: "${item.charQuestion}" — Respuesta: ${ans}`,
+                      round: currentRound,
+                    }]);
+                  }
+                }}
+              />;
+            }
             if(item.type==="picker") {
               const isLatest = feed.filter(f=>f.type==="picker").at(-1)===item;
               if(!isLatest||phase!=="picking") return null;
@@ -1554,16 +1648,17 @@ const DebateScreen = ({ characters, onClose, lang }) => {
             </div>
           )}
           {phase==="done" && !loading && verdictRevealed && (
-            <div style={{ marginTop:"28px", borderTop:"1px solid rgba(201,168,76,0.06)", paddingTop:"22px" }}>
-              <p style={{ color:"rgba(201,168,76,0.2)", fontSize:"12px", marginBottom:"12px", fontStyle:"italic", letterSpacing:"0.06em" }}>{t.anotherQuestion}</p>
-              <div style={{ display:"flex", gap:"8px", flexWrap:"wrap" }}>
-                <input value={followUpQ} onChange={e=>setFollowUpQ(e.target.value)} onKeyDown={e=>{if(e.key==="Enter")handleFollowUp();}} placeholder={t.followUpPlaceholder}
-                  style={{ flex:"1 1 200px", minWidth:0, background:"rgba(201,168,76,0.03)", border:"1px solid rgba(201,168,76,0.12)", borderRadius:"6px", color:"#d4c4a0", fontSize:"14px", padding:"10px 14px", outline:"none", fontFamily:"'Palatino Linotype',serif" }}
-                  onFocus={e=>e.target.style.borderColor="rgba(201,168,76,0.35)"} onBlur={e=>e.target.style.borderColor="rgba(201,168,76,0.12)"}
-                />
-                <button onClick={handleFollowUp} style={{ background:"rgba(201,168,76,0.08)", color:"#c9a84c", border:"1px solid rgba(201,168,76,0.25)", borderRadius:"6px", padding:"10px 18px", fontWeight:700, cursor:"pointer", fontSize:"13px" }}>→</button>
-                <button onClick={onClose} style={{ background:"transparent", color:"rgba(201,168,76,0.25)", border:"1px solid rgba(201,168,76,0.08)", borderRadius:"6px", padding:"10px 14px", fontSize:"12px", cursor:"pointer", letterSpacing:"0.06em" }}>{t.leave}</button>
-              </div>
+            <div style={{ marginTop:"36px", borderTop:"1px solid rgba(201,168,76,0.06)", paddingTop:"28px", textAlign:"center" }}>
+              <p style={{ color:"rgba(201,168,76,0.18)", fontSize:"11px", fontStyle:"italic", letterSpacing:"0.12em", marginBottom:"20px", fontFamily:"'Palatino Linotype',serif" }}>
+                {t.sessionComplete}
+              </p>
+              <button onClick={onClose}
+                style={{ background:"transparent", color:"rgba(201,168,76,0.5)", border:"1px solid rgba(201,168,76,0.2)", borderRadius:"3px", padding:"12px 36px", fontSize:"11px", fontWeight:700, cursor:"pointer", letterSpacing:"0.22em", textTransform:"uppercase", fontFamily:"'Palatino Linotype',serif", transition:"all 0.3s ease" }}
+                onMouseEnter={e=>{ e.currentTarget.style.color="#c9a84c"; e.currentTarget.style.borderColor="rgba(201,168,76,0.5)"; e.currentTarget.style.background="rgba(201,168,76,0.05)"; }}
+                onMouseLeave={e=>{ e.currentTarget.style.color="rgba(201,168,76,0.5)"; e.currentTarget.style.borderColor="rgba(201,168,76,0.2)"; e.currentTarget.style.background="transparent"; }}
+              >
+                {t.leaveCouncil}
+              </button>
             </div>
           )}
           <div ref={bottomRef}/>
