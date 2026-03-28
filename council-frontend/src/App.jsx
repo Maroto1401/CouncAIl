@@ -521,7 +521,7 @@ const ContextBlock = ({ questions, onSubmit, t=UI.en }) => {
       </div>
       <div style={{ background:"linear-gradient(160deg,rgba(13,10,2,0.95),rgba(8,6,0,0.98))", border:"1px solid rgba(201,168,76,0.18)", borderRadius:"12px", padding:"18px 22px", position:"relative" }}>
         <div style={{ position:"absolute",top:0,left:"20%",right:"20%",height:"1px",background:"linear-gradient(to right,transparent,rgba(201,168,76,0.4),transparent)" }}/>
-        <p style={{ color:"#6a5c3a", fontSize:"12px", marginBottom:"18px", fontStyle:"italic", fontFamily:"'Palatino Linotype',serif" }}>{t.beforeConvenes}</p>
+        <p style={{ color:"#8a7a5a", fontSize:"12px", marginBottom:"18px", fontFamily:"'Palatino Linotype',serif" }}>{t.beforeConvenes}</p>
         {questions.map((q,i) => (
           <div key={i} style={{ marginBottom:"16px" }}>
             <p style={{ color:"#d4c4a0", fontSize:"14px", marginBottom:"9px", lineHeight:"1.5", fontFamily:"'Palatino Linotype',serif" }}>{q}</p>
@@ -593,7 +593,7 @@ const AgentTurn = ({ turn, slideDir="left", respondingToDan=false, t=UI.en }) =>
         }}>
           <div style={{ display:"flex", alignItems:"center", gap:"8px", marginBottom:"10px", flexWrap:"wrap" }}>
             <span style={{ color:turn.color, fontWeight:800, fontSize:"11px", letterSpacing:"0.1em", textTransform:"uppercase", fontFamily:"'Palatino Linotype',serif" }}>{turn.name}</span>
-            <span style={{ color:hex2rgba(turn.color,0.4), fontSize:"10px", fontStyle:"italic" }}>{turn.title}</span>
+            <span style={{ color:hex2rgba(turn.color,0.55), fontSize:"10px", fontWeight:500 }}>{turn.title}</span>
             {turn.position_updated && <span style={{ fontSize:"9px", background:hex2rgba(turn.color,0.12), color:turn.color, borderRadius:"4px", padding:"2px 6px", fontWeight:700 }}>↻ {t.stanceShifted}</span>}
             {long && <button onClick={()=>setExp(!exp)} style={{ marginLeft:"auto", fontSize:"10px", color:"#4a4030", background:"transparent", border:"none", cursor:"pointer" }}>{exp ? t.collapse : t.expand}</button>}
           </div>
@@ -702,7 +702,7 @@ const DebateClosedBanner = ({ onReveal, revealed, t=UI.en }) => {
         <div style={{ position:"absolute",bottom:0,left:0,right:0,height:"1px",background:"linear-gradient(to right,transparent,rgba(201,168,76,0.3),transparent)" }}/>
         <div style={{ fontSize:"32px", marginBottom:"14px", opacity:0.8 }}>⚖️</div>
         <p style={{ color:"rgba(201,168,76,0.6)", fontWeight:700, fontSize:"11px", letterSpacing:"0.2em", textTransform:"uppercase", marginBottom:"8px", fontFamily:"'Palatino Linotype',serif" }}>{t.theCouncilSpoke}</p>
-        <p style={{ color:"#4a3e28", fontSize:"13px", lineHeight:"1.6", marginBottom:"22px", fontFamily:"'Palatino Linotype',serif", fontStyle:"italic" }}>{t.danReady}</p>
+        <p style={{ color:"#7a6a48", fontSize:"13px", lineHeight:"1.6", marginBottom:"22px", fontFamily:"'Palatino Linotype',serif" }}>{t.danReady}</p>
         <button onClick={onReveal} style={{ background:"rgba(201,168,76,0.1)", color:"#c9a84c", border:"1px solid rgba(201,168,76,0.35)", borderRadius:"8px", padding:"11px 28px", fontSize:"13px", fontWeight:700, cursor:"pointer", letterSpacing:"0.1em", textTransform:"uppercase", fontFamily:"'Palatino Linotype',serif", transition:"all 0.2s" }}
           onMouseEnter={e=>{ e.currentTarget.style.background="rgba(201,168,76,0.18)"; }}
           onMouseLeave={e=>{ e.currentTarget.style.background="rgba(201,168,76,0.1)"; }}
@@ -981,7 +981,7 @@ const LandingPage = ({ onEnter, lang="en" }) => {
           <div style={{ height:"1px", background:"linear-gradient(to right,transparent,rgba(201,168,76,0.7),transparent)", margin:"clamp(10px,2vw,18px) auto", animation:"lineDraw 1.2s ease forwards", width:0 }}/>
         )}
 
-        <p style={{ fontSize:"clamp(12px,2vw,18px)", color:"rgba(201,168,76,0.38)", fontStyle:"italic", letterSpacing:"0.08em", lineHeight:1.8, maxWidth:"500px", textAlign:"center", opacity:0, animation:phase>=3?"fadeUp 1s ease 0.3s forwards":"none", animationFillMode:"forwards", marginBottom:"clamp(28px,5vw,52px)" }}>
+        <p style={{ fontSize:"clamp(12px,2vw,18px)", color:"rgba(201,168,76,0.55)", letterSpacing:"0.04em", lineHeight:1.8, maxWidth:"500px", textAlign:"center", opacity:0, animation:phase>=3?"fadeUp 1s ease 0.3s forwards":"none", animationFillMode:"forwards", marginBottom:"clamp(28px,5vw,52px)" }}>
           {(UI[lang]||UI.en).subtitle || "Five minds. One question. No comfortable answers."}
         </p>
 
@@ -1048,12 +1048,10 @@ const LandingPage = ({ onEnter, lang="en" }) => {
                       }}>
                         <img src={PORTRAIT_URLS[m.id]} alt={m.name}
                           style={{ width:"100%", height:"100%",
-                            objectFit:"contain",
-                            objectPosition:"center bottom",
+                            objectFit: m.id==="surfer" ? "cover" : "contain",
+                            objectPosition: m.id==="surfer" ? "center top" : "center bottom",
                             filter:`brightness(${isActive?1:anyActive?0.5:0.85})`,
                             transition:"all 0.5s ease",
-                            transform: m.id==="surfer" ? "scale(1.55) translateY(-8%)" : "scale(1.04) translateY(-1%)",
-                            transformOrigin:"center bottom",
                           }}
                           onError={e=>{e.target.style.display="none"}}/>
                         <div style={{ position:"absolute", bottom:0, left:0, right:0, height:"35%",
@@ -1144,7 +1142,7 @@ const LandingPage = ({ onEnter, lang="en" }) => {
             </div>
 
             {!active && phase>=5 && (
-              <p style={{ fontSize:"clamp(8px,1vw,10px)", color:"rgba(201,168,76,0.15)", fontStyle:"italic", letterSpacing:"0.1em", marginTop:"4px" }}>
+              <p style={{ fontSize:"clamp(8px,1vw,10px)", color:"rgba(201,168,76,0.25)", letterSpacing:"0.08em", marginTop:"4px" }}>
                 touch a member to know them
               </p>
             )}
@@ -1158,7 +1156,7 @@ const LandingPage = ({ onEnter, lang="en" }) => {
           >
             Consult the Council
           </button>
-          <p style={{ color:"rgba(201,168,76,0.15)", fontSize:"clamp(8px,1vw,10px)", marginTop:"14px", letterSpacing:"0.14em", fontStyle:"italic" }}>
+          <p style={{ color:"rgba(201,168,76,0.3)", fontSize:"clamp(8px,1vw,10px)", marginTop:"14px", letterSpacing:"0.1em" }}>
             One question · One session · One verdict
           </p>
         </div>
@@ -1241,7 +1239,7 @@ const SetupScreen = ({ onStart, lang, onChangeLang }) => {
         <div style={{ fontSize:"52px", marginBottom:"28px", opacity:introStep>=1?0.7:0, transition:"opacity 1.2s ease", filter:"sepia(0.3)" }}>⚖️</div>
         <h1 style={{ fontFamily:"'Palatino Linotype','Palatino','Book Antiqua',serif", fontSize:"clamp(42px,8vw,72px)", fontWeight:400, letterSpacing:"0.18em", color:"#c9a84c", marginBottom:"6px", opacity:introStep>=1?1:0, transform:introStep>=1?"translateY(0)":"translateY(20px)", transition:"all 1.4s cubic-bezier(0.16,1,0.3,1)", textShadow:"0 0 40px rgba(201,168,76,0.2)" }}>{t.title}</h1>
         <div style={{ width:"60px", height:"1px", background:"linear-gradient(to right,transparent,rgba(201,168,76,0.5),transparent)", margin:"16px auto 20px", opacity:introStep>=1?1:0, transition:"opacity 1.4s ease 0.3s" }}/>
-        <p style={{ fontFamily:"'Palatino Linotype',serif", fontSize:"clamp(13px,2vw,16px)", color:"rgba(201,168,76,0.4)", letterSpacing:"0.12em", lineHeight:"1.8", fontStyle:"italic", opacity:introStep>=2?1:0, transform:introStep>=2?"translateY(0)":"translateY(10px)", transition:"all 1s ease 0.2s", marginBottom:"40px" }}>
+        <p style={{ fontFamily:"'Palatino Linotype',serif", fontSize:"clamp(13px,2vw,16px)", color:"rgba(201,168,76,0.55)", letterSpacing:"0.06em", lineHeight:"1.8", opacity:introStep>=2?1:0, transform:introStep>=2?"translateY(0)":"translateY(10px)", transition:"all 1s ease 0.2s", marginBottom:"40px" }}>
           {getCharFields("dan",lang).description || t.danDesc}
         </p>
         <button onClick={() => setStage("assembling")} style={{ opacity:introStep>=3?1:0, transform:introStep>=3?"translateY(0)":"translateY(10px)", transition:"all 0.8s ease", background:"transparent", color:"rgba(201,168,76,0.6)", border:"1px solid rgba(201,168,76,0.25)", borderRadius:"4px", padding:"12px 36px", fontSize:"11px", fontWeight:700, letterSpacing:"0.2em", textTransform:"uppercase", cursor:"pointer", fontFamily:"'Palatino Linotype',serif" }}
@@ -1260,7 +1258,7 @@ const SetupScreen = ({ onStart, lang, onChangeLang }) => {
           <div style={{ fontSize:"24px", marginBottom:"10px", opacity:0.5 }}>⚖️</div>
           <h1 style={{ fontSize:"clamp(20px,4vw,28px)", fontWeight:400, letterSpacing:"0.2em", color:"#c9a84c", marginBottom:"6px", textTransform:"uppercase" }}>{t.title}</h1>
           <div style={{ width:"40px", height:"1px", background:"rgba(201,168,76,0.3)", margin:"10px auto 14px" }}/>
-          <p style={{ color:"rgba(201,168,76,0.3)", fontSize:"12px", letterSpacing:"0.1em", fontStyle:"italic" }}>{t.subtitle}</p>
+          <p style={{ color:"rgba(201,168,76,0.5)", fontSize:"12px", letterSpacing:"0.06em" }}>{t.subtitle}</p>
           <button onClick={onChangeLang} style={{ marginTop:"12px", background:"transparent", border:"1px solid rgba(201,168,76,0.15)", borderRadius:"16px", padding:"4px 14px", color:"rgba(201,168,76,0.4)", fontSize:"11px", cursor:"pointer", letterSpacing:"0.08em", fontFamily:"'Palatino Linotype',serif" }}
             onMouseEnter={e=>{ e.currentTarget.style.borderColor="rgba(201,168,76,0.4)"; e.currentTarget.style.color="rgba(201,168,76,0.7)"; }}
             onMouseLeave={e=>{ e.currentTarget.style.borderColor="rgba(201,168,76,0.15)"; e.currentTarget.style.color="rgba(201,168,76,0.4)"; }}
@@ -1268,25 +1266,20 @@ const SetupScreen = ({ onStart, lang, onChangeLang }) => {
         </div>
 
         <div style={{ background:"linear-gradient(135deg,rgba(13,10,2,0.9),rgba(8,6,0,0.95))", border:"1px solid rgba(201,168,76,0.25)", borderRadius:"14px", padding:"18px 20px", marginBottom:"28px", display:"flex", alignItems:"center", gap:"16px", opacity:stage==="ready"?1:charReveal>=0?1:0, transition:"opacity 0.6s" }}>
-          <div style={{ flexShrink:0, width:"72px", height:"120px", borderRadius:"6px", overflow:"hidden",
-            border:"1px solid rgba(201,168,76,0.4)", background:"#020200",
-            boxShadow:"0 0 20px rgba(201,168,76,0.2)", position:"relative" }}>
+          <div style={{ flexShrink:0, width:"90px", height:"150px", borderRadius:"6px", overflow:"hidden",
+            background:"transparent", position:"relative" }}>
             <img src={PORTRAIT_URLS["dan"]} alt="Dan"
-              style={{ width:"100%", height:"100%", objectFit:"contain", objectPosition:"center bottom",
-                transform:"scale(1.05) translateY(-2%)", transformOrigin:"center bottom" }}
-              onError={e=>{
-                e.target.style.display="none";
-                e.target.nextSibling.style.display="flex";
-              }}/>
+              style={{ width:"100%", height:"100%", objectFit:"contain", objectPosition:"center bottom" }}
+              onError={e=>{ e.target.style.display="none"; e.target.nextSibling.style.display="flex"; }}/>
             <div style={{ display:"none", position:"absolute", inset:0, alignItems:"center", justifyContent:"center",
-              fontSize:"28px", background:"rgba(201,168,76,0.05)" }}>⚖️</div>
+              fontSize:"36px" }}>⚖️</div>
           </div>
           <div>
             <div style={{ display:"flex", alignItems:"center", gap:"10px", marginBottom:"5px" }}>
               <span style={{ fontWeight:700, color:"#c9a84c", fontSize:"17px" }}>Dan</span>
               <span style={{ fontSize:"9px", background:"rgba(201,168,76,0.1)", color:"rgba(201,168,76,0.6)", borderRadius:"4px", padding:"2px 8px", fontWeight:700, letterSpacing:"0.1em", textTransform:"uppercase" }}>{t.alwaysPresent}</span>
             </div>
-            <p style={{ fontSize:"12px", color:"rgba(201,168,76,0.35)", fontStyle:"italic", lineHeight:"1.5", margin:0 }}>{t.danDesc}</p>
+            <p style={{ fontSize:"12px", color:"rgba(201,168,76,0.5)", lineHeight:"1.5", margin:0 }}>{t.danDesc}</p>
           </div>
         </div>
 
@@ -1309,10 +1302,10 @@ const SetupScreen = ({ onStart, lang, onChangeLang }) => {
                   transition:"all 0.3s ease",
                 }}>
                   <img src={PORTRAIT_URLS[c.id]} alt={c.name}
-                    style={{ width:"100%", height:"100%", objectFit:"contain", objectPosition:"center bottom",
+                    style={{ width:"100%", height:"100%",
+                      objectFit: c.id==="surfer" ? "cover" : "contain",
+                      objectPosition: c.id==="surfer" ? "center top" : "center bottom",
                       filter:`brightness(${sel?1:0.75})`, transition:"all 0.3s ease",
-                      transform: c.id==="surfer" ? "scale(1.5) translateY(-8%)" : "scale(1.05) translateY(-2%)",
-                      transformOrigin:"center bottom",
                     }}
                     onError={e=>{ e.target.style.display="none"; }}/>
                   <div style={{ position:"absolute", bottom:0, left:0, right:0, height:"45%",
@@ -1324,7 +1317,7 @@ const SetupScreen = ({ onStart, lang, onChangeLang }) => {
                 </div>
                 <div style={{ marginTop:"10px", fontWeight:700, fontSize:"16px", color:sel?c.color:"#c8b99a", marginBottom:"3px" }}>{c.name}</div>
                 <div style={{ fontSize:"11px", color:hex2rgba(c.color,0.85), marginBottom:"8px", fontWeight:700, fontSize:"12px", letterSpacing:"0.06em" }}>{getCharFields(c.id,lang).title || c.title}</div>
-                <p style={{ fontSize:"12px", color:"rgba(201,168,76,0.6)", lineHeight:"1.5", marginBottom:"10px", fontStyle:"italic" }}>"{getCharFields(c.id,lang).tagline || c.tagline}"</p>
+                <p style={{ fontSize:"12px", color:"rgba(201,168,76,0.65)", lineHeight:"1.5", marginBottom:"10px" }}>"{getCharFields(c.id,lang).tagline || c.tagline}"</p>
                 <div style={{ fontSize:"9px", background:hex2rgba(c.color,0.08), color:hex2rgba(c.color,0.6), borderRadius:"4px", padding:"3px 8px", display:"inline-block", fontWeight:700, letterSpacing:"0.08em", border:`1px solid ${hex2rgba(c.color,0.15)}`, textTransform:"uppercase" }}>{getCharFields(c.id,lang).lens || c.lens}</div>
               </div>
             );
@@ -1649,7 +1642,7 @@ const DebateScreen = ({ characters, onClose, lang }) => {
           )}
           {phase==="done" && !loading && verdictRevealed && (
             <div style={{ marginTop:"36px", borderTop:"1px solid rgba(201,168,76,0.06)", paddingTop:"28px", textAlign:"center" }}>
-              <p style={{ color:"rgba(201,168,76,0.18)", fontSize:"11px", fontStyle:"italic", letterSpacing:"0.12em", marginBottom:"20px", fontFamily:"'Palatino Linotype',serif" }}>
+              <p style={{ color:"rgba(201,168,76,0.35)", fontSize:"11px", letterSpacing:"0.08em", marginBottom:"20px", fontFamily:"'Palatino Linotype',serif" }}>
                 {t.sessionComplete}
               </p>
               <button onClick={onClose}
