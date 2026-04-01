@@ -1040,7 +1040,7 @@ const LandingPage = ({ onEnter, lang="en" }) => {
                         filter: anyActive && !isActive ? "blur(2px) brightness(0.35)" : "none",
                         pointerEvents: anyActive && !isActive ? "none" : "auto",
                       }}>
-                      <div style={{ position:"relative", width:"clamp(110px,12vw,160px)", height:"clamp(240px,30vw,380px)",
+                      <div style={{ position:"relative", width:"clamp(130px,14vw,185px)", height:"clamp(240px,30vw,380px)",
                         borderRadius:"4px", overflow:"hidden", background:"transparent",
                         transition:"all 0.5s ease",
                         boxShadow: isActive ? `0 0 60px ${m.color}35, 0 0 120px ${m.color}12` : "none",
@@ -1481,15 +1481,22 @@ const DebateScreen = ({ characters, onClose, lang }) => {
         language: lang,
       }, 15000).then(cqData => {
         if(cqData?.question) {
-          setFeed(p => [...p, {
-            type:"char_question",
-            charQuestion: cqData.question,
-            charName: turn.name,
-            charColor: turn.color,
-            charId: characterId,
-            answered: false,
-            userAnswer: null,
-          }]);
+          setFeed(prev => {
+            // Don't add if this char already has an unanswered question in feed
+            const alreadyPending = prev.some(f =>
+              f.type==="char_question" && f.charId===characterId && !f.answered
+            );
+            if(alreadyPending) return prev;
+            return [...prev, {
+              type:"char_question",
+              charQuestion: cqData.question,
+              charName: turn.name,
+              charColor: turn.color,
+              charId: characterId,
+              answered: false,
+              userAnswer: null,
+            }];
+          });
         }
       }).catch(() => {});
 
@@ -1609,7 +1616,7 @@ const DebateScreen = ({ characters, onClose, lang }) => {
                   if(ans !== "—") {
                     setHistory(h => [...h, {
                       type:"user_context",
-                      text:`${item.charName} preguntó: "${item.charQuestion}" — Respuesta: ${ans}`,
+                      text:`${item.charName}: "${item.charQuestion}" → ${ans}`,
                       round: currentRound,
                     }]);
                   }
