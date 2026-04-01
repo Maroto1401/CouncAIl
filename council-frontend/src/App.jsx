@@ -1040,7 +1040,7 @@ const LandingPage = ({ onEnter, lang="en" }) => {
                         filter: anyActive && !isActive ? "blur(2px) brightness(0.35)" : "none",
                         pointerEvents: anyActive && !isActive ? "none" : "auto",
                       }}>
-                      <div style={{ position:"relative", width:"clamp(110px,12vw,160px)", height:"clamp(220px,28vw,360px)",
+                      <div style={{ position:"relative", width:"clamp(110px,12vw,160px)", height:"clamp(240px,30vw,380px)",
                         borderRadius:"4px", overflow:"hidden", background:"transparent",
                         transition:"all 0.5s ease",
                         boxShadow: isActive ? `0 0 60px ${m.color}35, 0 0 120px ${m.color}12` : "none",
@@ -1049,7 +1049,7 @@ const LandingPage = ({ onEnter, lang="en" }) => {
                         <img src={PORTRAIT_URLS[m.id]} alt={m.name}
                           style={{ width:"100%", height:"100%",
                             objectFit: m.id==="surfer" ? "cover" : "contain",
-                            objectPosition: m.id==="surfer" ? "center top" : "center bottom",
+                            objectPosition: m.id==="surfer" ? "center 20%" : "center bottom",
                             filter:`brightness(${isActive?1:anyActive?0.5:0.85})`,
                             transition:"all 0.5s ease",
                           }}
@@ -1265,27 +1265,30 @@ const SetupScreen = ({ onStart, lang, onChangeLang }) => {
           >{LANGUAGES.find(l=>l.code===lang)?.flag} {LANGUAGES.find(l=>l.code===lang)?.label} ↩</button>
         </div>
 
-        <div style={{ background:"linear-gradient(135deg,rgba(13,10,2,0.9),rgba(8,6,0,0.95))", border:"1px solid rgba(201,168,76,0.25)", borderRadius:"14px", padding:"18px 20px", marginBottom:"28px", display:"flex", alignItems:"center", gap:"16px", opacity:stage==="ready"?1:charReveal>=0?1:0, transition:"opacity 0.6s" }}>
-          <div style={{ flexShrink:0, width:"90px", height:"150px", borderRadius:"6px", overflow:"hidden",
-            background:"transparent", position:"relative" }}>
+        <div style={{ marginBottom:"32px", opacity:stage==="ready"?1:charReveal>=0?1:0, transition:"opacity 0.6s", display:"flex", flexDirection:"column", alignItems:"center", gap:"0" }}>
+          {/* Dan portrait — large and centered */}
+          <div style={{ position:"relative", width:"clamp(120px,18vw,180px)", height:"clamp(200px,32vw,300px)", overflow:"hidden", background:"transparent" }}>
             <img src={PORTRAIT_URLS["dan"]} alt="Dan"
-              style={{ width:"100%", height:"100%", objectFit:"contain", objectPosition:"center bottom" }}
+              style={{ width:"100%", height:"100%", objectFit:"contain", objectPosition:"center bottom",
+                filter:"drop-shadow(0 0 40px rgba(201,168,76,0.25))" }}
               onError={e=>{ e.target.style.display="none"; e.target.nextSibling.style.display="flex"; }}/>
-            <div style={{ display:"none", position:"absolute", inset:0, alignItems:"center", justifyContent:"center",
-              fontSize:"36px" }}>⚖️</div>
-          </div>
-          <div>
-            <div style={{ display:"flex", alignItems:"center", gap:"10px", marginBottom:"5px" }}>
-              <span style={{ fontWeight:700, color:"#c9a84c", fontSize:"17px" }}>Dan</span>
-              <span style={{ fontSize:"9px", background:"rgba(201,168,76,0.1)", color:"rgba(201,168,76,0.6)", borderRadius:"4px", padding:"2px 8px", fontWeight:700, letterSpacing:"0.1em", textTransform:"uppercase" }}>{t.alwaysPresent}</span>
+            <div style={{ display:"none", alignItems:"center", justifyContent:"center", height:"100%", fontSize:"52px" }}>⚖️</div>
+            <div style={{ position:"absolute", bottom:0, left:0, right:0, height:"40%",
+              background:"linear-gradient(to top, rgba(2,2,0,0.9) 0%, transparent 100%)" }}/>
+            <div style={{ position:"absolute", bottom:"12px", left:0, right:0, textAlign:"center" }}>
+              <div style={{ fontSize:"clamp(14px,2vw,18px)", fontWeight:700, color:"#c9a84c", letterSpacing:"0.18em", textTransform:"uppercase", textShadow:"0 0 20px rgba(201,168,76,0.6)" }}>Dan</div>
+              <div style={{ fontSize:"10px", color:"rgba(201,168,76,0.5)", letterSpacing:"0.12em", textTransform:"uppercase", marginTop:"2px" }}>{t.alwaysPresent}</div>
             </div>
-            <p style={{ fontSize:"12px", color:"rgba(201,168,76,0.5)", lineHeight:"1.5", margin:0 }}>{t.danDesc}</p>
           </div>
+          {/* Desc below portrait */}
+          <p style={{ fontSize:"12px", color:"rgba(201,168,76,0.5)", lineHeight:"1.6", textAlign:"center", maxWidth:"420px", marginTop:"10px", padding:"0 8px" }}>{t.danDesc}</p>
         </div>
 
-        <div style={{ fontSize:"9px", fontWeight:800, letterSpacing:"0.16em", textTransform:"uppercase", color:"rgba(201,168,76,0.25)", marginBottom:"14px", display:"flex", alignItems:"center", gap:"10px" }}>
-          <span>{t.selectMembers}</span>
-          <span style={{ color:selected.length>=2?"rgba(74,222,128,0.6)":"rgba(201,168,76,0.2)" }}>({selected.length} / 4)</span>
+        <div style={{ display:"flex", alignItems:"center", gap:"12px", marginBottom:"18px" }}>
+          <div style={{ flex:1, height:"1px", background:"linear-gradient(to right,transparent,rgba(201,168,76,0.12))" }}/>
+          <span style={{ fontSize:"11px", fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase", color:"rgba(201,168,76,0.6)" }}>{t.selectMembers}</span>
+          <span style={{ fontSize:"11px", fontWeight:700, color:selected.length>=2?"rgba(74,222,128,0.8)":"rgba(201,168,76,0.35)", letterSpacing:"0.06em" }}>{selected.length} / 4</span>
+          <div style={{ flex:1, height:"1px", background:"linear-gradient(to left,transparent,rgba(201,168,76,0.12))" }}/>
         </div>
 
         <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(min(100%,220px),1fr))", gap:"10px", marginBottom:"32px" }}>
