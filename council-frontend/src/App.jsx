@@ -33,6 +33,11 @@ const UI = {
     chooseLanguage:"Choose your language", danJudge:"Dan — The Judge", dansJudgment:"Dan's Judgment",
     councilPrepares:"The council prepares…", danDeliberates:"Dan deliberates…",
     danWrites:"Dan writes his judgment…", respondsToDan:"responds to Dan",
+    copyVerdict:"Copy verdict", verdictCopied:"Copied!", feedbackPrompt:"Was this verdict useful?",
+    rateLimitTitle:"The council needs to rest", rateLimitMsg:"You have reached today's limit. Return when you have another question.",
+    slowStartBanner:"The council is preparing… this can take up to a minute on first consultation. Please be patient.",
+    councilConvened:"The council has convened",
+    councilConvenedTimes:"times",
   },
   es: {
     title:"EL CONSEJO", subtitle:"Reúne a tu consejo. Tú controlas quién habla.", enterChamber:"Entrar a la Cámara",
@@ -50,6 +55,11 @@ const UI = {
     chooseLanguage:"Elige tu idioma", danJudge:"Dan — El Juez", dansJudgment:"El Juicio de Dan",
     councilPrepares:"El consejo se prepara…", danDeliberates:"Dan delibera…",
     danWrites:"Dan escribe su juicio…", respondsToDan:"responde a Dan",
+    copyVerdict:"Copiar veredicto", verdictCopied:"¡Copiado!", feedbackPrompt:"¿Fue útil este veredicto?",
+    rateLimitTitle:"El consejo necesita descansar", rateLimitMsg:"Has alcanzado el límite diario. Regresa cuando tengas otra pregunta.",
+    slowStartBanner:"El consejo se está preparando… esto puede tardar hasta un minuto en la primera consulta. Por favor, ten paciencia.",
+    councilConvened:"El consejo se ha reunido",
+    councilConvenedTimes:"veces",
   },
   fr: {
     title:"LE CONSEIL", subtitle:"Assemblez votre conseil. Vous contrôlez qui parle.", enterChamber:"Entrer dans la Chambre",
@@ -67,6 +77,10 @@ const UI = {
     chooseLanguage:"Choisissez votre langue", danJudge:"Dan — Le Juge", dansJudgment:"Le Jugement de Dan",
     councilPrepares:"Le conseil se prépare…", danDeliberates:"Dan délibère…",
     danWrites:"Dan rédige son jugement…", respondsToDan:"répond à Dan",
+    copyVerdict:"Copy verdict", verdictCopied:"Copied!", feedbackPrompt:"Was this verdict useful?",
+    rateLimitTitle:"The council needs to rest", rateLimitMsg:"Return when you have another question.",
+    slowStartBanner:"The council is preparing… this can take up to a minute. Please be patient.",
+    councilConvened:"The council has convened", councilConvenedTimes:"times",
   },
   de: {
     title:"DER RAT", subtitle:"Stellen Sie Ihren Rat zusammen. Sie bestimmen, wer spricht.", enterChamber:"Die Kammer betreten",
@@ -84,6 +98,10 @@ const UI = {
     chooseLanguage:"Sprache wählen", danJudge:"Dan — Der Richter", dansJudgment:"Dans Urteil",
     councilPrepares:"Der Rat bereitet sich vor…", danDeliberates:"Dan überlegt…",
     danWrites:"Dan schreibt sein Urteil…", respondsToDan:"antwortet Dan",
+    copyVerdict:"Copy verdict", verdictCopied:"Copied!", feedbackPrompt:"Was this verdict useful?",
+    rateLimitTitle:"The council needs to rest", rateLimitMsg:"Return when you have another question.",
+    slowStartBanner:"The council is preparing… this can take up to a minute. Please be patient.",
+    councilConvened:"The council has convened", councilConvenedTimes:"times",
   },
   pt: {
     title:"O CONSELHO", subtitle:"Monte seu conselho. Você controla quem fala.", enterChamber:"Entrar na Câmara",
@@ -101,6 +119,10 @@ const UI = {
     chooseLanguage:"Escolha o idioma", danJudge:"Dan — O Juiz", dansJudgment:"O Julgamento de Dan",
     councilPrepares:"O conselho se prepara…", danDeliberates:"Dan delibera…",
     danWrites:"Dan escreve seu julgamento…", respondsToDan:"responde a Dan",
+    copyVerdict:"Copy verdict", verdictCopied:"Copied!", feedbackPrompt:"Was this verdict useful?",
+    rateLimitTitle:"The council needs to rest", rateLimitMsg:"Return when you have another question.",
+    slowStartBanner:"The council is preparing… this can take up to a minute. Please be patient.",
+    councilConvened:"The council has convened", councilConvenedTimes:"times",
   },
   it: {
     title:"IL CONSIGLIO", subtitle:"Assembla il tuo consiglio. Controlli chi parla.", enterChamber:"Entra nella Camera",
@@ -118,6 +140,10 @@ const UI = {
     chooseLanguage:"Scegli la lingua", danJudge:"Dan — Il Giudice", dansJudgment:"Il Giudizio di Dan",
     councilPrepares:"Il consiglio si prepara…", danDeliberates:"Dan delibera…",
     danWrites:"Dan scrive il suo giudizio…", respondsToDan:"risponde a Dan",
+    copyVerdict:"Copy verdict", verdictCopied:"Copied!", feedbackPrompt:"Was this verdict useful?",
+    rateLimitTitle:"The council needs to rest", rateLimitMsg:"Return when you have another question.",
+    slowStartBanner:"The council is preparing… this can take up to a minute. Please be patient.",
+    councilConvened:"The council has convened", councilConvenedTimes:"times",
   },
   nl: {
     title:"DE RAAD", subtitle:"Stel uw raad samen. U bepaalt wie spreekt.", enterChamber:"De Kamer betreden",
@@ -135,6 +161,10 @@ const UI = {
     chooseLanguage:"Kies taal", danJudge:"Dan — De Rechter", dansJudgment:"Dans Oordeel",
     councilPrepares:"De raad bereidt zich voor…", danDeliberates:"Dan delibereert…",
     danWrites:"Dan schrijft zijn oordeel…", respondsToDan:"antwoordt Dan",
+    copyVerdict:"Copy verdict", verdictCopied:"Copied!", feedbackPrompt:"Was this verdict useful?",
+    rateLimitTitle:"The council needs to rest", rateLimitMsg:"Return when you have another question.",
+    slowStartBanner:"The council is preparing… this can take up to a minute. Please be patient.",
+    councilConvened:"The council has convened", councilConvenedTimes:"times",
   },
   zh: {
     title:"议会", subtitle:"组建你的议会。你控制谁发言。", enterChamber:"进入议事厅",
@@ -152,6 +182,10 @@ const UI = {
     chooseLanguage:"选择语言", danJudge:"丹 — 法官", dansJudgment:"丹的判决",
     councilPrepares:"议会准备中…", danDeliberates:"丹在审议…",
     danWrites:"丹正在写判决…", respondsToDan:"回应丹",
+    copyVerdict:"Copy verdict", verdictCopied:"Copied!", feedbackPrompt:"Was this verdict useful?",
+    rateLimitTitle:"The council needs to rest", rateLimitMsg:"Return when you have another question.",
+    slowStartBanner:"The council is preparing… this can take up to a minute. Please be patient.",
+    councilConvened:"The council has convened", councilConvenedTimes:"times",
   },
   ja: {
     title:"評議会", subtitle:"評議会を編成してください。誰が発言するかはあなたが決めます。", enterChamber:"議場に入る",
@@ -169,6 +203,10 @@ const UI = {
     chooseLanguage:"言語を選択", danJudge:"ダン — 裁判官", dansJudgment:"ダンの判決",
     councilPrepares:"評議会が準備中…", danDeliberates:"ダンが審議中…",
     danWrites:"ダンが判決を書いています…", respondsToDan:"ダンに返答",
+    copyVerdict:"Copy verdict", verdictCopied:"Copied!", feedbackPrompt:"Was this verdict useful?",
+    rateLimitTitle:"The council needs to rest", rateLimitMsg:"Return when you have another question.",
+    slowStartBanner:"The council is preparing… this can take up to a minute. Please be patient.",
+    councilConvened:"The council has convened", councilConvenedTimes:"times",
   },
   ar: {
     title:"المجلس", subtitle:"اجمع مجلسك. أنت تتحكم في من يتكلم.", enterChamber:"الدخول إلى القاعة",
@@ -186,6 +224,10 @@ const UI = {
     chooseLanguage:"اختر اللغة", danJudge:"دان — القاضي", dansJudgment:"حكم دان",
     councilPrepares:"المجلس يستعد…", danDeliberates:"دان يتداول…",
     danWrites:"دان يكتب حكمه…", respondsToDan:"يرد على دان",
+    copyVerdict:"Copy verdict", verdictCopied:"Copied!", feedbackPrompt:"Was this verdict useful?",
+    rateLimitTitle:"The council needs to rest", rateLimitMsg:"Return when you have another question.",
+    slowStartBanner:"The council is preparing… this can take up to a minute. Please be patient.",
+    councilConvened:"The council has convened", councilConvenedTimes:"times",
   },
 };
 
@@ -776,17 +818,35 @@ const VerdictBlock = ({ verdict, t=UI.en }) => {
   );
 };
 
-const LoadingPulse = ({ label, speaker }) => (
-  <div style={{ display:"flex",alignItems:"center",gap:"10px",padding:"10px 0",opacity:0.6 }}>
-    {speaker && <Avatar char={speaker} size={26} active/>}
-    <div style={{ display:"flex",gap:"4px" }}>
-      {[0,1,2].map(i=>(
-        <div key={i} style={{ width:"5px",height:"5px",borderRadius:"50%",background:speaker?speaker.color:"#c9a84c",animation:"pulse 1.2s ease-in-out infinite",animationDelay:`${i*0.2}s` }}/>
-      ))}
+const LoadingPulse = ({ label, speaker, t=UI.en }) => {
+  const isSlowStart = label === "slow_start";
+  return (
+    <div style={{ display:"flex", flexDirection:"column", gap:"12px", padding:"10px 0" }}>
+      <div style={{ display:"flex",alignItems:"center",gap:"10px",opacity:0.6 }}>
+        {speaker && <Avatar char={speaker} size={26} active/>}
+        <div style={{ display:"flex",gap:"4px" }}>
+          {[0,1,2].map(i=>(
+            <div key={i} style={{ width:"5px",height:"5px",borderRadius:"50%",background:speaker?speaker.color:"#c9a84c",animation:"pulse 1.2s ease-in-out infinite",animationDelay:`${i*0.2}s` }}/>
+          ))}
+        </div>
+        {!isSlowStart && label && <span style={{ color:"#3a3020",fontSize:"12px",fontFamily:"'Palatino Linotype',serif" }}>{label}</span>}
+      </div>
+      {isSlowStart && (
+        <div style={{ background:"linear-gradient(135deg,rgba(201,168,76,0.06),rgba(201,168,76,0.02))", border:"1px solid rgba(201,168,76,0.15)", borderRadius:"10px", padding:"14px 18px", maxWidth:"500px" }}>
+          <div style={{ display:"flex", alignItems:"center", gap:"10px", marginBottom:"6px" }}>
+            <div style={{ fontSize:"16px" }}>⏳</div>
+            <span style={{ color:"rgba(201,168,76,0.7)", fontSize:"11px", fontWeight:700, letterSpacing:"0.1em", textTransform:"uppercase", fontFamily:"'Palatino Linotype',serif" }}>
+              {(t.rateLimitTitle||"Please wait")}
+            </span>
+          </div>
+          <p style={{ color:"rgba(201,168,76,0.5)", fontSize:"13px", lineHeight:"1.6", fontFamily:"'Palatino Linotype',serif", margin:0 }}>
+            {t.slowStartBanner || "The council is preparing… this can take up to a minute on first consultation. Please be patient."}
+          </p>
+        </div>
+      )}
     </div>
-    {label && <span style={{ color:"#3a3020",fontSize:"12px",fontStyle:"italic",fontFamily:"'Palatino Linotype',serif" }}>{label}</span>}
-  </div>
-);
+  );
+};
 
 const QuestionBubble = ({ text }) => (
   <div style={{ display:"flex",justifyContent:"flex-end",marginBottom:"22px" }}>
@@ -941,6 +1001,11 @@ const LandingPage = ({ onEnter, lang="en" }) => {
   const [phase, setPhase] = useState(-1);
   const [activeChar, setActiveChar] = useState(null);
   const [charsRevealed, setCharsRevealed] = useState(false);
+  const [sessionCount, setSessionCount] = useState(0);
+
+  useEffect(() => {
+    fetch(`${API_URL}/stats`).then(r=>r.json()).then(d=>{ if(d.sessions_total) setSessionCount(d.sessions_total); }).catch(()=>{});
+  }, []);
 
   useEffect(() => {
     const t0 = setTimeout(() => setPhase(0), 100);
@@ -1159,6 +1224,11 @@ const LandingPage = ({ onEnter, lang="en" }) => {
           <p style={{ color:"rgba(201,168,76,0.3)", fontSize:"clamp(8px,1vw,10px)", marginTop:"14px", letterSpacing:"0.1em" }}>
             One question · One session · One verdict
           </p>
+          {sessionCount > 0 && (
+            <p style={{ color:"rgba(201,168,76,0.2)", fontSize:"clamp(8px,0.9vw,10px)", marginTop:"8px", letterSpacing:"0.08em" }}>
+              {(UI[lang]||UI.en).councilConvened} {sessionCount.toLocaleString()} {(UI[lang]||UI.en).councilConvenedTimes}
+            </p>
+          )}
         </div>
 
       </div>
@@ -1336,6 +1406,85 @@ const SetupScreen = ({ onStart, lang, onChangeLang }) => {
   );
 };
 
+// ── Post-verdict: share + feedback + exit ────────────────────
+const PostVerdictActions = ({ verdict, question, onClose, lang, t=UI.en }) => {
+  const [copied, setCopied] = useState(false);
+  const [feedback, setFeedback] = useState(null); // null | "up" | "down"
+
+  const handleCopy = () => {
+    if(!verdict) return;
+    const insightLines = verdict.insights?.length ? verdict.insights.map(i => "◆ " + i).join("\n") : "";
+    const rec = verdict.recommendation ? "\n\n⚖️ " + verdict.recommendation : "";
+    const text = "The Council — \"" + question + "\"\n\n" + insightLines + rec + "\n\ncounc-a-il.vercel.app";
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    }).catch(() => {});
+  };
+
+  const handleFeedback = (rating) => {
+    if(feedback) return;
+    setFeedback(rating);
+    fetch(`${API_URL}/debate/feedback`, {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ rating, language:lang, question_length: question?.length || 0 })
+    }).catch(() => {});
+  };
+
+  return (
+    <div style={{ marginTop:"36px", borderTop:"1px solid rgba(201,168,76,0.06)", paddingTop:"28px" }}>
+      {/* Feedback */}
+      <div style={{ textAlign:"center", marginBottom:"24px" }}>
+        <p style={{ color:"rgba(201,168,76,0.4)", fontSize:"11px", letterSpacing:"0.1em", marginBottom:"12px", fontFamily:"'Palatino Linotype',serif" }}>
+          {t.feedbackPrompt || "Was this verdict useful?"}
+        </p>
+        <div style={{ display:"flex", gap:"10px", justifyContent:"center" }}>
+          <button onClick={() => handleFeedback("up")} style={{
+            background: feedback==="up" ? "rgba(74,222,128,0.15)" : "transparent",
+            border: `1px solid ${feedback==="up" ? "rgba(74,222,128,0.5)" : "rgba(201,168,76,0.15)"}`,
+            borderRadius:"8px", padding:"8px 20px", cursor: feedback ? "default" : "pointer",
+            fontSize:"18px", transition:"all 0.2s",
+            opacity: feedback && feedback!=="up" ? 0.3 : 1,
+          }}>👍</button>
+          <button onClick={() => handleFeedback("down")} style={{
+            background: feedback==="down" ? "rgba(251,146,60,0.12)" : "transparent",
+            border: `1px solid ${feedback==="down" ? "rgba(251,146,60,0.4)" : "rgba(201,168,76,0.15)"}`,
+            borderRadius:"8px", padding:"8px 20px", cursor: feedback ? "default" : "pointer",
+            fontSize:"18px", transition:"all 0.2s",
+            opacity: feedback && feedback!=="down" ? 0.3 : 1,
+          }}>👎</button>
+        </div>
+      </div>
+
+      {/* Share + Leave */}
+      <div style={{ display:"flex", gap:"10px", justifyContent:"center", flexWrap:"wrap" }}>
+        <button onClick={handleCopy} style={{
+          background: copied ? "rgba(74,222,128,0.1)" : "rgba(201,168,76,0.05)",
+          color: copied ? "rgba(74,222,128,0.8)" : "rgba(201,168,76,0.5)",
+          border: `1px solid ${copied ? "rgba(74,222,128,0.3)" : "rgba(201,168,76,0.15)"}`,
+          borderRadius:"3px", padding:"10px 24px", fontSize:"11px", fontWeight:700,
+          cursor:"pointer", letterSpacing:"0.16em", textTransform:"uppercase",
+          fontFamily:"'Palatino Linotype',serif", transition:"all 0.3s ease",
+          display:"flex", alignItems:"center", gap:"7px",
+        }}>
+          <span>{copied ? "✓" : "⎘"}</span>
+          {copied ? (t.verdictCopied || "Copied!") : (t.copyVerdict || "Copy verdict")}
+        </button>
+        <button onClick={onClose} style={{
+          background:"transparent", color:"rgba(201,168,76,0.5)", border:"1px solid rgba(201,168,76,0.2)",
+          borderRadius:"3px", padding:"10px 28px", fontSize:"11px", fontWeight:700,
+          cursor:"pointer", letterSpacing:"0.22em", textTransform:"uppercase",
+          fontFamily:"'Palatino Linotype',serif", transition:"all 0.3s ease",
+        }}
+          onMouseEnter={e=>{ e.currentTarget.style.color="#c9a84c"; e.currentTarget.style.borderColor="rgba(201,168,76,0.5)"; e.currentTarget.style.background="rgba(201,168,76,0.05)"; }}
+          onMouseLeave={e=>{ e.currentTarget.style.color="rgba(201,168,76,0.5)"; e.currentTarget.style.borderColor="rgba(201,168,76,0.2)"; e.currentTarget.style.background="transparent"; }}
+        >{t.leaveCouncil}</button>
+      </div>
+    </div>
+  );
+};
+
 const DebateScreen = ({ characters, onClose, lang }) => {
   const t = UI[lang] || UI.en;
   const [phase, setPhase] = useState("question");
@@ -1388,8 +1537,8 @@ const DebateScreen = ({ characters, onClose, lang }) => {
     setPhase("loading");
     setFeed([{ type:"question_bubble", text:question }]); setApiError(null);
     setLoading(true); setLoadingLabel("…"); setLoadingSpeaker(DAN); setActiveSpeaker("dan");
-    // Warm-up label after 8s (Render cold start can take 30-50s)
-    const warmupTimer = setTimeout(() => setLoadingLabel(t.councilPrepares + "…"), 8000);
+    // Slow-start banner after 10s
+    const warmupTimer = setTimeout(() => setLoadingLabel("slow_start"), 10000);
     try {
       const data = await post("/debate/context", { question, characters:charConfigs, language:lang }, 90000);
       clearTimeout(warmupTimer);
@@ -1404,9 +1553,13 @@ const DebateScreen = ({ characters, onClose, lang }) => {
     } catch(e) {
       clearTimeout(warmupTimer);
       console.error(e);
-      setApiError(e.message);
+      if(e.message.includes("429") || e.message.includes("RATE_LIMIT")) {
+        setApiError("RATE_LIMIT");
+      } else {
+        setApiError(e.message);
+      }
       setPhase("question");
-      setLoading(false); setLoadingSpeaker(null); setActiveSpeaker(null); setPhase("question");
+      setLoading(false); setLoadingSpeaker(null); setActiveSpeaker(null);
     }
   };
 
@@ -1643,26 +1796,28 @@ const DebateScreen = ({ characters, onClose, lang }) => {
             );
             return null;
           })}
-          {loading && <LoadingPulse label={loadingLabel} speaker={loadingSpeaker}/>}
+          {loading && <LoadingPulse label={loadingLabel} speaker={loadingSpeaker} t={t}/>}
           {apiError && !loading && (
-            <div style={{ background:"rgba(251,100,60,0.08)", border:"1px solid rgba(251,100,60,0.2)", borderRadius:"10px", padding:"12px 16px", margin:"12px 0", fontSize:"12px", color:"rgba(251,100,60,0.7)", fontFamily:"monospace" }}>
-              ⚠ {apiError}
-              <button onClick={()=>setApiError(null)} style={{ marginLeft:"12px", background:"transparent", border:"none", color:"rgba(251,100,60,0.5)", cursor:"pointer", fontSize:"11px" }}>✕</button>
-            </div>
+            apiError === "RATE_LIMIT" ? (
+              <div style={{ background:"linear-gradient(160deg,rgba(13,10,2,0.97),rgba(5,4,0,0.99))", border:"1px solid rgba(201,168,76,0.2)", borderRadius:"16px", padding:"30px 24px", margin:"20px 0", textAlign:"center", position:"relative", overflow:"hidden" }}>
+                <div style={{ position:"absolute",top:0,left:0,right:0,height:"1px",background:"linear-gradient(to right,transparent,rgba(201,168,76,0.4),transparent)" }}/>
+                <div style={{ fontSize:"32px", marginBottom:"14px", opacity:0.7 }}>⚖️</div>
+                <p style={{ color:"rgba(201,168,76,0.7)", fontWeight:700, fontSize:"13px", letterSpacing:"0.12em", textTransform:"uppercase", marginBottom:"8px", fontFamily:"'Palatino Linotype',serif" }}>{t.rateLimitTitle}</p>
+                <p style={{ color:"rgba(201,168,76,0.4)", fontSize:"13px", lineHeight:"1.6", fontFamily:"'Palatino Linotype',serif" }}>{t.rateLimitMsg}</p>
+                <button onClick={onClose} style={{ marginTop:"20px", background:"transparent", color:"rgba(201,168,76,0.5)", border:"1px solid rgba(201,168,76,0.2)", borderRadius:"3px", padding:"10px 28px", fontSize:"11px", fontWeight:700, cursor:"pointer", letterSpacing:"0.18em", textTransform:"uppercase", fontFamily:"'Palatino Linotype',serif" }}
+                  onMouseEnter={e=>{ e.currentTarget.style.color="#c9a84c"; e.currentTarget.style.borderColor="rgba(201,168,76,0.5)"; }}
+                  onMouseLeave={e=>{ e.currentTarget.style.color="rgba(201,168,76,0.5)"; e.currentTarget.style.borderColor="rgba(201,168,76,0.2)"; }}
+                >{t.leaveCouncil}</button>
+              </div>
+            ) : (
+              <div style={{ background:"rgba(251,100,60,0.08)", border:"1px solid rgba(251,100,60,0.2)", borderRadius:"10px", padding:"12px 16px", margin:"12px 0", fontSize:"12px", color:"rgba(251,100,60,0.7)", fontFamily:"monospace" }}>
+                ⚠ {apiError}
+                <button onClick={()=>setApiError(null)} style={{ marginLeft:"12px", background:"transparent", border:"none", color:"rgba(251,100,60,0.5)", cursor:"pointer", fontSize:"11px" }}>✕</button>
+              </div>
+            )
           )}
           {phase==="done" && !loading && verdictRevealed && (
-            <div style={{ marginTop:"36px", borderTop:"1px solid rgba(201,168,76,0.06)", paddingTop:"28px", textAlign:"center" }}>
-              <p style={{ color:"rgba(201,168,76,0.35)", fontSize:"11px", letterSpacing:"0.08em", marginBottom:"20px", fontFamily:"'Palatino Linotype',serif" }}>
-                {t.sessionComplete}
-              </p>
-              <button onClick={onClose}
-                style={{ background:"transparent", color:"rgba(201,168,76,0.5)", border:"1px solid rgba(201,168,76,0.2)", borderRadius:"3px", padding:"12px 36px", fontSize:"11px", fontWeight:700, cursor:"pointer", letterSpacing:"0.22em", textTransform:"uppercase", fontFamily:"'Palatino Linotype',serif", transition:"all 0.3s ease" }}
-                onMouseEnter={e=>{ e.currentTarget.style.color="#c9a84c"; e.currentTarget.style.borderColor="rgba(201,168,76,0.5)"; e.currentTarget.style.background="rgba(201,168,76,0.05)"; }}
-                onMouseLeave={e=>{ e.currentTarget.style.color="rgba(201,168,76,0.5)"; e.currentTarget.style.borderColor="rgba(201,168,76,0.2)"; e.currentTarget.style.background="transparent"; }}
-              >
-                {t.leaveCouncil}
-              </button>
-            </div>
+            <PostVerdictActions verdict={feed.find(f=>f.type==="verdict")?.data} question={question} onClose={onClose} lang={lang} t={t} />
           )}
           <div ref={bottomRef}/>
         </div>

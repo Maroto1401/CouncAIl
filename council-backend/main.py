@@ -68,6 +68,7 @@ def check_token_budget():
 
 # ── Per-IP session rate limiting ──────────────────────────────
 _ip_sessions: Dict[str, dict] = {}
+_total_sessions: int = 0  # global counter — resets on restart, that's fine
 FREE_SESSIONS_PER_DAY = 5  # generous free tier
 
 def get_ip_hash(request: Request) -> str:
@@ -77,6 +78,7 @@ def get_ip_hash(request: Request) -> str:
 
 def check_session_limit(request: Request):
     """Allow FREE_SESSIONS_PER_DAY debate sessions per IP per day."""
+    global _total_sessions
     ip_hash = get_ip_hash(request)
     now = time.time()
     if ip_hash not in _ip_sessions:
@@ -88,9 +90,10 @@ def check_session_limit(request: Request):
     if session["count"] >= FREE_SESSIONS_PER_DAY:
         raise HTTPException(
             status_code=429,
-            detail=f"Daily limit reached. The council can only be consulted {FREE_SESSIONS_PER_DAY} times per day."
+            detail="RATE_LIMIT"
         )
     session["count"] += 1
+    _total_sessions += 1
 
 
 # ── Models ────────────────────────────────────────────────────
@@ -800,3 +803,21 @@ async def budget_status():
 @app.get("/health")
 async def health():
     return {"status": "ok"}
+
+
+@app.get("/stats")
+async def stats():
+    """Public stats for display."""
+    return {"sessions_total": _total_sessions}
+
+
+@app.post("/debate/feedback")
+@limiter.limit("60/minute")
+async def submit_feedback(request: Request, req: dict):
+    """Receive thumbs up/down feedback after verdict. Just log it for now."""
+    import logging
+    rating = req.get("rating")  # "up" or "down"
+    lang = req.get("language", "en")
+    q_len = req.get("question_length", 0)
+    logging.warning(f"FEEDBACK rating={rating} lang={lang} q_len={q_len}")
+    return {"ok": True}
